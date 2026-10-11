@@ -1,0 +1,30 @@
+{
+	"originalName": "@narumitw/pi-skillforge",
+	"url": "https://registry.npmjs.org/@narumitw/pi-skillforge/-/pi-skillforge-0.2.5.tgz",
+	"version": "0.2.5",
+	"integrity": "sha512-ZBzJ/9sD/qqumeGJMPEdNQyFPKdqwVy30dQ16U8787LjT/WGOkZjU2MNXyGYqwpBCPsLcW1AW5C1kgizMdsdSQ==",
+	"importedPaths": [
+		"LICENSE",
+		"README.md",
+		"examples/memory-entry.md",
+		"examples/promoted-skill-patch.md",
+		"examples/skill-registry.yaml",
+		"extensions/skillforge.ts",
+		"package.json",
+		"schemas/memory.schema.json",
+		"schemas/skill-registry.schema.json",
+		"src/memory/capture.ts",
+		"src/memory/commands.ts",
+		"src/memory/parse.ts",
+		"src/memory/retrieve.ts",
+		"src/memory/serialize.ts",
+		"src/memory/validate.ts",
+		"src/promotion/promotion.ts",
+		"src/shared/types.ts",
+		"src/store/storage.ts",
+		"templates/decision.md",
+		"templates/gotcha.md",
+		"templates/skill-patch.md"
+	],
+	"localForkVersion": "0.2.5-ezxomp.1"
+}

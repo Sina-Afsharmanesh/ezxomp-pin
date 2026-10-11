@@ -1,0 +1,320 @@
+export interface SymbolQuery {
+  symbol: string;
+  file?: string;
+  includeBody?: boolean;
+  contextLines?: number;
+}
+
+export interface DefinitionQuery {
+  symbol: string;
+  file?: string;
+}
+
+export interface ReferenceQuery {
+  symbol: string;
+  file?: string;
+  limit?: number;
+}
+
+export interface TraceQuery {
+  symbol: string;
+  file?: string;
+  depth?: number;
+  limit?: number;
+}
+
+export type NavigationIntent = 'discover' | 'define' | 'inspect' | 'trace' | 'impact' | 'debug' | 'explain';
+export type NavigationMode = 'auto' | 'inspect' | 'trace' | 'impact' | 'debug' | 'explain';
+export type PlannerStatus = 'needs-discovery' | 'grounded-next-hop' | 'needs-narrowing' | 'answer-now';
+export type PlannerConfidence = 'low' | 'medium' | 'high';
+export type ToolRouteFamily = 'discovery' | 'code_nav' | 'lsp' | 'read' | 'answer';
+
+export interface SymbolLocation {
+  file: string;
+  line: number;
+  character?: number;
+  startLine?: number;
+  endLine?: number;
+  preview?: string;
+  confidence?: 'high' | 'medium' | 'low';
+  backend?: 'lsp' | 'ast' | 'fallback';
+}
+
+export interface SymbolCandidate {
+  name: string;
+  file: string;
+  line: number;
+  startLine: number;
+  endLine: number;
+  kind: 'function' | 'class' | 'interface' | 'type' | 'enum' | 'const' | 'method';
+  matchKind: 'exact' | 'case-insensitive' | 'partial';
+  hinted: boolean;
+}
+
+export interface SymbolResult {
+  symbol: string;
+  location?: SymbolLocation;
+  content: string;
+  details: Record<string, unknown>;
+}
+
+export interface DefinitionResult {
+  symbol: string;
+  location?: SymbolLocation;
+  content: string;
+  details: Record<string, unknown> & {
+    symbol?: string;
+    file?: string;
+    location?: SymbolLocation;
+    backend?: 'lsp' | 'ast' | 'fallback';
+    ok?: boolean;
+    ambiguous?: boolean;
+    candidates?: unknown;
+    confidence?: 'high' | 'medium' | 'low';
+    owningFile?: string;
+    nextBestTool?: string;
+    nextBestReason?: string;
+    nextBestArgs?: Record<string, unknown>;
+    suggestedNextTool?: string;
+    suggestedNextReason?: string;
+    suggestedNextArgs?: Record<string, unknown>;
+    suggestedNextSteps?: string[];
+    status?: 'resolved' | 'ambiguous' | 'not-found';
+  };
+}
+
+export interface ReferenceHit {
+  file: string;
+  line: number;
+  character?: number;
+  preview?: string;
+  confidence?: 'high' | 'medium' | 'low';
+  backend?: 'lsp' | 'ast' | 'fallback';
+  fallback?: boolean;
+  previewPriority?: number;
+  previewPriorityReason?: string;
+}
+
+export interface ReferenceFileGroup {
+  file: string;
+  count: number;
+  confidence: 'high' | 'medium' | 'low';
+  backend: 'lsp' | 'ast' | 'fallback';
+  fallback: boolean;
+  lines: Array<{
+    line: number;
+    character?: number;
+    preview?: string;
+    confidence?: 'high' | 'medium' | 'low';
+    backend?: 'lsp' | 'ast' | 'fallback';
+    fallback?: boolean;
+    previewPriority?: number;
+    previewPriorityReason?: string;
+  }>;
+  topPreview?: {
+    line: number;
+    character?: number;
+    preview?: string;
+    previewPriority?: number;
+    previewPriorityReason?: string;
+  };
+  impactScore?: number;
+  impactReason?: string;
+  callsInContext?: string[];
+  importsInFile?: string[];
+  isExported?: boolean;
+  functionRole?: string;
+}
+
+export interface ReferenceResult {
+  symbol: string;
+  hits: ReferenceHit[];
+  content: string;
+  details: Record<string, unknown> & {
+    symbol?: string;
+    file?: string;
+    limit?: number;
+    hits?: ReferenceHit[];
+    groupedHits?: ReferenceFileGroup[];
+    backend?: 'lsp' | 'ast' | 'fallback';
+    confidence?: 'high' | 'medium' | 'low';
+    fallback?: boolean;
+    source?: 'lsp' | 'scan';
+    definitionBackend?: 'lsp' | 'ast' | 'fallback';
+    definitionConfidence?: 'high' | 'medium' | 'low';
+    definitionFallback?: boolean;
+    definitionFile?: string;
+    definitionLine?: number;
+    ok?: boolean;
+    owningFile?: string;
+    nextBestTool?: string;
+    nextBestReason?: string;
+    nextBestArgs?: Record<string, unknown>;
+    suggestedNextTool?: string;
+    suggestedNextReason?: string;
+    suggestedNextArgs?: Record<string, unknown>;
+    suggestedNextSteps?: string[];
+    bestNextCallerFile?: string;
+    bestNextCallerReason?: string;
+    bestNextReadArgs?: Record<string, unknown>;
+    topImpactFiles?: Array<{
+      file: string;
+      impactScore: number;
+      reason: string;
+      count: number;
+      topLine?: number;
+      topPreview?: string;
+    }>;
+    status?: 'resolved' | 'not-found';
+  };
+}
+
+export interface RankedItem {
+  kind: 'file' | 'symbol';
+  id: string;
+  score: number;
+  reason: string;
+  file?: string;
+}
+
+export interface TraceCaller {
+  file: string;
+  line: number;
+  preview?: string;
+  callsInContext: string[];
+  importsFrom: string[];
+}
+
+export interface SessionRelationship {
+  fromSymbol: string;
+  fromFile: string;
+  toSymbol: string;
+  toFile: string;
+  relationType: 'calls' | 'imports' | 'extends' | 'uses';
+}
+
+export interface TraceDetails {
+  symbol: string;
+  root?: string;
+  depth: number;
+  callers: TraceCaller[];
+  totalCallers: number;
+  suggestedNextTool?: string;
+  suggestedNextArgs?: Record<string, unknown>;
+  suggestedNextReason?: string;
+}
+
+export interface TraceResult {
+  root: { symbol: string; file?: string; line?: number };
+  callers: TraceCaller[];
+  depth: number;
+  totalCallers: number;
+  content: string;
+  details: TraceDetails;
+}
+
+export interface CompareQuery {
+  symbol?: string;
+  pattern?: string;
+  scope?: string;
+  limit?: number;
+}
+
+export interface CompareImplementation {
+  symbol: string;
+  file: string;
+  line: number;
+  snippet?: string;
+  calls: string[];
+  functionRole?: string;
+}
+
+export interface CompareDetails {
+  symbol?: string;
+  implementations: CompareImplementation[];
+  commonPattern: { calls: string[]; role: string };
+  outliers: Array<{ file: string; reason: string }>;
+  totalImplementations: number;
+  suggestedNextTool?: string;
+  suggestedNextArgs?: Record<string, unknown>;
+  suggestedNextReason?: string;
+  ok?: boolean;
+  reason?: string;
+}
+
+export interface CompareResult {
+  implementations: CompareImplementation[];
+  commonPattern: { calls: string[]; role: string };
+  outliers: Array<{ file: string; reason: string }>;
+  content: string;
+  details: CompareDetails;
+}
+
+export interface PlannerQuery {
+  task: string;
+  symbol?: string;
+  file?: string;
+  mode?: NavigationMode;
+  limit?: number;
+  depth?: number;
+}
+
+export interface ToolRoute {
+  primary: ToolRouteFamily;
+  toolName?: string;
+  args?: Record<string, unknown>;
+  reason: string;
+  ladderPosition?: 1 | 2 | 3 | 4;
+}
+
+export interface NavigationStep {
+  order: number;
+  toolFamily: ToolRouteFamily;
+  tool: string;
+  args?: Record<string, unknown>;
+  reason: string;
+  stopIfResolved?: boolean;
+  ladderPosition?: 1 | 2 | 3 | 4;
+}
+
+export interface EvidenceSnapshot {
+  task: string;
+  symbol?: string;
+  file?: string;
+  freshSession: boolean;
+  hasConcreteEvidence: boolean;
+  mentionedFiles: string[];
+  readFiles: string[];
+  queriedSymbols: string[];
+  lastResolvedDefinition?: {
+    symbol: string;
+    file: string;
+    line: number;
+    character?: number;
+  };
+  lastTopCallerFiles: Array<{
+    file: string;
+    reason?: string;
+    line?: number;
+  }>;
+  lastPlannerSummary?: {
+    intent: NavigationIntent;
+    route: ToolRouteFamily;
+    nextTool?: string;
+  };
+  symbolRelationships?: SessionRelationship[];
+}
+
+export interface NavigationPlan {
+  intent: NavigationIntent;
+  status: PlannerStatus;
+  confidence: PlannerConfidence;
+  evidence: EvidenceSnapshot;
+  steps: NavigationStep[];
+  nextTool?: string;
+  nextArgs?: Record<string, unknown>;
+  fallbackSteps: NavigationStep[];
+  stopWhen: string[];
+  bestRoute: ToolRoute;
+  freshSession: boolean;
+}

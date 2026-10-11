@@ -1,0 +1,38 @@
+{
+	"name": "@ezxomp/extensible-workflows",
+	"version": "5.1.0-ezxomp.3",
+	"description": "Saved-recipe persistence and authoring layer for OMP native Workflowz",
+	"type": "module",
+	"license": "MIT",
+	"keywords": [
+		"omp-package",
+		"workflowz",
+		"workflow",
+		"saved-recipes",
+		"authoring"
+	],
+	"omp": {
+		"extensions": [
+			"src/index.ts"
+		]
+	},
+	"dependencies": {
+		"@ezxomp/experiences": "workspace:*",
+		"@ezxomp/agent-learning": "workspace:*"
+	},
+	"peerDependencies": {
+		"@oh-my-pi/pi-ai": "18.0.6",
+		"@oh-my-pi/pi-coding-agent": "18.0.6",
+		"@oh-my-pi/pi-tui": "18.0.6",
+		"@oh-my-pi/pi-utils": "18.0.6"
+	},
+	"files": [
+		"src",
+		"skills",
+		"README.md",
+		"LICENSE"
+	],
+	"engines": {
+		"bun": ">=1.3.14"
+	}
+}

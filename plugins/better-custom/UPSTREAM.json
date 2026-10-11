@@ -1,0 +1,7 @@
+{
+  "originalName": "omp-better-custom",
+  "url": "https://tangled.org/expi.tngl.sh/ezxomp",
+  "integrity": "sha256-omp-better-custom-born-in-repo",
+  "localForkVersion": "0.1.3-ezxomp.0",
+  "note": "Born in the ezxomp monorepo (plugins/better-custom). Zero-dependency /custom-provider wizard plus /model-seam model browser and /better-models view (TASK-16)."
+}

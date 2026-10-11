@@ -1,0 +1,10 @@
+[Unit]
+Description=OMP Experiences Agent Experience daily scheduled Analyze (setup-rendered template)
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+Persistent=true
+Unit=omp-experiences-agent-experience-analyze.service
+
+[Install]
+WantedBy=timers.target

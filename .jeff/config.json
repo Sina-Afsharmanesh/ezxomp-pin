@@ -1,0 +1,6 @@
+{
+  "schemaVersion": 1,
+  "system": "jeff",
+  "active": true,
+  "testCommand": "bun test test/"
+}

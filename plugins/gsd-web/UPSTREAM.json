@@ -1,0 +1,7 @@
+{
+	"originalName": "gsd-pi",
+	"url": "https://github.com/open-gsd/gsd-pi",
+	"integrity": "sha256-port-of-gsd-pi-web@8e0a639aedc7e94ec67055cecfcb83aaa1283d3a",
+	"importedPaths": ["web/", "src/web/", "src/web-mode.ts", "src/cli-web-branch.ts", "scripts/stage-web-standalone.cjs"],
+	"localForkVersion": "5.2.0-ezxomp.1"
+}

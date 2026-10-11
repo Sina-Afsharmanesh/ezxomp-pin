@@ -1,0 +1,5 @@
+{"seq":0,"at":"2026-08-30T06:20:04.014Z","event":"intent","stage":"verify","note":"Orchestrator dispatching cook-validator for TASK-56.8 per AC: targeted tests, just verify (tsc + full suite), direct-source isolated fresh-agent smoke (AC3, post-fix tree 4538f59f), then two-phase install cutover per docs/omp-marketplace-update.md: Phase 1 local-link fresh-agent self-check, push main (user-approved), Phase 2 marketplace install + fresh-agent re-check. Validator reports only; coordinator owns merge/push decision. Deliverable tip is linear on main (diff 60 files, single concern)."}
+{"seq":1,"at":"2026-08-30T06:42:55.537Z","event":"gate","stage":"ac1-targeted","hash":"d867f77b3cac3382cdf35bddc1b78528f44755d2","note":"green"}
+{"seq":2,"at":"2026-08-30T06:42:55.537Z","event":"gate","stage":"ac2-repo","hash":"d867f77b3cac3382cdf35bddc1b78528f44755d2","note":"green"}
+{"seq":3,"at":"2026-08-30T06:42:55.537Z","event":"gate","stage":"ac3-direct","hash":"d867f77b3cac3382cdf35bddc1b78528f44755d2","note":"green"}
+{"seq":4,"at":"2026-08-30T06:42:55.537Z","event":"gate","stage":"phase1-link","hash":"d867f77b3cac3382cdf35bddc1b78528f44755d2","note":"green"}

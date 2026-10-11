@@ -1,0 +1,7 @@
+version: 1
+skills:
+  - name: omp-extensions
+    aliases:
+      - OMP package development
+    paths:
+      - getAgentDir()/skills/omp-extensions/SKILL.md

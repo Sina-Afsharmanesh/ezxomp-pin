@@ -1,0 +1,1 @@
+{"seq":0,"at":"2026-08-30T00:59:36.548Z","event":"intent","stage":"implement","note":"Dispatching cook-researcher to synthesize doc-14/15/16 into the parent research document with pattern matrix. Operator disambiguation applied: pi-dcp = pi-vault/pi-dcp. Expected side effect: backlog_doc_create type=research linked to TASK-56; AC evidence recorded."}

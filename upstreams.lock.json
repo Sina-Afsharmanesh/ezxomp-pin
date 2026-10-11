@@ -1,0 +1,68 @@
+{
+  "$schema": "ezxomp-upstreams-lock/v1",
+  "sources": {
+    "augment": {
+      "type": "npm",
+      "package": "pi-augment",
+      "version": "1.0.8",
+      "url": "https://registry.npmjs.org/pi-augment/-/pi-augment-1.0.8.tgz",
+      "integrity": "sha512-0ZKEcBYieA11PoRB/QzQMYeDrNQS0nLAwzCWtQf5X1NGBd1ZLrPkHY5xTRRtcq5063hoXXMFfm3K7aHTFOjqnw==",
+      "importRoot": "."
+    },
+    "code-nav": {
+      "type": "npm",
+      "package": "pi-code-nav",
+      "version": "0.5.0",
+      "url": "https://registry.npmjs.org/pi-code-nav/-/pi-code-nav-0.5.0.tgz",
+      "integrity": "sha512-M1l5AVCqbUONOT9xM9okY39rJzevZ6Nrhd0DiLExj3LY6ZmFEAjBpkMmSUhbZUhEZgMAoLP9PtJOq9QFOOG21Q==",
+      "importRoot": "."
+    },
+    "codesight": {
+      "type": "npm",
+      "package": "pi-codesight",
+      "version": "0.2.1",
+      "url": "https://registry.npmjs.org/pi-codesight/-/pi-codesight-0.2.1.tgz",
+      "integrity": "sha512-Cec4EAQWfHJmtthL4gIk0JwjBuHmzyvvqXBcNh5GXMsGiCeW+nY7FbNBB6Ax/175oCX98RrMcfIGf//ltLzISg==",
+      "importRoot": "."
+    },
+    "experiences": {
+      "type": "npm",
+      "package": "pi-experiences",
+      "version": "0.1.49",
+      "url": "https://registry.npmjs.org/pi-experiences/-/pi-experiences-0.1.49.tgz",
+      "integrity": "sha512-gmwgTtpVh2DF27u4EWwfSwHYLFFvIUoYJJF0nfHXIyQIcdzcac2ejjs3zz0s/wQ/XXJdTgFICxVq6siDn7L95w==",
+      "importRoot": "."
+    },
+    "compact-eng": {
+      "type": "npm",
+      "package": "pi-ultra-compact",
+      "version": "1.2.1",
+      "url": "https://registry.npmjs.org/pi-ultra-compact/-/pi-ultra-compact-1.2.1.tgz",
+      "integrity": "sha512-GBurpTm0AJSO5PB1A4VYUzkBg9VfDf/SUX+Sxig9yPNlZlt88MwDjGIU+saIEb9MjLMrk8A2I4P6icxmhB7AsQ==",
+      "importRoot": "."
+    },
+    "extensible-workflows": {
+      "type": "git",
+      "repo": "vekexasia/pi-extensible-workflows",
+      "commit": "3c5050ea6b33306f6ebe6cec57e6e94c9ed13d0c",
+      "url": "https://github.com/vekexasia/pi-extensible-workflows/archive/3c5050ea6b33306f6ebe6cec57e6e94c9ed13d0c.tar.gz",
+      "integrity": "sha256:d6e269b69dee12e79a44de1645b4f8b8a0ddb1f420c8507cb96b8b26575daec3",
+      "importRoot": "packages/core",
+      "exclude": [
+        "packages/extensions/herdr"
+      ]
+    },
+    "plannotator": {
+      "type": "git",
+      "repo": "backnotprop/plannotator",
+      "commit": "8f84852f9776eaf3f62dbb8ad95545e05c22132f",
+      "url": "https://github.com/backnotprop/plannotator/archive/8f84852f9776eaf3f62dbb8ad95545e05c22132f.tar.gz",
+      "integrity": "sha256:d8a691cc9cdc905fab812868af43d08df46e745ba0accfb6eb45bef0e748a405",
+      "importRoot": "apps/pi-extension",
+      "build": "build:pi",
+      "exclude": [
+        ".gitignore"
+      ]
+    }
+  }
+}

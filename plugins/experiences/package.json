@@ -1,0 +1,82 @@
+{
+  "name": "@ezxomp/experiences",
+  "version": "0.1.49-ezxomp.1",
+  "description": "Human-reviewed habits for OMP coding agents—a local-first behavioral learning layer alongside skills and memory.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "bun": ">=1.3.14"
+  },
+  "keywords": [
+    "omp-package",
+    "omp-extension",
+    "omp-coding-agent",
+    "ai-agent",
+    "coding-agent",
+    "agent-experience",
+    "agent-habits",
+    "agent-memory",
+    "agent-profile",
+    "agent-skills",
+    "behavioral-learning",
+    "context-management",
+    "persistent-learning",
+    "human-in-the-loop",
+    "local-first",
+    "privacy-first",
+    "token-efficiency",
+    "personalization",
+    "habits"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/misunders2d/pi-experiences.git"
+  },
+  "bugs": {
+    "url": "https://github.com/misunders2d/pi-experiences/issues"
+  },
+  "homepage": "https://github.com/misunders2d/pi-experiences#readme",
+  "bin": {
+    "omp-experience-consolidate": "dist/experience-consolidate.mjs"
+  },
+  "scripts": {
+    "check": "npm run check:agent-experience && npm run check:source && npm run check:cli && npm run check:generated",
+    "check:agent-experience": "bun ./scripts/test-agent-experience-phase1.mjs && bun ./scripts/test-agent-experience-phase2-storage.mjs && bun ./scripts/test-agent-experience-phase3-capture.mjs && bun ./scripts/test-agent-experience-phase4a-consolidation.mjs && bun ./scripts/test-agent-experience-phase4b-model-output.mjs && bun ./scripts/test-agent-experience-phase5-review.mjs && bun ./scripts/test-agent-experience-phase6-selector.mjs && bun ./scripts/test-agent-experience-phase7a-selector-adapter.mjs && bun ./scripts/test-agent-experience-phase7b8.mjs && bun ./scripts/test-agent-experience-phase9-setup-analyze.mjs && bun ./scripts/test-agent-experience-phase10-semantic-dedupe.mjs && bun ./scripts/test-agent-experience-phase11-storage-hardening.mjs && bun ./scripts/test-agent-experience-phase12-observations.mjs && bun ./scripts/test-agent-experience-phase13-local-embedding.mjs && bun ./scripts/test-agent-experience-phase14-semantic-atomicity.mjs && bun ./scripts/test-agent-experience-phase15-lock-recovery.mjs && bun ./scripts/test-agent-experience-phase16-conversation.mjs && bun ./scripts/test-agent-experience-phase17-scheduled-analyze.mjs && bun ./scripts/test-agent-experience-phase18-break-in.mjs && bun ./scripts/test-agent-experience-phase19-vector-selector.mjs && bun ./scripts/test-agent-experience-phase20-context-selector.mjs && bun ./scripts/test-agent-experience-phase21-consolidation-identity.mjs && bun ./scripts/test-agent-experience-phase22-provider-guidance.mjs && bun ./scripts/test-agent-experience-phase23-self-contained-install.mjs",
+    "check:source": "bun ./scripts/check-agent-experience-source.mjs",
+    "build": "node ./scripts/build-cli.mjs",
+    "prepack": "npm run build",
+    "prepublishOnly": "npm run check && npm run build",
+    "check:cli": "npm run build && bun ./dist/experience-consolidate.mjs --help >/dev/null && bun ./dist/experience-consolidate.mjs status >/dev/null",
+    "check:generated": "node ./scripts/check-generated-cli.mjs"
+  },
+  "peerDependencies": {
+    "@oh-my-pi/pi-ai": "18.0.6",
+    "@oh-my-pi/pi-coding-agent": "18.0.6",
+    "@oh-my-pi/pi-tui": "18.0.6"
+  },
+  "devDependencies": {
+    "@oh-my-pi/pi-ai": "18.0.6",
+    "@oh-my-pi/pi-coding-agent": "18.0.6",
+    "@oh-my-pi/pi-tui": "18.0.6",
+    "esbuild": "^0.28.1",
+    "onnxruntime-web": "1.27.0"
+  },
+  "omp": {
+    "extensions": [
+      "extensions/agent-experience/index.ts"
+    ]
+  },
+  "files": [
+    "bin/",
+    "dist/",
+    "extensions/",
+    "runtime/",
+    "skills/",
+    "docs/",
+    "scripts/",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md"
+  ]
+}

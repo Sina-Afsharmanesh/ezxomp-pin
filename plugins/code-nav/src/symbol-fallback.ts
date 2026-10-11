@@ -1,0 +1,294 @@
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import type { Dirent } from 'node:fs';
+import { join, relative } from 'node:path';
+import type { ReferenceHit, SymbolCandidate } from './types.ts';
+
+import { resolveWorkspaceFile } from './workspace-path.ts';
+import type { MatchKind } from './symbol-normalization.ts';
+import {
+  classifyDeclaration,
+  classifyMatchKind,
+  classifyReferenceMatchKind,
+  containsSymbolReference,
+  findSymbolColumn,
+  matchScore,
+} from './symbol-normalization.ts';
+
+const extToAstGrepLang: Record<string, string> = {
+  '.ts': 'typescript',
+  '.tsx': 'tsx',
+  '.mts': 'typescript',
+  '.cts': 'typescript',
+  '.js': 'javascript',
+  '.jsx': 'javascript',
+  '.mjs': 'javascript',
+  '.cjs': 'javascript',
+  '.css': 'css',
+  '.scss': 'css',
+  '.sass': 'css',
+  '.py': 'python',
+  '.go': 'go',
+  '.rb': 'ruby',
+  '.java': 'java',
+  '.rs': 'rust',
+  '.cs': 'csharp',
+  '.php': 'php',
+  '.kt': 'kotlin',
+  '.kts': 'kotlin',
+  '.swift': 'swift',
+  '.dart': 'dart',
+  '.ex': 'elixir',
+  '.exs': 'elixir',
+  '.hs': 'haskell',
+  '.lua': 'lua',
+  '.scala': 'scala',
+  '.html': 'html',
+  '.htm': 'html',
+  '.json': 'json',
+  '.yaml': 'yaml',
+  '.yml': 'yaml',
+  '.sql': 'sql',
+  '.c': 'c',
+  '.cpp': 'cpp',
+};
+
+
+export function detectLangFromPath(filePath: string): string {
+  const ext = filePath.substring(filePath.lastIndexOf('.')).toLowerCase();
+  return extToAstGrepLang[ext] ?? 'typescript';
+}
+
+
+interface ReferenceCandidate extends ReferenceHit {
+  matchKind: MatchKind;
+  hinted: boolean;
+}
+
+const SOURCE_EXTENSIONS = new Set([
+  // JavaScript/TypeScript
+  '.ts',
+  '.tsx',
+  '.js',
+  '.jsx',
+  '.mjs',
+  '.cjs',
+  '.mts',
+  '.cts',
+  // CSS/Sass
+  '.css',
+  '.scss',
+  '.sass',
+  '.less',
+  // Python
+  '.py',
+  // Go
+  '.go',
+  // Ruby
+  '.rb',
+  // Java
+  '.java',
+  // Rust
+  '.rs',
+  // C#
+  '.cs',
+  // PHP
+  '.php',
+  // Kotlin
+  '.kt',
+  '.kts',
+  // Swift
+  '.swift',
+  // Dart
+  '.dart',
+  // Elixir
+  '.ex',
+  '.exs',
+  // Haskell
+  '.hs',
+  // Lua
+  '.lua',
+  // Scala
+  '.scala',
+  // HTML
+  '.html',
+  '.htm',
+]);
+
+const IGNORE_DIRS = new Set(['.git', 'node_modules', 'dist', 'build', 'coverage', '.next']);
+
+export function findFileHintCandidates(symbol: string, fileHint: string): SymbolCandidate[] {
+  const matches = resolveFileHint(fileHint);
+  const candidates = matches.flatMap((file) => scanFileForSymbol(file, symbol));
+  return sortCandidates(candidates);
+}
+
+export function findWorkspaceCandidates(symbol: string, fileHint?: string): SymbolCandidate[] {
+  const root = process.cwd();
+  const files = listWorkspaceSourceFiles(root);
+  const scored = files.flatMap((file) => scanFileForSymbol(file, symbol, fileHint));
+  return sortCandidates(scored);
+}
+
+export function scanReferences(symbol: string, fileHint: string | undefined, limit: number): ReferenceHit[] {
+  const files = fileHint ? resolveFileHint(fileHint) : listWorkspaceSourceFiles(process.cwd());
+  const candidates: ReferenceCandidate[] = [];
+
+  for (const file of files) {
+    let text: string;
+    try {
+      text = readFileSync(file, 'utf8');
+    } catch {
+      continue;
+    }
+
+    const lines = text.split(/\r?\n/);
+    for (let index = 0; index < lines.length; index += 1) {
+      const line = lines[index]!;
+      if (!containsSymbolReference(line, symbol)) continue;
+      const preview = line.trim();
+      candidates.push({
+        file,
+        line: index + 1,
+        character: findSymbolColumn(line, symbol),
+        preview: preview.length > 180 ? `${preview.slice(0, 177)}...` : preview,
+        matchKind: classifyReferenceMatchKind(line, symbol),
+        hinted: Boolean(fileHint && file.includes(fileHint)),
+      });
+    }
+  }
+
+  return sortReferenceCandidates(candidates).slice(0, limit).map(({ matchKind: _matchKind, hinted: _hinted, ...hit }) => hit);
+}
+
+export function resolveFileHint(fileHint: string): string[] {
+  const safeHint = resolveWorkspaceFile(fileHint);
+  if (safeHint) {
+    try {
+      const stats = statSync(safeHint);
+      if (stats.isFile()) return [safeHint];
+      if (stats.isDirectory()) return listWorkspaceSourceFiles(safeHint);
+    } catch {
+      // Continue to fuzzy matching for a safe but not-yet-created path.
+    }
+  }
+
+  const root = resolveWorkspaceFile(process.cwd());
+  if (!root) return [];
+  const normalizedHint = fileHint.replace(/\\/g, '/');
+  return listWorkspaceSourceFiles(root).filter((file) => relative(root, file).replace(/\\/g, '/').includes(normalizedHint));
+}
+
+export function listWorkspaceSourceFiles(root: string): string[] {
+  const workspaceRoot = resolveWorkspaceFile(process.cwd());
+  const safeRoot = resolveWorkspaceFile(root);
+  if (!workspaceRoot || !safeRoot) return [];
+  const rootRelative = relative(workspaceRoot, safeRoot);
+  if (rootRelative === '..' || rootRelative.startsWith(`..${process.platform === 'win32' ? '\\' : '/'}`) || rootRelative.startsWith('/')) return [];
+
+  const files: string[] = [];
+  const visit = (dir: string) => {
+    let entries: Dirent<string>[];
+    try {
+      entries = readdirSync(dir, { withFileTypes: true });
+    } catch {
+      return;
+    }
+    for (const entry of entries) {
+      if (entry.isDirectory()) {
+        if (IGNORE_DIRS.has(entry.name)) continue;
+        visit(join(dir, entry.name));
+        continue;
+      }
+      const ext = entry.name.slice(entry.name.lastIndexOf('.'));
+      if (!SOURCE_EXTENSIONS.has(ext)) continue;
+      files.push(join(dir, entry.name));
+    }
+  };
+  visit(safeRoot);
+  return files;
+}
+
+function scanFileForSymbol(file: string, symbol: string, fileHint?: string): SymbolCandidate[] {
+  let text: string;
+  try {
+    text = readFileSync(file, 'utf8');
+  } catch {
+    return [];
+  }
+
+  const lang = detectLangFromPath(file);
+  const lines = text.split(/\r?\n/);
+  const candidates: SymbolCandidate[] = [];
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index]!;
+    const declaration = classifyDeclaration(line, symbol, lang);
+    if (!declaration) continue;
+    const matchKind = classifyMatchKind(line, symbol);
+    const range = findBlockRange(lines, index + 1);
+    candidates.push({
+      name: symbol,
+      file,
+      line: index + 1,
+      startLine: range.startLine,
+      endLine: range.endLine,
+      kind: declaration,
+      matchKind,
+      hinted: Boolean(fileHint && file.includes(fileHint)),
+    });
+  }
+
+  return candidates;
+}
+
+function sortReferenceCandidates(candidates: ReferenceCandidate[]): ReferenceCandidate[] {
+  return [...candidates].sort((left, right) => {
+    const hintDelta = Number(right.hinted) - Number(left.hinted);
+    if (hintDelta !== 0) return hintDelta;
+    const matchDelta = matchScore(right.matchKind) - matchScore(left.matchKind);
+    if (matchDelta !== 0) return matchDelta;
+    if (left.file !== right.file) return left.file.localeCompare(right.file);
+    return left.line - right.line;
+  });
+}
+
+function findBlockRange(lines: string[], lineNumber: number) {
+  const declarationLine = lines[lineNumber - 1] ?? '';
+  let braceBalance = countChar(declarationLine, '{') - countChar(declarationLine, '}');
+  let endLine = lineNumber;
+
+  if (braceBalance <= 0) {
+    return { startLine: lineNumber, endLine: lineNumber };
+  }
+
+  for (let index = lineNumber; index < lines.length; index += 1) {
+    const line = lines[index]!;
+    braceBalance += countChar(line, '{') - countChar(line, '}');
+    endLine = index + 1;
+    if (braceBalance <= 0) break;
+  }
+
+  return { startLine: lineNumber, endLine };
+}
+
+function countChar(text: string, char: string) {
+  return Array.from(text).filter((value) => value === char).length;
+}
+
+function sortCandidates(candidates: SymbolCandidate[]): SymbolCandidate[] {
+  const seen = new Set<string>();
+  return [...candidates]
+    .filter((candidate) => {
+      const key = `${candidate.file}:${candidate.startLine}:${candidate.endLine}:${candidate.name}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((left, right) => {
+      const hintDelta = Number(right.hinted) - Number(left.hinted);
+      if (hintDelta !== 0) return hintDelta;
+      const matchDelta = matchScore(right.matchKind) - matchScore(left.matchKind);
+      if (matchDelta !== 0) return matchDelta;
+      if (left.file !== right.file) return left.file.localeCompare(right.file);
+      return left.line - right.line;
+    });
+}

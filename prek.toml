@@ -1,0 +1,19 @@
+#:schema https://www.schemastore.org/prek.json
+# prek — pre-commit hooks for ezxomp
+# Install: prek install
+# Run manually: prek run
+
+[[repos]]
+repo = "builtin"
+hooks = [
+    { id = 'trailing-whitespace', exclude = '^backlog/cook-state\.json$' },
+    { id = 'end-of-file-fixer', exclude = '^backlog/cook-state\.json$' },
+    { id = "check-added-large-files", args = ["--maxkb=512"] },
+]
+
+# Local gate: type-check + tests before every commit
+[[repos]]
+repo = "local"
+hooks = [
+    { id = "just-verify", name = "CI gate (just verify)", entry = "just verify", language = "system", stages = ["pre-commit"], pass_filenames = false },
+]

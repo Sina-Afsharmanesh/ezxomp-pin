@@ -1,0 +1,12 @@
+type:session
+version=2
+id=session-099
+parentId=nonexistent-id
+cwd=dangling-project
+timestamp=2026-01-18T09:00:00Z
+
+type:message
+role=user content=hello
+
+type:message
+role=assistant content=ok

@@ -1,0 +1,121 @@
+{
+  "name": "@ezxomp/gsd-browser",
+  "version": "0.1.0-ezxomp.0",
+  "description": "GSD browser-tool surface for OMP: page fetch, Brave web search, DOM snapshot, navigation, and screenshots with GSD's honest-degradation reason codes.",
+  "keywords": [
+    "omp-package",
+    "gsd",
+    "browser",
+    "fetch",
+    "screenshot"
+  ],
+  "license": "Apache-2.0",
+  "type": "module",
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE",
+    "AGENTS.md",
+    "UPSTREAM.json"
+  ],
+  "peerDependencies": {
+    "@oh-my-pi/pi-coding-agent": "18.0.6"
+  },
+  "devDependencies": {
+    "@oh-my-pi/pi-coding-agent": "*",
+    "typebox": "1.1.38",
+    "vitest": "*"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "omp": {
+    "extensions": [
+      "./src/index.ts"
+    ],
+    "settings": {
+      "enabled": {
+        "type": "boolean",
+        "default": true
+      },
+      "backend": {
+        "type": "enum",
+        "default": "auto",
+        "values": [
+          "auto",
+          "none"
+        ]
+      },
+      "domVerification": {
+        "type": "boolean",
+        "default": false
+      },
+      "braveApiKey": {
+        "type": "string",
+        "default": "",
+        "description": "Brave Search API key. Precedence: BRAVE_API_KEY env > this setting > ~/.gsd/brave_api_key file. Env preferred: plugin settings are plaintext on disk."
+      },
+      "searchTimeoutMs": {
+        "type": "number",
+        "default": 10000,
+        "min": 1,
+        "step": 1,
+        "description": "Per-attempt Brave search timeout; GSD_WEBSEARCH_TIMEOUT_MS env overrides."
+      },
+      "fetchTimeoutMs": {
+        "type": "number",
+        "default": 10000,
+        "min": 1,
+        "step": 1
+      },
+      "maxFetchBytes": {
+        "type": "number",
+        "default": 67108864,
+        "min": 1024,
+        "step": 1,
+        "description": "Streamed byte cap for gsd_browser_fetch; truncation marker appended."
+      },
+      "injectionBlocking": {
+        "type": "boolean",
+        "default": false,
+        "description": "HIGH injection findings (3+ patterns) block with isError only when true; advisory always in details.injection."
+      },
+      "allowPrivateHosts": {
+        "type": "boolean",
+        "default": true,
+        "description": "Allow loopback/RFC1918/link-local hosts (dev servers on localhost:3000/5173/8080); false rejects with reason private_host_blocked."
+      },
+      "viewportWidth": {
+        "type": "number",
+        "default": 1440,
+        "min": 1,
+        "step": 1
+      },
+      "viewportHeight": {
+        "type": "number",
+        "default": 900,
+        "min": 1,
+        "step": 1
+      },
+      "captureDir": {
+        "type": "string",
+        "default": ".gsd-browser/captures",
+        "description": "Screenshot capture directory; .gitignore gate written unconditionally before first capture."
+      },
+      "browserProfileDir": {
+        "type": "string",
+        "default": "",
+        "description": "Persistent browser profile dir; empty = fresh temp profile per launch (GSD --isolated equivalent)."
+      },
+      "browserExecutablePath": {
+        "type": "string",
+        "default": "",
+        "description": "Browser binary override; discovery then falls back to GSD_BROWSER_EXECUTABLE env, then PATH scan."
+      },
+      "headless": {
+        "type": "boolean",
+        "default": true
+      }
+    }
+  }
+}

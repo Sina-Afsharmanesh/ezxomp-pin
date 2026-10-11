@@ -1,0 +1,42 @@
+{
+	"name": "@ezxomp/agent-learning",
+	"version": "0.1.0-ezxomp.0",
+	"description": "OMP extension — unified agent learning: skills.sh surface + ezxomp plugin catalog, native-memory facts shim, skillforge evidence/procedures pipeline, experiences habits lane, unified review gate",
+	"type": "module",
+	"main": "src/index.ts",
+	"scripts": {
+		"test": "bun test"
+	},
+	"files": [
+		"src",
+		"skills",
+		"README.md",
+		"LICENSE"
+	],
+	"omp": {
+		"extensions": [
+			"src/index.ts"
+		]
+	},
+	"keywords": [
+		"omp",
+		"omp-extension",
+		"agent-learning",
+		"skills",
+		"memory",
+		"habits"
+	],
+	"author": "ezxomp",
+	"license": "MIT",
+	"publishConfig": {
+		"access": "public"
+	},
+	"peerDependencies": {
+		"@oh-my-pi/pi-coding-agent": "18.0.6",
+		"@oh-my-pi/pi-tui": "18.0.6",
+		"@oh-my-pi/pi-utils": "18.0.6"
+	},
+	"dependencies": {
+		"@ezxomp/experiences": "workspace:*"
+	}
+}

@@ -1,0 +1,8 @@
+{
+  "planner": "hf:moonshotai/Kimi-K3",
+  "scout": "deepseek-v4-flash:0731",
+  "researcher": "openai/gpt-5.6-luna",
+  "worker": "glm-5.3-flash",
+  "validator": "openai/gpt-5.6-luna",
+  "judge": "openai/gpt-5.6-luna"
+}

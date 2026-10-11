@@ -1,0 +1,47 @@
+{
+  "name": "@ezxomp/cook",
+  "version": "0.1.7-ezxomp.8",
+  "description": "Backlog.md cookbook workflow plugin for OMP. Decomposes work into atomic sub-tickets and drives scout/planner/worker/validator/judge plus conditional audit/refute agents through OMP's native task tool, with ADHD divergent ideation, DAG iteration, and Done-gate enforcement. Backlog tools/helpers/instructions now provided by @ezxomp/backlog.",
+  "keywords": [
+    "omp-package",
+    "backlog",
+    "cook",
+    "workflow",
+    "agents",
+    "subagent"
+  ],
+  "license": "Apache-2.0",
+  "type": "module",
+  "files": [
+    "extensions",
+    "agents",
+    "vendor",
+    "skills",
+    "tests",
+    "README.md",
+    "LICENSE"
+  ],
+  "peerDependencies": {
+    "@oh-my-pi/pi-coding-agent": "18.0.6",
+    "@oh-my-pi/omptype": "18.0.6"
+  },
+  "dependencies": {
+    "@ezxomp/backlog": "workspace:*"
+  },
+  "devDependencies": {
+    "@oh-my-pi/pi-coding-agent": "*",
+    "@oh-my-pi/omptype": "*",
+    "@types/node": "*",
+    "@biomejs/biome": "*",
+    "typebox": "1.1.38",
+    "vitest": "*"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "omp": {
+    "extensions": [
+      "./extensions/index.ts"
+    ]
+  }
+}

@@ -1,0 +1,291 @@
+{
+  "$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+  "production": true,
+  "health": {
+    "thresholdOverrides": [
+      {
+        "files": [
+          "plugins/extensible-workflows/src/worktree.ts"
+        ],
+        "maxCyclomatic": 40,
+        "maxCognitive": 60,
+        "maxCrap": 1400.0,
+        "maxUnitSize": 140,
+        "reason": "Native Git worktree parsing and cleanup validate untrusted porcelain records, exact identity, branch state, and dirty-worktree refusal in ordered fail-closed checks; splitting those guards further obscures the isolation contract."
+      },
+      {
+        "files": [
+          "plugins/cook/extensions/cook-tools.ts"
+        ],
+        "maxCyclomatic": 70,
+        "maxCognitive": 75,
+        "maxCrap": 4500.0,
+        "maxUnitSize": 2500,
+        "reason": "registerCookTools is a flat tool-registration list and its handlers are independent orchestration state machines; splitting it would scatter dispatch, journal, claim, and typed-result contracts."
+      },
+      {
+        "files": [
+          "plugins/cook/extensions/dagr.ts"
+        ],
+        "maxCyclomatic": 60,
+        "maxCognitive": 90,
+        "maxCrap": 3400.0,
+        "maxUnitSize": 400,
+        "reason": "Contract v3 mapping is a pure field-by-field lifecycle projection; branching derives ordered intent/result/gate states and optional DAGR schema fields."
+      },
+      {
+        "files": [
+          "plugins/cook/extensions/watch.ts"
+        ],
+        "maxCyclomatic": 30,
+        "maxCognitive": 45,
+        "maxCrap": 1000.0,
+        "maxUnitSize": 120,
+        "reason": "pollWatchedTasks reconciles task claims and lifecycle state across watcher cycles; its sequential guards are the orchestration boundary."
+      },
+      {
+        "files": [
+          "plugins/evo/extensions/evo/evoSub.ts"
+        ],
+        "maxCyclomatic": 30,
+        "maxCognitive": 50,
+        "maxCrap": 120.0,
+        "maxUnitSize": 120,
+        "reason": "activate/deactivate enumerate both profile scopes (global and project-local) with fail-closed error branches; the sequential scope checks are the profile synchronization boundary."
+      },
+      {
+        "files": [
+          "plugins/agent-learning/src/procedures/transcript/miner.ts"
+        ],
+        "maxCyclomatic": 60,
+        "maxCognitive": 100,
+        "maxCrap": 4000.0,
+        "maxUnitSize": 400,
+        "reason": "SkillOpt (microsoft/SkillOpt, MIT, arXiv 2605.23904) mine.py port: digestPiSession/dedupTasks/computeOutcome are upstream parser state machines over Pi JSONL v1/v2/v3 trees; splitting would sever the whole-graph rejection contract (TASK-98)."
+      },
+      {
+        "files": [
+          "plugins/agent-learning/src/procedures/promotion/edit-engine.ts"
+        ],
+        "maxCyclomatic": 40,
+        "maxCognitive": 60,
+        "maxCrap": 1200.0,
+        "maxUnitSize": 300,
+        "reason": "SkillOpt apply loop port (TASK-96): applyEditsDetailed dispatches add/delete/replace against a protected LEARNED region with normalized dedup; the op dispatch is one upstream state machine, not refactorable without splitting the anchor-match contract."
+      },
+      {
+        "files": [
+          "plugins/agent-learning/src/procedures/prompts/registry.ts"
+        ],
+        "maxCyclomatic": 20,
+        "maxCognitive": 20,
+        "maxCrap": 200.0,
+        "maxUnitSize": 60,
+        "reason": "SkillOpt prompts.py port (TASK-100): loadOverridesWithUnknown duplicates upstream's parse-with-unknown-keys flow; splitting would move the mtime cache invariant out of the parse path."
+      },
+      {
+        "files": [
+          "plugins/agent-learning/src/procedures/promotion/staging.ts"
+        ],
+        "maxCyclomatic": 15,
+        "maxCognitive": 15,
+        "maxCrap": 150.0,
+        "maxUnitSize": 60,
+        "reason": "SkillOpt staging port (TASK-99): backupSkillFile/listBackups replicate upstream's collision-safe timestamped backup contract; branch count comes from the EEXIST/collision guards, not incidental complexity."
+      },
+      {
+        "files": [
+          "plugins/agent-learning/src/procedures/promotion/splits.ts"
+        ],
+        "maxCyclomatic": 10,
+        "maxCognitive": 10,
+        "maxCrap": 60.0,
+        "maxUnitSize": 60,
+        "reason": "SkillOpt assign_splits port (TASK-97): hash-bucketing partition math is upstream reference logic; leave verbatim per the verbatim-port policy."
+      },
+      {
+        "files": [
+          "plugins/agent-learning/src/learning-command.ts"
+        ],
+        "maxCyclomatic": 15,
+        "maxCognitive": 10,
+        "maxCrap": 150.0,
+        "maxUnitSize": 60,
+        "reason": "Subcommand dispatch table; the sleep addition keeps the flat switch contract used by status/experience/skillforge."
+      },
+      {
+        "files": [
+          "plugins/agent-learning/src/procedures/promotion/promotion.ts"
+        ],
+        "maxCyclomatic": 20,
+        "maxCognitive": 20,
+        "maxCrap": 200.0,
+        "maxUnitSize": 130,
+        "reason": "Promotion orchestrator is the doc-23 integration seam: applyProposal composes canonical-path guard + engine + staging + evidence + log per the composed port; promoteMemoryIfEligible is pre-existing main logic extended with the TASK-95 gate check. Splitting further would scatter the store/proposal contract across files."
+      },
+      {
+        "files": [
+          "plugins/gsd-web/extensions/index.ts"
+        ],
+        "maxCyclomatic": 40,
+        "maxCognitive": 50,
+        "maxCrap": 1300.0,
+        "maxUnitSize": 140,
+        "reason": "gsd-web command handler dispatches the full start/stop/status/open/url/logs/set/unset verb set with per-verb argument validation; it is a flat command table, and splitting would scatter the verb contract."
+      },
+      {
+        "files": [
+          "plugins/gsd-web/extensions/host-launcher.ts"
+        ],
+        "maxCyclomatic": 18,
+        "maxCognitive": 20,
+        "maxCrap": 300.0,
+        "maxUnitSize": 90,
+        "reason": "launchWebServer is the ordered detached-spawn sequence (port, bind, origins, env, spawn, readiness, registry); splitting scatters the launch contract."
+      },
+      {
+        "files": [
+          "plugins/gsd-web/extensions/settings.ts"
+        ],
+        "maxCyclomatic": 12,
+        "maxCognitive": 12,
+        "maxCrap": 120.0,
+        "maxUnitSize": 40,
+        "reason": "mergeSettings normalizes every typed and freeform key with individual type guards; the branch count is the field schema, not incidental control flow."
+      },
+      {
+        "files": [
+          "plugins/better-custom/src/probe/ollama.ts"
+        ],
+        "maxCyclomatic": 14,
+        "maxCognitive": 30,
+        "maxCrap": 120.0,
+        "maxUnitSize": 60,
+        "reason": "probeOllama is the ordered Ollama/9router/OmniRoute discovery contract: strict /api/health OmniRoute marker checked before /api/version 9router detection, native /api/tags+/api/show probing, and the shared OpenAI-style /v1/models catalog acceptance with static-tags bypass. The health-first ordering (TASK-113.2) is the point \u2014 splitting the marker chain further scatters the evidence-precedence order the probe guarantees."
+      }
+    ]
+  },
+  "audit": {
+    "gate": "new-only",
+    "css": false,
+    "cssDeep": false,
+    "deadCodeBaseline": "fallow-baselines/dead-code.json",
+    "healthBaseline": "fallow-baselines/health.json",
+    "dupesBaseline": "fallow-baselines/dupes.json"
+  },
+  "ignorePatterns": [
+    ".codesight/**",
+    "fallow-baselines/**",
+    "plugins/*/vendor/**",
+    "plugins/*/dist/**",
+    "test/fixtures/**",
+    "test/__snapshots__/**",
+    "archive/**",
+    "plugins/*/runtime/vendor/**",
+    "plugins/gsd-web/web/**"
+  ],
+  "entry": [
+    "plugins/*/extensions/**/index.ts",
+    "plugins/*/src/index.ts",
+    "plugins/plannotator/server.ts",
+    "plugins/plannotator/server/*.ts",
+    "plugins/plannotator/index.ts",
+    "plugins/experiences/bin/*.mjs",
+    "plugins/experiences/scripts/*.ts",
+    "plugins/experiences/scripts/*.mjs",
+    "plugins/experiences/runtime/agent-experience/*.mjs",
+    "scripts/**/*.ts",
+    "plugins/plannotator/scripts/optional-stubs/*.mjs",
+    "plugins/*/scripts/*.ts",
+    "plugins/*/scripts/*.mjs",
+    "plugins/plannotator/generated/*.ts",
+    "test/*.test.ts"
+  ],
+  "ignoreDependencies": [
+    "@oh-my-pi/pi-agent-core",
+    "@oh-my-pi/pi-ai",
+    "@oh-my-pi/pi-tui",
+    "@anthropic-ai/claude-agent-sdk",
+    "@opencode-ai/sdk"
+  ],
+  "ignoreExports": [
+    {
+      "file": "plugins/plannotator/plannotator-browser.ts",
+      "exports": [
+        "stopAllBrowserSessions",
+        "openPlanReviewBrowser",
+        "startPlanReviewBrowserSession",
+        "openCodeReview",
+        "startCodeReviewBrowserSession",
+        "openMarkdownAnnotation",
+        "startMarkdownAnnotationSession",
+        "openLastMessageAnnotation",
+        "startLastMessageAnnotationSession",
+        "openArchiveBrowserAction"
+      ]
+    },
+    {
+      "file": "plugins/plannotator/plannotator-events.ts",
+      "exports": [
+        "stopAllBrowserSessions",
+        "openPlanReviewBrowser",
+        "startPlanReviewBrowserSession",
+        "openCodeReview",
+        "startCodeReviewBrowserSession",
+        "openMarkdownAnnotation",
+        "startMarkdownAnnotationSession",
+        "openLastMessageAnnotation",
+        "startLastMessageAnnotationSession",
+        "openArchiveBrowserAction"
+      ]
+    },
+    {
+      "file": "plugins/agent-learning/src/procedures/promotion/edit-engine.ts",
+      "exports": [
+        "extractLearned",
+        "currentLearnedLines",
+        "setLearned"
+      ]
+    },
+    {
+      "file": "plugins/agent-learning/src/learning-command.ts",
+      "exports": [
+        "formatSleepSurface"
+      ]
+    },
+    {
+      "file": "plugins/agent-learning/src/procedures/promotion/gate.ts",
+      "exports": [
+        "selectGateScore"
+      ]
+    },
+    {
+      "file": "plugins/agent-learning/src/procedures/promotion/staging.ts",
+      "exports": [
+        "listBackups"
+      ]
+    },
+    {
+      "file": "plugins/gsd-web/extensions/host-launcher.ts",
+      "exports": [
+        "pluginRoot",
+        "reservePort",
+        "writeRegistry",
+        "removeInstance"
+      ]
+    },
+    {
+      "file": "plugins/gsd-web/extensions/settings.ts",
+      "exports": [
+        "PLUGIN_NAME",
+        "mergeSettings"
+      ]
+    }
+  ],
+  "ignoreFindings": [
+    "plugins/agent-learning/src/procedures/transcript/miner.ts",
+    "plugins/agent-learning/src/procedures/transcript/types.ts",
+    "plugins/agent-learning/src/procedures/promotion/splits.ts",
+    "plugins/agent-learning/src/procedures/prompts/registry.ts"
+  ]
+}

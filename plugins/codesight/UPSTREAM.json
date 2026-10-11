@@ -1,0 +1,20 @@
+{
+  "originalName": "pi-codesight",
+  "url": "https://registry.npmjs.org/pi-codesight/-/pi-codesight-0.2.1.tgz",
+  "version": "0.2.1",
+  "integrity": "sha512-Cec4EAQWfHJmtthL4gIk0JwjBuHmzyvvqXBcNh5GXMsGiCeW+nY7FbNBB6Ax/175oCX98RrMcfIGf//ltLzISg==",
+  "importedPaths": [
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md",
+    "package.json",
+    "src/codesight.ts",
+    "src/commands.ts",
+    "src/format.ts",
+    "src/index.ts",
+    "src/queries.ts",
+    "src/stale.ts",
+    "src/tools.ts"
+  ],
+  "localForkVersion": "0.2.2-ezxomp.0"
+}

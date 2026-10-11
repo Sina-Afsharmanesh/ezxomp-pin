@@ -1,0 +1,1 @@
+{"seq":0,"at":"2026-08-31T00:54:25.941Z","event":"intent","stage":"plan","note":"Dispatching cook-planner to investigate plugins/augment failure modes, research similar tools, and decompose TASK-58 into atomic sub-tickets (root-cause, research doc, /aug command, SMOL model resolution, enhancements) with depends_on edges."}

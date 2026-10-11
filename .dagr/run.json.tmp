@@ -1,0 +1,2570 @@
+{
+  "dagr": 3,
+  "run": {
+    "id": "cook--home-eag1-repo-ezxomp",
+    "title": "cook session",
+    "started_at": "2026-08-31T04:36:25.458Z"
+  },
+  "generated_at": "2026-08-31T04:36:25.459Z",
+  "tasks": [
+    {
+      "id": "TASK-15",
+      "title": "workflowz v2: import Atomic + pi-extensible-workflows capabilities into @ezxomp/extensible-workflows",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-15·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-15.1",
+      "title": "P1: resume/retry, worktree tool, builtin templates, scaffold tool",
+      "kind": "impl",
+      "project": "TASK-15",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-15.1·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-15.1.3",
+      "title": "P1: preserve recovery provenance across derived runs",
+      "kind": "impl",
+      "project": "TASK-15.1",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-15.1.3·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-15.1.4",
+      "title": "P1: prove lifecycle asset and isolation contracts",
+      "kind": "impl",
+      "owner": "Verify1514",
+      "project": "TASK-15.1",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-15.1.4·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-15.2",
+      "title": "P0: Schema V2, gate rendering, run journal, report/checkpoint/status/stop tools",
+      "kind": "impl",
+      "owner": "codex",
+      "project": "TASK-15",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-15.2·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-15.5",
+      "title": "P0-R: Research verifier adapters and workflow router contracts",
+      "kind": "impl",
+      "owner": "codex",
+      "project": "TASK-15",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-15.5·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-15.6",
+      "title": "P0-C: Define OMP core capability gaps for workflowz parity",
+      "kind": "impl",
+      "project": "TASK-15",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-15.6·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-15.7",
+      "title": "P0-A: Define workflow-scoped agent profiles and Just code chains",
+      "kind": "impl",
+      "project": "TASK-15",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-15.7·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-15.8",
+      "title": "P0-O: Define orchestrator skill and Hook/Hub watchdog contract",
+      "kind": "impl",
+      "project": "TASK-15",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-15.8·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-16",
+      "title": "Rebuild better-custom as zero-dependency OMP provider-wizard plugin",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-16·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-16.9",
+      "title": "Expose and verify the completed custom-provider OMP command",
+      "kind": "impl",
+      "project": "TASK-16",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-16.9·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-16.10",
+      "title": "Restore repo-wide green gate: exclude vendored extensible-workflows deps from tsc and fix workflowz-observability typing",
+      "kind": "impl",
+      "project": "TASK-16",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-16.10·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-22",
+      "title": "Restore pstack-suite smoke gate under full-repo bun test run",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-22·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-27",
+      "title": "Consolidate skills, skillforge, experiences into @ezxomp/agent-learning",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-27·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-31",
+      "title": "Fix typebox registerTool type-debt blocking just check",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-31·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-31.1",
+      "title": "Fix lean-ctx registerTool TS2322 (establish pattern)",
+      "kind": "impl",
+      "project": "TASK-31",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-31.1·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-32",
+      "title": "Cook TUI batch 1: chain progress widget + /cook autocomplete + working message/title + watch activity",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-32·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-32.1",
+      "title": "Cook widget renders chain and Backlog progress counts",
+      "kind": "impl",
+      "project": "TASK-32",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-32.1·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-32.2",
+      "title": "Cook watch fire timestamps refresh widget state",
+      "kind": "impl",
+      "project": "TASK-32",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-32.2·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-32.3",
+      "title": "Cook /cook subcommands complete in editor",
+      "kind": "impl",
+      "project": "TASK-32",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-32.3·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-36",
+      "title": "Make /cook config use project-local agent profiles",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-36·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-37",
+      "title": "Prevent lean-ctx agent-bus worker saturation",
+      "kind": "impl",
+      "owner": "@Main",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-37·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-38",
+      "title": "Work through remaining backlog tickets",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-38·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-38.1",
+      "title": "Coordinate Cook TUI batch 1 completion (existing TASK-32)",
+      "kind": "impl",
+      "project": "TASK-38",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-38.1·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-38.3",
+      "title": "Coordinate project-local Cook config and provider display completion (existing TASK-36/TASK-35)",
+      "kind": "impl",
+      "owner": "@Task383Config",
+      "project": "TASK-38",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-38.3·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-38.4",
+      "title": "Resolve or durably record TASK-37 lean-ctx capacity boundary",
+      "kind": "impl",
+      "owner": "@Task384Leanctx",
+      "project": "TASK-38",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-38.4·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-38.5",
+      "title": "Run final TASK-38 verification gate and close the parent",
+      "kind": "impl",
+      "project": "TASK-38",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-38.5·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-38.6",
+      "title": "Normalize repository dependency graph and restore typecheck",
+      "kind": "impl",
+      "owner": "@Task386Deps",
+      "project": "TASK-38",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-38.6·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-40",
+      "title": "Fallow gate: config, baselines, and dead-code triage",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-40·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-40.1",
+      "title": "4a: Commit .fallowrc.json + make just verify / fallow-audit green",
+      "kind": "impl",
+      "project": "TASK-40",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-40.1·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-40.2",
+      "title": "4b: Fix fallow-baseline recipe to --save-baseline, capture baselines, dead-code triage",
+      "kind": "impl",
+      "owner": "@PrimeBee",
+      "project": "TASK-40",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-40.2·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-40.4",
+      "title": "4d: Negative-control test — gate must fail on a synthetic dead export",
+      "kind": "impl",
+      "project": "TASK-40",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-40.4·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-40.5",
+      "title": "Break fallow circular dependency cycles",
+      "kind": "impl",
+      "owner": "@MarxistParakeet",
+      "project": "TASK-40",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-40.5·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-41",
+      "title": "Harness: `hub` tool `op` parameter omitted by callers — validation error + prompt priming",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-41·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-42",
+      "title": "Harness: subagents finish work but never call `yield` — job stuck \\\"Still Running\\\" until timeout",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-42·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-44.1",
+      "title": "W1: state, journal, and dagr projection modules",
+      "kind": "impl",
+      "project": "TASK-44",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-44.1·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-44.2",
+      "title": "W2: COOK_PROTOCOL rewrite and stage prompts",
+      "kind": "impl",
+      "project": "TASK-44",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-44.2·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-44.3",
+      "title": "W3: agent profiles update and council agents",
+      "kind": "impl",
+      "project": "TASK-44",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-44.3·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-44.4",
+      "title": "W4: new tools, dispatch paths, and dagr wiring",
+      "kind": "impl",
+      "project": "TASK-44",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-44.4·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-49",
+      "title": "Integrate upstream Jeff cook profiles",
+      "kind": "impl",
+      "owner": "@Main",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-49·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-49.1",
+      "title": "Ship missing Jeff cook profiles",
+      "kind": "impl",
+      "owner": "@Main",
+      "project": "TASK-49",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-49.1·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-49.2",
+      "title": "Route new cook stages and dispatch",
+      "kind": "impl",
+      "owner": "@Main",
+      "project": "TASK-49",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-49.2·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-49.3",
+      "title": "Align evo-sub allowlists for cook roster",
+      "kind": "impl",
+      "owner": "@Main",
+      "project": "TASK-49",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-49.3·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-50.1",
+      "title": "Dagr producer emits validator-clean synthetic attempts for done tasks",
+      "kind": "impl",
+      "project": "TASK-50",
+      "state": "queued",
+      "attempts": []
+    },
+    {
+      "id": "TASK-51",
+      "title": "Troubleshoot cook plugin workflow end to end via a live ticket run",
+      "kind": "impl",
+      "state": "working",
+      "attempts": []
+    },
+    {
+      "id": "TASK-51.1",
+      "title": "Preserve additive profile customizations in cook agent resync (F1 merge-on-write)",
+      "kind": "impl",
+      "project": "TASK-51",
+      "state": "working",
+      "attempts": []
+    },
+    {
+      "id": "TASK-51.2",
+      "title": "Verify and judge TASK-51.1 profile-pin preservation fix",
+      "kind": "impl",
+      "project": "TASK-51",
+      "state": "queued",
+      "attempts": []
+    },
+    {
+      "id": "TASK-51.3",
+      "title": "Close parent TASK-51 with AC evidence and final summary",
+      "kind": "impl",
+      "project": "TASK-51",
+      "state": "queued",
+      "attempts": []
+    },
+    {
+      "id": "TASK-52",
+      "title": "Enhance cook dagr producer to author-intent freshness and lifecycle projection",
+      "kind": "impl",
+      "state": "working",
+      "attempts": []
+    },
+    {
+      "id": "TASK-52.1",
+      "title": "Lifecycle projection core: journal+agentLog derived attempts/events with evidence tiers (E2+E3)",
+      "kind": "impl",
+      "project": "TASK-52",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-52.1·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-52.2",
+      "title": "Locator, liveness.last_output_at, and HERDR_PANE_ID orchestrator projection (E4+E5)",
+      "kind": "impl",
+      "project": "TASK-52",
+      "state": "working",
+      "attempts": []
+    },
+    {
+      "id": "TASK-52.3",
+      "title": "Fire pushDagr on every store-mutating commit site (E1)",
+      "kind": "impl",
+      "project": "TASK-52",
+      "state": "queued",
+      "attempts": []
+    },
+    {
+      "id": "TASK-52.4",
+      "title": "Kind mapping + projects hierarchy emission (E6)",
+      "kind": "impl",
+      "project": "TASK-52",
+      "state": "queued",
+      "attempts": []
+    },
+    {
+      "id": "TASK-52.5",
+      "title": "RED producer-contract test suite for E1/E2/E3/E4/E5/E6 observable contracts",
+      "kind": "impl",
+      "project": "TASK-52",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-52.5·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-52.6",
+      "title": "Record typed validation and review kickbacks end to end",
+      "kind": "impl",
+      "project": "TASK-52",
+      "state": "queued",
+      "attempts": []
+    },
+    {
+      "id": "TASK-52.7",
+      "title": "Reconcile cook widget and dagr projection at turn boundaries",
+      "kind": "impl",
+      "project": "TASK-52",
+      "state": "working",
+      "attempts": []
+    },
+    {
+      "id": "TASK-53",
+      "title": "Assess one-tool EVAL gateway for EVO mode",
+      "kind": "impl",
+      "owner": "@eag1",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-53·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-54",
+      "title": "Design sharper EVO policy for main and subagents",
+      "kind": "impl",
+      "owner": "@eag1",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-54·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-55",
+      "title": "Implement transactional EVO policy for main and cook subagents",
+      "kind": "impl",
+      "owner": "@eag1",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-55·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-55.1",
+      "title": "Persist one versioned atomic EVO generation",
+      "kind": "impl",
+      "owner": "@EvoStateWorker",
+      "project": "TASK-55",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-55.1·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-55.2",
+      "title": "Restore persisted main grants exactly across sessions",
+      "kind": "impl",
+      "owner": "@EvoMainPolicyWorker",
+      "project": "TASK-55",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-55.2·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-55.3",
+      "title": "Derive subagent grants from authoritative original profiles",
+      "kind": "impl",
+      "owner": "@EvoSubPolicyWorker",
+      "project": "TASK-55",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-55.3·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-55.4",
+      "title": "Make sub restore refresh and regenerate conflict-safe",
+      "kind": "impl",
+      "project": "TASK-55",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-55.4·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-55.5",
+      "title": "Stabilize EVO routing hooks protocol reads and task preflight",
+      "kind": "impl",
+      "project": "TASK-55",
+      "state": "queued",
+      "attempts": []
+    },
+    {
+      "id": "TASK-55.6",
+      "title": "Document and execute EVO isolation E2E protocol",
+      "kind": "impl",
+      "project": "TASK-55",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-55.6·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-55.7",
+      "title": "Separate main and sub EVO recovery authority",
+      "kind": "impl",
+      "owner": "@eag1",
+      "project": "TASK-55",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-55.7·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-55.8",
+      "title": "Align EVO tests with transactional policy contracts",
+      "kind": "impl",
+      "owner": "@eag1",
+      "project": "TASK-55",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-55.8·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-56",
+      "title": "Rearchitect ultra-compact into compact-eng: tools + hooks for efficient per-turn context built on OMP-native Shake and snapcompact",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-56·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-56.1",
+      "title": "Pi-dcp identity and context patterns are evidenced",
+      "kind": "impl",
+      "project": "TASK-56",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-56.1·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-56.2",
+      "title": "pi-agenticoding context-management patterns are evidenced",
+      "kind": "impl",
+      "owner": "@Researcher562",
+      "project": "TASK-56",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-56.2·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-56.3",
+      "title": "OMP Shake and snapcompact extension contracts are evidenced",
+      "kind": "impl",
+      "owner": "@Researcher563",
+      "project": "TASK-56",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-56.3·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-56.4",
+      "title": "Compact-eng research synthesis is published",
+      "kind": "impl",
+      "project": "TASK-56",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-56.4·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-56.5",
+      "title": "Compact-eng native-composition architecture is specified",
+      "kind": "impl",
+      "project": "TASK-56",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-56.5·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-56.6",
+      "title": "Compact-eng clean-cutover rename is decided",
+      "kind": "impl",
+      "project": "TASK-56",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-56.6·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-56.7",
+      "title": "Compact-eng ships as a native-composing auto-compaction plugin",
+      "kind": "impl",
+      "project": "TASK-56",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-56.7·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-56.8",
+      "title": "Compact-eng passes repository and marketplace gates",
+      "kind": "impl",
+      "project": "TASK-56",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-56.8·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-57",
+      "title": "Repo-level OMP setup script: clean/backup config choice + local vs marketplace install",
+      "kind": "impl",
+      "owner": "@omp-agent",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-57·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-58",
+      "title": "Durable augment plugin: reliable SMOL-backed prompt regeneration, /aug command, and research-backed enhancements",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-58·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-58.2",
+      "title": "Document Augment regeneration failure modes and root causes",
+      "kind": "impl",
+      "project": "TASK-58",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-58.2·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-58.4",
+      "title": "Research durable prompt-rewriting tools and methods",
+      "kind": "impl",
+      "project": "TASK-58",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-58.4·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-58.5",
+      "title": "Route Augment regeneration through the configured SMOL model",
+      "kind": "impl",
+      "owner": "@cook",
+      "project": "TASK-58",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-58.5·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-58.6",
+      "title": "Add the /aug prompt-rewrite command",
+      "kind": "impl",
+      "owner": "@cook",
+      "project": "TASK-58",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-58.6·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-58.7",
+      "title": "Document and validate the durable Augment release",
+      "kind": "impl",
+      "project": "TASK-58",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-58.7·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-15.4",
+      "title": "P2: TUI — library overlay tabs, run overlay, footer widget, lifecycle cards, shortcuts",
+      "kind": "impl",
+      "project": "TASK-15",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-15.4·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-28",
+      "title": "Move procedures evidence store into experiences SQLite (schema v7 partition)",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-28·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-28.1",
+      "title": "TASK-28.A: Experiences ledger owns v7 procedures partition (schema, migrations, capability export)",
+      "kind": "impl",
+      "project": "TASK-28",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-28.1·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-28.2",
+      "title": "TASK-28.B: Procedures evidence survives in owner ledger with safe legacy cutover (adapter)",
+      "kind": "impl",
+      "project": "TASK-28",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-28.2·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-28.3",
+      "title": "TASK-28.C: Capture, retrieval, promotion, and review consume one procedures owner",
+      "kind": "impl",
+      "project": "TASK-28",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-28.3·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-28.4",
+      "title": "TASK-28.D: Backup and restore round-trip procedures evidence",
+      "kind": "impl",
+      "project": "TASK-28",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-28.4·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-28.5",
+      "title": "TASK-28.E: Final mixed-version and regression gate for procedures migration",
+      "kind": "impl",
+      "project": "TASK-28",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-28.5·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-29",
+      "title": "Triage existing managed skills and decide autolearn enforcement for the learning gate",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-29·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-32.4",
+      "title": "Cook chain activity updates title and working message",
+      "kind": "impl",
+      "project": "TASK-32",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-32.4·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-32.5",
+      "title": "Cook UI surfaces degrade safely without hasUI",
+      "kind": "impl",
+      "owner": "@CookWorker381",
+      "project": "TASK-32",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-32.5·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-32.6",
+      "title": "Verify cook TUI batch 1 contracts",
+      "kind": "impl",
+      "owner": "@CookWorker381",
+      "project": "TASK-32",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-32.6·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-33",
+      "title": "Cook TUI: interactive DAG status overlay on /cook status",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-33·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-34",
+      "title": "Cook TUI: renderCall/renderResult for cook_dispatch_* and cook_next tools",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-34·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-35",
+      "title": "Show provider families in /cook config",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-35·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-38.2",
+      "title": "Coordinate Cook renderer and DAG overlay completion (existing TASK-34/TASK-33)",
+      "kind": "impl",
+      "owner": "@Task382Renderer",
+      "project": "TASK-38",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-38.2·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-39",
+      "title": "Tool-failure audit log for 2026-08-28 backlog-clearing pass",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-39·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-40.3",
+      "title": "4c: Dupes + circular-dependency triage",
+      "kind": "impl",
+      "project": "TASK-40",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-40.3·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-40.6",
+      "title": "Resolve fallow duplicate export definitions",
+      "kind": "impl",
+      "owner": "@PregnantSparrow",
+      "project": "TASK-40",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-40.6·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-40.7",
+      "title": "Remove unused plannotator dependencies",
+      "kind": "impl",
+      "project": "TASK-40",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-40.7·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-40.8",
+      "title": "Fix agent-experience dependency hygiene findings",
+      "kind": "impl",
+      "project": "TASK-40",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-40.8·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-44.5",
+      "title": "W5: integration tests, changelog, docs",
+      "kind": "impl",
+      "project": "TASK-44",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-44.5·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-15.1.5",
+      "title": "Harden Worktrunk structured-output edges: array remove payloads, non-string actions, repo-root authority",
+      "kind": "impl",
+      "project": "TASK-15.1",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-15.1.5·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-15.3",
+      "title": "P3: autocomplete, appendEntry mirror, title/working-message, hardened notice, memory stats",
+      "kind": "impl",
+      "project": "TASK-15",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-15.3·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-15.3.2",
+      "title": "P3: harden workflow catalog notice",
+      "kind": "impl",
+      "project": "TASK-15.3",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-15.3.2·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-15.3.3",
+      "title": "P3: surface journal statistics in the Runs tab",
+      "kind": "impl",
+      "project": "TASK-15.3",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-15.3.3·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-15.3.4",
+      "title": "P3: verify autocomplete and observability contracts",
+      "kind": "impl",
+      "owner": "Verify1534",
+      "project": "TASK-15.3",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-15.3.4·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-15.3.5",
+      "title": "P3: command autocomplete grammar and provider",
+      "kind": "impl",
+      "project": "TASK-15.3",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-15.3.5·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-16.11",
+      "title": "Polish better-custom follow-up delta per standards review (dedupe confirm copy, drop dead aliases, tagged token result, extract merge helper)",
+      "kind": "impl",
+      "project": "TASK-16",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-16.11·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-20",
+      "title": "Polish omp-agent-v1 evaluation doc per review (plugin table completeness, de-diary §7, source provenance)",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-20·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-40.9",
+      "title": "Resolve remaining fallow unused files",
+      "kind": "impl",
+      "project": "TASK-40",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-40.9·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-40.10",
+      "title": "Refactor fallow duplication hotspots",
+      "kind": "impl",
+      "owner": "@PregnantSparrow",
+      "project": "TASK-40",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-40.10·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-43",
+      "title": "Durable fallow negative-control test + entry-glob narrowing",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-43·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-50",
+      "title": "Demo cook workflow end-to-end",
+      "kind": "impl",
+      "state": "working",
+      "attempts": []
+    },
+    {
+      "id": "TASK-30",
+      "title": "Extract Backlog.md configuration from cook into standalone backlog plugin",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-30·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-30.1",
+      "title": "Scaffold @ezxomp/backlog plugin and migrate backlog tools+helpers",
+      "kind": "impl",
+      "project": "TASK-30",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-30.1·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-30.2",
+      "title": "Wire backlog plugin as default instruction source",
+      "kind": "impl",
+      "project": "TASK-30",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-30.2·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-30.3",
+      "title": "Rewire cook to consume @ezxomp/backlog and purge duplicates",
+      "kind": "impl",
+      "project": "TASK-30",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-30.3·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-30.4",
+      "title": "Register backlog plugin in marketplace and manifest test",
+      "kind": "impl",
+      "project": "TASK-30",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-30.4·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-30.5",
+      "title": "Run scoped verification gates and record delta evidence",
+      "kind": "impl",
+      "project": "TASK-30",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-30.5·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-31.2",
+      "title": "Fix backlog tools.ts type-debt (pattern application)",
+      "kind": "impl",
+      "project": "TASK-31",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-31.2·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-31.3",
+      "title": "Fix cook-tools.ts type-debt (pattern application)",
+      "kind": "impl",
+      "project": "TASK-31",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-31.3·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-31.4",
+      "title": "Update lean-ctx cli-fallback tests to gateway architecture",
+      "kind": "impl",
+      "project": "TASK-31",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-31.4·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-44",
+      "title": "Sync cook plugin with upstream jeff 6.6.1 + herdr-dagr pane integration",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-44·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-45",
+      "title": "fix cook marketplace-install extension load: vendor js-yaml into cook",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-45·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-46",
+      "title": "Record two-phase marketplace install protocol + cut user OMP install to marketplace",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-46·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-47",
+      "title": "Wire pstack-suite into the ezxomp marketplace as a first-class plugin",
+      "kind": "impl",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-47·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    },
+    {
+      "id": "TASK-48",
+      "title": "Detach skills + skillforge shims into archive/_reference after agent-learning consolidation",
+      "kind": "impl",
+      "owner": "@agent",
+      "state": "done",
+      "attempts": [
+        {
+          "id": "TASK-48·a1",
+          "n": 1,
+          "cause": {
+            "type": "initial"
+          },
+          "state": "settled_unverified",
+          "outcome": {
+            "result": "settled_unverified",
+            "evidence": "asserted"
+          }
+        }
+      ]
+    }
+  ],
+  "events": []
+}

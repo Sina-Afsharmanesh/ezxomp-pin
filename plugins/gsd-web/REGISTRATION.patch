@@ -1,0 +1,63 @@
+# REGISTRATION.patch — @ezxomp/gsd-web (W1)
+#
+# Shared-repo registration hunks for the serialized integration wave.
+# Workers may not edit these shared files in parallel; the wave owner applies
+# this patch (or the equivalent edits) in ONE serialized pass after all four
+# GSD port plugin trees land, then re-runs the manifest/smoke gates.
+#
+# Expected state after application:
+#   - bun test test/manifest.test.ts test/smoke-plugins.test.ts  → green
+#   - git check-ignore plugins/gsd-web/server/x                  → exit 1
+#
+# NOTE: the .gitignore hunk was applied directly in the gsd-web task
+# workspace (it is plugin-stream-scoped, not cross-stream shared); it is
+# included below for the main-repo integration record.
+
+## 1. .omp-plugin/marketplace.json — append to "plugins" array
+```json
+{
+	"name": "gsd-web",
+	"source": "./plugins/gsd-web",
+	"description": "OMP-native port of the GSD-Pi Web UI: Next.js 16 standalone dashboard with /gsd-web command, gsd_web_* tools, and an omp --mode rpc bridge.",
+	"version": "0.1.0-ezxomp.1",
+	"attribution": "Ported from open-gsd/gsd-pi web UI. Ported to OMP 18.0.6 by ezxomp."
+}
+```
+Keep the array sorted/positioned consistent with the existing entry ordering.
+
+## 2. test/manifest.test.ts — extend the three EXPECTED arrays
+- `EXPECTED_PLUGINS`: add `"gsd-web"`.
+- `EXPECTED_PACKAGE_IDS`: add `"gsd-web": "@ezxomp/gsd-web"`.
+- `EXPECTED_VERSIONS`: add `"gsd-web": "0.1.0-ezxomp.1"`.
+
+## 3. test/smoke-plugins.test.ts — new describe block
+```ts
+describe("smoke: gsd-web plugin", () => {
+	test("registers /gsd-web command against a fake pi", async () => {
+		const pkg = JSON.parse(readFileSync(join(PLUGINS, "gsd-web", "package.json"), "utf-8"));
+		const [entry] = pkg.omp?.extensions ?? [];
+		expect(entry).toBeDefined();
+
+		const extension = await import(join(PLUGINS, "gsd-web", entry!));
+		const commands = new Map<string, unknown>();
+		expect(extension.default).toBeTypeOf("function");
+		extension.default({
+			setLabel: (_label: string) => {},
+			registerCommand: (name: string, command: unknown) => commands.set(name, command),
+		} as never);
+		expect(commands.has("gsd-web")).toBe(true);
+	});
+});
+```
+
+## 4. Root AGENTS.md — Child DOX Index line (after the plugins/AGENTS.md line)
+```markdown
+- [`plugins/gsd-web/AGENTS.md`](plugins/gsd-web/AGENTS.md) — GSD-Pi Web UI port: standalone Next host, launcher/registry contracts, settings surface, rpc bridge.
+```
+
+## 5. .gitignore — negations for the committed standalone tree
+(add directly after the `node_modules/` rule)
+```gitignore
+!plugins/gsd-web/server/
+!plugins/gsd-web/server/**
+```

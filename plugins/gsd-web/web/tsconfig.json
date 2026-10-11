@@ -1,0 +1,67 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "target": "ES2024",
+    "allowImportingTsExtensions": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./*"
+      ],
+      "@gsd/agent-core/*": [
+        "./server/vendor-gsd-core/agent-core/*"
+      ],
+      "@gsd/pi-ai": [
+        "./server/vendor-gsd-core/pi-ai/index.ts"
+      ],
+      "@gsd/pi-tui": [
+        "./server/vendor-gsd-core/pi-tui/src"
+      ],
+      "@gsd/native/*": [
+        "./server/vendor-gsd-core/native-stub/*"
+      ],
+      "@opengsd/contracts": [
+        "./server/vendor-gsd-core/contracts/index.ts"
+      ],
+      "@opengsd/contracts/*": [
+        "./server/vendor-gsd-core/contracts/*"
+      ],
+      "@gsd/pi-coding-agent": [
+        "./server/vendor-gsd-core/coding-agent/index.ts"
+      ],
+      "@gsd/pi-coding-agent/*": [
+        "./server/vendor-gsd-core/coding-agent/*"
+      ]
+    },
+    "baseUrl": "."
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

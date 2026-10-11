@@ -1,0 +1,12 @@
+type:session
+version=2
+id=session-010
+parentId=null
+cwd=malformed-v2
+timestamp=2026-01-19T10:00:00Z
+
+type:message
+role=user content=hello there
+
+type:message
+role=assistant content=ok

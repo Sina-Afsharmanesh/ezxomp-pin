@@ -1,0 +1,1 @@
+{"seq":0,"at":"2026-08-30T01:20:22.836Z","event":"intent","stage":"implement","note":"Dispatching cook-planner (design authority) to author the compact-eng architecture spec (TASK-56.5). Expected side effect: backlog_doc_create type=spec linked to TASK-56; plan-level decisions recorded; AC evidence on the ticket."}

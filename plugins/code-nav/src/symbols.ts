@@ -1,0 +1,347 @@
+import { formatCompactSection } from './format.ts';
+import { enrichReferenceGroup, groupReferenceHits, formatReferenceGroups } from './reference-format.ts';
+import {
+  findAstCandidates,
+  findLspCandidates,
+} from './symbol-backends.ts';
+import {
+  rememberMentionedFile,
+  rememberQueriedSymbol,
+  rememberReadFile,
+  recordSymbolRelationship,
+  setLastResolvedDefinition,
+  setLastTopCallerFiles,
+} from './state.ts';
+import { selectBestResult } from './symbol-selection.ts';
+import { resolveReferences } from './symbol-reference-resolution.ts';
+import type { DefinitionQuery, DefinitionResult, ReferenceQuery, ReferenceResult, SymbolQuery, SymbolResult } from './types.ts';
+import type { BackendName } from './symbol-backends.ts';
+
+export async function findDefinition(params: DefinitionQuery): Promise<DefinitionResult> {
+  const symbolResult = await getSymbolSlice({
+    symbol: params.symbol,
+    file: params.file,
+    includeBody: false,
+    contextLines: 0,
+  });
+
+  const location = symbolResult.location;
+  const backend = (symbolResult.details.backend as BackendName | undefined) ?? 'fallback';
+  const ok = Boolean(location);
+  if (location?.file) {
+    setLastResolvedDefinition({
+      symbol: params.symbol,
+      file: location.file,
+      line: location.line,
+      character: location.character,
+    });
+  }
+  const ambiguous = symbolResult.details.ambiguous === true;
+  const status: DefinitionResult['details']['status'] = ok ? 'resolved' : (ambiguous ? 'ambiguous' : 'not-found');
+  const owningFile = location?.file;
+  const nextBestTool = ok ? 'code_nav_get_symbol' : (ambiguous ? 'code_nav_get_symbol' : 'grep');
+  const nextBestArgs = ok
+    ? { symbol: params.symbol, file: owningFile, includeBody: true }
+    : (ambiguous ? { symbol: params.symbol, file: params.file } : { pattern: params.symbol });
+  const nextBestReason = ok
+    ? 'Definition grounded; jump straight to the implementation body.'
+    : (ambiguous
+        ? 'Multiple candidates remain; narrow the owning file before reading code.'
+        : 'Exact symbol or owning file is still ungrounded.');
+  const suggestedNextSteps = ok
+    ? [
+        'Call code_nav_get_symbol with the resolved file to read the definition body with minimal surrounding code.',
+        'Then call code_nav_find_references if you need impact or caller tracing.',
+      ]
+    : (ambiguous
+        ? [
+            'Pass a narrower file hint to code_nav_get_symbol to choose the intended candidate.',
+            'If the owning file is still unknown, use discovery tools (e.g., glob, read) for repo-level exploration first.',
+          ]
+        : [
+            'Use discovery tools (e.g., glob, read) or current source to confirm the exact symbol name or file.',
+            'Retry code_nav_find_definition only after the name is grounded exactly.',
+          ]);
+
+  return {
+    symbol: params.symbol,
+    location,
+    content: formatCompactSection('Definition lookup', [
+      `- symbol: ${params.symbol}` ,
+      params.file ? `- file hint: ${params.file}` : '- file hint: none',
+      `- backend: ${backend}` ,
+      ok && location ? `- definition: ${location.file}:${location.line}` : '- definition: none',
+      location?.confidence ? `- confidence: ${location.confidence}` : '- confidence: unknown',
+      ambiguous ? '- ambiguity: multiple definition candidates found' : '- ambiguity: none',
+      `- status: ${status}` ,
+      ok ? '- sufficient for simple lookup: yes' : '- sufficient for simple lookup: no',
+      ok && nextBestTool ? `- next tool: ${nextBestTool}` : '- next tool: none',
+      ok && nextBestArgs ? `- next args: ${JSON.stringify(nextBestArgs)}` : '- next args: none',
+      ok && nextBestReason ? `- next reason: ${nextBestReason}` : '- next reason: n/a',
+      ok
+        ? '- next: answer immediately if the resolved definition already satisfies the request; only call another code_nav_* tool when deeper tracing is explicitly needed'
+        : (ambiguous
+            ? '- next: pass a narrower file hint to code_nav_get_symbol or use discovery tools to disambiguate'
+            : '- next: use discovery tools or current source to ground the exact symbol name before retrying'),
+    ]),
+    details: {
+      symbol: params.symbol,
+      file: params.file,
+      location,
+      backend,
+      ok,
+      ambiguous,
+      candidates: symbolResult.details.candidates,
+      confidence: symbolResult.location?.confidence,
+      owningFile,
+      sufficientForSimpleLookup: ok,
+      nextBestTool,
+      nextBestReason,
+      nextBestArgs,
+      suggestedNextTool: nextBestTool,
+      suggestedNextReason: nextBestReason,
+      suggestedNextArgs: nextBestArgs,
+      suggestedNextSteps,
+      status,
+    },
+  };
+}
+
+export async function findReferences(params: ReferenceQuery): Promise<ReferenceResult> {
+  // These lookups intentionally update session memory used later by rankContext.
+  // Benchmarks that compare baseline vs treatment should isolate runs with fresh
+  // sessions or an equivalent reset so prior symbol/navigation history does not leak.
+  rememberQueriedSymbol(params.symbol);
+  if (params.file) rememberMentionedFile(params.file);
+
+  const symbol = params.symbol.trim();
+  const limit = params.limit ?? 20;
+  if (!symbol) {
+    return {
+      symbol: params.symbol,
+      hits: [],
+      content: formatCompactSection('Reference lookup failed', [
+        '- reason: symbol name was empty after trimming',
+        '- next: pass one exact grounded symbol name before asking for references',
+      ]),
+      details: {
+        symbol: params.symbol,
+        file: params.file,
+        limit,
+        hits: [],
+        backend: 'fallback',
+        ok: false,
+        status: 'not-found',
+        suggestedNextTool: 'grep',
+        suggestedNextReason: 'Ground the exact symbol name or file before tracing usages.',
+        suggestedNextArgs: { pattern: params.symbol },
+        suggestedNextSteps: [
+          'Confirm the exact symbol name from current source or repo context.',
+          'Retry code_nav_find_references with one grounded symbol name.',
+        ],
+      },
+    };
+  }
+
+  const resolution = await resolveReferences(symbol, params.file, limit, async (resolvedSymbol, fileHint) => {
+    return findDefinition({ symbol: resolvedSymbol, file: fileHint });
+  });
+  const hits = resolution.hits;
+  for (const hit of hits) rememberReadFile(hit.file);
+  const groupedHits = groupReferenceHits(hits, resolution.backend, resolution.fallback, resolution.confidence);
+  for (const group of groupedHits) {
+    enrichReferenceGroup(group, symbol);
+  }
+  const ok = hits.length > 0;
+  const status: ReferenceResult['details']['status'] = ok ? 'resolved' : 'not-found';
+  const bestNextCaller = groupedHits[0];
+  setLastTopCallerFiles(
+    groupedHits.slice(0, 3).map((group) => ({
+      file: group.file,
+      reason: group.impactReason,
+      line: group.topPreview?.line,
+    })),
+  );
+  const owningFile = bestNextCaller?.file ?? params.file;
+  const definitionFile = resolution.definitionFile;
+
+  for (const group of groupedHits) {
+    const sourceFile = definitionFile ?? owningFile;
+    if (sourceFile) {
+      recordSymbolRelationship({
+        fromSymbol: symbol,
+        fromFile: sourceFile,
+        toSymbol: symbol,
+        toFile: group.file,
+        relationType: 'uses',
+      });
+    }
+  }
+  const nextBestTool = ok ? 'code_nav_get_symbol' : 'code_nav_find_definition';
+  const nextBestArgs = ok
+    ? { symbol, file: owningFile, includeBody: false }
+    : { symbol, file: params.file };
+  const nextBestReason = ok
+    ? 'Best caller file is grounded; inspect one exact usage or callee next.'
+    : 'Definition is not grounded yet; resolve the owning file before tracing callers.';
+  const topImpactFiles = groupedHits.slice(0, 3).map((group) => ({
+    file: group.file,
+    impactScore: group.impactScore ?? 0,
+    reason: group.impactReason ?? 'grounded grouped reference hits',
+    count: group.count,
+    topLine: group.topPreview?.line,
+    topPreview: group.topPreview?.preview,
+  }));
+  const bestNextReadArgs = ok
+    ? {
+        file: bestNextCaller?.file ?? params.file,
+        startLine: bestNextCaller?.topPreview?.line ?? bestNextCaller?.lines[0]?.line,
+      }
+    : undefined;
+  const bestNextCallerReason = ok
+    ? (bestNextCaller?.impactReason ?? 'Highest-impact grounded caller file from grouped references.')
+    : undefined;
+  const suggestedNextSteps = ok
+    ? [
+        'If grouped hits already answer a simple "where used?" question, stop and answer without another hop.',
+        'Start with the best next caller file only when the task explicitly needs deeper tracing, impact analysis, or caller inspection.',
+        'Use the remaining impact files as secondary follow-up sites only if the first caller is not enough.',
+      ]
+    : [
+        'Call code_nav_find_definition first to verify the exact symbol and owning file.',
+        'If names are still uncertain, use discovery tools (e.g., glob, read) for repo-level exploration before retrying references.',
+      ];
+
+  return {
+    symbol,
+    hits,
+    content: formatCompactSection('Reference lookup', [
+      `- symbol: ${symbol}` ,
+      params.file ? `- file scope: ${params.file}` : '- file scope: workspace',
+      `- backend: ${resolution.backend}` ,
+      `- confidence: ${resolution.confidence}` ,
+      `- fallback: ${resolution.fallback ? 'yes' : 'no'}` ,
+      resolution.definitionBackend ? `- definition backend: ${resolution.definitionBackend}` : '- definition backend: none',
+      resolution.definitionConfidence ? `- definition confidence: ${resolution.definitionConfidence}` : '- definition confidence: n/a',
+      `- limit: ${limit}` ,
+      `- hits: ${hits.length}` ,
+      `- files: ${groupedHits.length}` ,
+      ok ? '- sufficient for simple lookup: yes' : '- sufficient for simple lookup: no',
+      ok && bestNextCaller ? `- best next caller file: ${bestNextCaller.file}` : '- best next caller file: none',
+      ok && bestNextCallerReason ? `- best next caller reason: ${bestNextCallerReason}` : '- best next caller reason: n/a',
+      ok && nextBestTool ? `- next tool: ${nextBestTool}` : '- next tool: none',
+      ok && nextBestArgs ? `- next args: ${JSON.stringify(nextBestArgs)}` : '- next args: none',
+      ok && bestNextReadArgs ? `- best next read args: ${JSON.stringify(bestNextReadArgs)}` : '- best next read args: none',
+      ...topImpactFiles.map((item, index) => `- top likely impact ${index + 1}: ${item.file} (impact=${item.impactScore}, hits=${item.count}${item.topLine ? `, top line=${item.topLine}` : ''}) — ${item.reason}${item.topPreview ? ` — ${item.topPreview}` : ''}`),
+      ...formatReferenceGroups(groupedHits),
+      ok
+        ? '- next: answer immediately if grouped hits already satisfy the request; inspect the best next caller only when deeper tracing is explicitly needed'
+        : '- next: call code_nav_find_definition first, or use discovery tools if the symbol/path is still not grounded',
+    ]),
+    details: {
+      symbol,
+      file: params.file,
+      limit,
+      hits,
+      groupedHits,
+      backend: resolution.backend,
+      confidence: resolution.confidence,
+      fallback: resolution.fallback,
+      source: resolution.source,
+      definitionBackend: resolution.definitionBackend,
+      definitionConfidence: resolution.definitionConfidence,
+      definitionFallback: resolution.definitionFallback,
+      definitionFile: resolution.definitionFile,
+      definitionLine: resolution.definitionLine,
+      ok,
+      owningFile,
+      sufficientForSimpleLookup: ok,
+      nextBestTool,
+      nextBestReason,
+      nextBestArgs,
+      suggestedNextTool: nextBestTool,
+      suggestedNextReason: nextBestReason,
+      suggestedNextArgs: nextBestArgs,
+      suggestedNextSteps,
+      bestNextCallerFile: bestNextCaller?.file,
+      bestNextCallerReason,
+      bestNextReadArgs,
+      topImpactFiles,
+      status,
+    },
+  };
+}
+export async function getSymbolSlice(params: SymbolQuery): Promise<SymbolResult> {
+  // These lookups intentionally update session memory used later by rankContext.
+  // Benchmarks that compare baseline vs treatment should isolate runs with fresh
+  // sessions or an equivalent reset so prior symbol/navigation history does not leak.
+  rememberQueriedSymbol(params.symbol);
+  if (params.file) rememberMentionedFile(params.file);
+  const contextLines = params.contextLines ?? 12;
+  const includeBody = params.includeBody ?? true;
+  const exactQuery = params.symbol.trim();
+  if (!exactQuery) {
+    return {
+      symbol: params.symbol,
+      content: formatCompactSection('Symbol lookup failed', ['- reason: symbol name was empty after trimming']),
+      details: {
+        symbol: params.symbol,
+        file: params.file,
+        backend: 'fallback',
+        ok: false,
+      },
+    };
+  }
+
+  const lspCandidates = await findLspCandidates(exactQuery, params.file);
+  const lspResult = selectBestResult(exactQuery, lspCandidates, includeBody, contextLines, 'fallback', rememberReadFile, params.file);
+  if (lspResult) {
+    if (lspResult.location?.file) {
+      setLastResolvedDefinition({
+        symbol: exactQuery,
+        file: lspResult.location.file,
+        line: lspResult.location.line,
+        character: lspResult.location.character,
+      });
+    }
+    return lspResult;
+  }
+
+  const astCandidates = await findAstCandidates(exactQuery, params.file);
+  const astResult = selectBestResult(exactQuery, astCandidates, includeBody, contextLines, 'fallback', rememberReadFile, params.file);
+  if (astResult) {
+    if (astResult.location?.file) {
+      setLastResolvedDefinition({
+        symbol: exactQuery,
+        file: astResult.location.file,
+        line: astResult.location.line,
+        character: astResult.location.character,
+      });
+    }
+    return astResult;
+  }
+
+  return {
+    symbol: exactQuery,
+    content: formatCompactSection('Symbol lookup failed', [
+      `- symbol: ${exactQuery}`,
+      params.file ? `- file hint: ${params.file}` : '- file hint: none',
+      '- result: no exact definition candidate found',
+      '- likely cause: guessed or approximate symbol name did not match current source exactly',
+      '- next: verify exact exported symbol name from current source before retrying; do not keep guessing variants of the name',
+      '- hint: use discovery tools (glob, read) for fresh repo/path exploration, and reserve code_nav_* for exact symbol or caller follow-up once names are grounded',
+    ]),
+    details: {
+      symbol: exactQuery,
+      backend: 'fallback',
+      ok: false,
+      ambiguous: false,
+      likelyCause: 'inexact-symbol-name',
+      suggestedNextSteps: [
+        'Verify the exact symbol name from current source before retrying; do not keep guessing variants.',
+        'Use discovery tools (glob, read) first for repo-level exploration when the symbol/path is not yet grounded.',
+        'Retry code_nav_get_symbol with an exact symbol name or a narrower file hint.',
+      ],
+    },
+  };
+}

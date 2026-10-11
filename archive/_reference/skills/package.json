@@ -1,0 +1,47 @@
+{
+	"name": "@ezxomp/skills",
+	"version": "0.7.4-ezxomp.0",
+	"description": "OMP extension — thin backward-compatibility publisher for @ezxomp/agent-learning (read_skills surface)",
+	"type": "module",
+	"main": "src/index.ts",
+	"scripts": {
+		"test": "bun test"
+	},
+	"files": [
+		"src",
+		"README.md",
+		"LICENSE"
+	],
+	"omp": {
+		"extensions": [
+			"src/index.ts"
+		]
+	},
+	"keywords": [
+		"omp",
+		"omp-extension",
+		"skills"
+	],
+	"author": "xynogen",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/xynogen/pix-mono.git",
+		"directory": "packages/pix-skills"
+	},
+	"homepage": "https://github.com/xynogen/pix-mono/tree/main/packages/pix-skills#readme",
+	"bugs": {
+		"url": "https://github.com/xynogen/pix-mono/issues"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"peerDependencies": {
+		"@oh-my-pi/pi-coding-agent": "18.0.6",
+		"@oh-my-pi/pi-tui": "18.0.6",
+		"@oh-my-pi/pi-utils": "18.0.6"
+	},
+	"dependencies": {
+		"@ezxomp/agent-learning": "workspace:*"
+	}
+}

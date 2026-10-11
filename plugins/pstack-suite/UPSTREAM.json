@@ -1,0 +1,7 @@
+{
+  "originalName": "omp-pstack-suite",
+  "url": "https://tangled.org/expi.tngl.sh/ezxomp",
+  "integrity": "sha256-omp-pstack-suite-born-in-repo",
+  "localForkVersion": "1.0.0-ezxomp.0",
+  "note": "Born in the ezxomp monorepo (plugins/pstack-suite). Unified agent workflow command suite. Package renamed from @ezxomp/omp-pstack-suite to @ezxomp/pstack-suite for marketplace registration (TASK-47)."
+}

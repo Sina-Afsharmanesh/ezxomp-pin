@@ -1,0 +1,17 @@
+{
+  "originalName": "pi-ultra-compact",
+  "url": "https://registry.npmjs.org/pi-ultra-compact/-/pi-ultra-compact-1.2.1.tgz",
+  "version": "1.2.1",
+  "integrity": "sha512-GBurpTm0AJSO5PB1A4VYUzkBg9VfDf/SUX+Sxig9yPNlZlt88MwDjGIU+saIEb9MjLMrk8A2I4P6icxmhB7AsQ==",
+  "importedPaths": [
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md",
+    "extensions/governor.ts",
+    "extensions/index.ts",
+    "extensions/types/index.ts",
+    "package.json",
+    "skills/compact-eng/SKILL.md"
+  ],
+  "localForkVersion": "2.0.0-ezxomp.0"
+}

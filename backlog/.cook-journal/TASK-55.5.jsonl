@@ -1,0 +1,1 @@
+{"seq":0,"at":"2026-08-29T15:47:12.479Z","event":"intent","stage":"implement","note":"Dispatch cook-worker for canonical routing, stable hook outcomes, xd:// protocol reads, retry control, refresh/regenerate commands, and cook task preflight."}

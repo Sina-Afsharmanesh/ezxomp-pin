@@ -1,0 +1,24 @@
+{
+  "originalName": "pi-augment",
+  "url": "https://registry.npmjs.org/pi-augment/-/pi-augment-1.0.8.tgz",
+  "version": "1.0.8",
+  "integrity": "sha512-0ZKEcBYieA11PoRB/QzQMYeDrNQS0nLAwzCWtQf5X1NGBd1ZLrPkHY5xTRRtcq5063hoXXMFfm3K7aHTFOjqnw==",
+  "importedPaths": [
+    "LICENSE",
+    "README.md",
+    "package.json",
+    "src/constants.ts",
+    "src/context.ts",
+    "src/contracts.ts",
+    "src/enhance.ts",
+    "src/index.ts",
+    "src/intent.ts",
+    "src/model-routing.ts",
+    "src/parser.ts",
+    "src/prompt-leverage.ts",
+    "src/strategies/shared.ts",
+    "src/strategies/strategy.ts",
+    "src/types.ts"
+  ],
+  "localForkVersion": "1.0.9-ezxomp.0"
+}

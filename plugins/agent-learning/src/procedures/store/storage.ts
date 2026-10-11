@@ -1,0 +1,403 @@
+import { execFile } from "node:child_process";
+import { createHash, randomUUID } from "node:crypto";
+import {
+	access,
+	link,
+	mkdir,
+	open,
+	readdir,
+	readFile,
+	rename,
+	unlink,
+} from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { promisify } from "node:util";
+import { getAgentDir } from "@oh-my-pi/pi-utils";
+import { parseMemoryText } from "../memory/parse.js";
+import { validateMemoryEntry } from "../memory/validate.js";
+import {
+  isProceduresPartitionAvailable,
+  ensureProceduresLedger,
+  migrateLegacyAgentLearningIfNeeded,
+  readProceduresForValidation,
+} from "./experience.js";
+import type {
+	MemoryEntry,
+	MemoryIndex,
+	MemoryIndexEntry,
+	MemoryType,
+} from "../shared/types.js";
+
+const execFileAsync = promisify(execFile);
+
+export const GLOBAL_STORE_DIR = "agent-learning";
+export const LEGACY_STORE_DIR = "skillforge";
+export const INDEX_FILE = "index.json";
+export const REGISTRY_FILE = "registry.yaml";
+export const PROMOTION_LOG_FILE = "promotion-log.md";
+
+export type MemoryPartition = "project" | "global";
+export type RetrievePartition = MemoryPartition | "all";
+
+export interface SkillforgePaths {
+	partition: MemoryPartition;
+	projectId?: string;
+	root: string;
+	memory: string;
+	gotchas: string;
+	decisions: string;
+	patterns: string;
+	promotions: string;
+	index: string;
+	registry: string;
+	promotionLog: string;
+}
+
+export interface ValidationReportItem {
+	partition: MemoryPartition;
+	projectId?: string;
+	path: string;
+	absolutePath: string;
+	valid: boolean;
+	errors: string[];
+	entry?: MemoryEntry;
+}
+
+export async function getSkillforgePaths(
+	cwd: string,
+	partition: MemoryPartition = "project",
+): Promise<SkillforgePaths> {
+	const root = getGlobalSkillforgeRoot();
+	const projectId =
+		partition === "project" ? await getProjectId(cwd) : undefined;
+	const partitionPath = getPartitionPath(partition, projectId);
+	const memory = path.join(root, "memory", partitionPath);
+	return {
+		partition,
+		projectId,
+		root,
+		memory,
+		gotchas: path.join(memory, "gotchas"),
+		decisions: path.join(memory, "decisions"),
+		patterns: path.join(memory, "patterns"),
+		promotions: path.join(root, "promotions", partitionPath),
+		index: path.join(root, INDEX_FILE),
+		registry: path.join(root, REGISTRY_FILE),
+		promotionLog: path.join(root, PROMOTION_LOG_FILE),
+	};
+}
+
+export async function ensureStore(
+  cwd: string,
+  partition: MemoryPartition = "project",
+): Promise<SkillforgePaths> {
+  await migrateLegacyStore();
+  if (isProceduresPartitionAvailable()) {
+    await ensureProceduresLedger();
+    await migrateLegacyAgentLearningIfNeeded();
+    return getSkillforgePaths(cwd, partition);
+  }
+  const paths = await getSkillforgePaths(cwd, partition);
+  await writeIfMissing(paths.registry, defaultRegistry());
+  await writeIfMissing(paths.promotionLog, "# Skillforge Promotion Log\n\n");
+  await writeIfMissing(
+    paths.index,
+    `${JSON.stringify(emptyIndex(), null, "\t")}\n`,
+  );
+  return paths;
+}
+
+export async function validateStoredMemories(
+  cwd: string,
+  partition: MemoryPartition = "project",
+): Promise<ValidationReportItem[]> {
+  if (isProceduresPartitionAvailable()) {
+    const sqliteReports = await readProceduresForValidation(cwd, partition);
+    if (sqliteReports !== null) return sqliteReports;
+  }
+  const paths = await getSkillforgePaths(cwd, partition);
+  const files = await listMemoryFiles(paths.memory);
+  const reports = await Promise.all(
+    files.map((file) => validateMemoryFile(paths, file)),
+  );
+  return reports.sort((a, b) => a.path.localeCompare(b.path));
+}
+
+export async function validateRetrievalMemories(
+  cwd: string,
+  partition: RetrievePartition = "all",
+): Promise<ValidationReportItem[]> {
+  if (isProceduresPartitionAvailable()) {
+    if (partition === "all") {
+      const [projectReports, globalReports] = await Promise.all([
+        readProceduresForValidation(cwd, "project"),
+        readProceduresForValidation(cwd, "global"),
+      ]);
+      if (projectReports !== null && globalReports !== null) {
+        return [...projectReports, ...globalReports].sort((a, b) =>
+          a.path.localeCompare(b.path),
+        );
+      }
+    } else {
+      const sqliteReports = await readProceduresForValidation(cwd, partition);
+      if (sqliteReports !== null) return sqliteReports;
+    }
+  }
+  const partitions: MemoryPartition[] =
+    partition === "all" ? ["project", "global"] : [partition];
+  const reports = await Promise.all(
+    partitions.map((memoryPartition) =>
+      validateStoredMemories(cwd, memoryPartition),
+    ),
+  );
+  return reports.flat().sort((a, b) => a.path.localeCompare(b.path));
+}
+
+export async function rebuildIndex(cwd: string): Promise<MemoryIndex> {
+	const reports = await validateRetrievalMemories(cwd, "all");
+	const validEntries = reports.flatMap((report) =>
+		report.entry ? [toIndexEntry(report.absolutePath, report.entry)] : [],
+	);
+	const index: MemoryIndex = {
+		version: 1,
+		updated_at: new Date().toISOString(),
+		entries: validEntries.sort((a, b) => a.id.localeCompare(b.id)),
+	};
+	const indexPath = path.join(getGlobalSkillforgeRoot(), INDEX_FILE);
+	await writeAtomicFile(indexPath, `${JSON.stringify(index, null, "\t")}\n`);
+	return index;
+}
+
+export async function readIndex(): Promise<MemoryIndex | undefined> {
+	try {
+		const text = await readFile(
+			path.join(getGlobalSkillforgeRoot(), INDEX_FILE),
+			"utf8",
+		);
+		const parsed = JSON.parse(text) as MemoryIndex;
+		if (parsed.version !== 1 || !Array.isArray(parsed.entries))
+			return undefined;
+		return parsed;
+	} catch (error) {
+		if (isNodeError(error) && error.code === "ENOENT") return undefined;
+		throw error;
+	}
+}
+
+export function memoryDirectoryForType(
+	paths: SkillforgePaths,
+	type: MemoryType,
+): string {
+	switch (type) {
+		case "gotcha":
+			return paths.gotchas;
+		case "decision":
+			return paths.decisions;
+		case "pattern":
+			return paths.patterns;
+	}
+}
+
+export function formatDisplayPath(absolutePath: string): string {
+	const home = os.homedir();
+	if (absolutePath === home) return "~";
+	if (absolutePath.startsWith(`${home}${path.sep}`)) {
+		return path.join("~", absolutePath.slice(home.length + 1));
+	}
+	return absolutePath;
+}
+
+export function getGlobalSkillforgeRoot(): string {
+	return path.join(getAgentDir(), GLOBAL_STORE_DIR);
+}
+
+/**
+ * One-time legacy migration: move the pre-consolidation skillforge store
+ * (~/.omp/agent/skillforge) into the unified agent-learning root. Single
+ * atomic directory rename; never clobbers an existing new-root store.
+ */
+async function migrateLegacyStore(): Promise<void> {
+	const legacyRoot = path.join(getAgentDir(), LEGACY_STORE_DIR);
+	const newRoot = getGlobalSkillforgeRoot();
+	try {
+		await access(legacyRoot);
+	} catch {
+		return;
+	}
+	try {
+		await access(newRoot);
+		return;
+	} catch {
+		// legacy present, new root absent → migrate
+	}
+	await mkdir(path.dirname(newRoot), { recursive: true });
+	await rename(legacyRoot, newRoot);
+}
+export async function writeAtomicFile(
+	file: string,
+	content: string,
+	options: { overwrite?: boolean; mode?: number } = {},
+): Promise<void> {
+	await mkdir(path.dirname(file), { recursive: true });
+	const temporaryFile = `${file}.${process.pid}.${randomUUID()}.tmp`;
+	let completed = false;
+	try {
+		const handle = await open(temporaryFile, "wx", options.mode ?? 0o666);
+		try {
+			await handle.writeFile(content, "utf8");
+			await handle.sync();
+		} finally {
+			await handle.close();
+		}
+
+		if (options.overwrite === false) {
+			await link(temporaryFile, file);
+			await unlink(temporaryFile);
+		} else {
+			await rename(temporaryFile, file);
+		}
+		completed = true;
+	} finally {
+		if (!completed) await unlink(temporaryFile).catch(() => undefined);
+	}
+}
+
+export async function getProjectId(cwd: string): Promise<string> {
+	const gitRemote = await gitOutput(cwd, [
+		"config",
+		"--get",
+		"remote.origin.url",
+	]);
+	const gitRoot = await gitOutput(cwd, ["rev-parse", "--show-toplevel"]);
+	const identity = gitRemote || gitRoot || path.resolve(cwd);
+	const nameSource = gitRoot || path.resolve(cwd);
+	const basename = sanitizePathSegment(path.basename(nameSource));
+	const digest = createHash("sha256")
+		.update(identity)
+		.digest("hex")
+		.slice(0, 8);
+	return `${basename || "project"}-${digest}`;
+}
+
+export function getPartitionPath(
+	partition: MemoryPartition,
+	projectId?: string,
+): string {
+	return partition === "global"
+		? "global"
+		: path.join("projects", projectId ?? "unknown-project");
+}
+
+async function validateMemoryFile(
+	paths: SkillforgePaths,
+	absolutePath: string,
+): Promise<ValidationReportItem> {
+	const displayPath = formatDisplayPath(absolutePath);
+	try {
+		const text = await readFile(absolutePath, "utf8");
+		const parsed = parseMemoryText(text, absolutePath);
+		const result = validateMemoryEntry(parsed);
+		return {
+			partition: paths.partition,
+			projectId: paths.projectId,
+			path: displayPath,
+			absolutePath,
+			valid: result.valid,
+			errors: result.errors,
+			entry: result.entry,
+		};
+	} catch (error) {
+		return {
+			partition: paths.partition,
+			projectId: paths.projectId,
+			path: displayPath,
+			absolutePath,
+			valid: false,
+			errors: [error instanceof Error ? error.message : String(error)],
+		};
+	}
+}
+
+async function listMemoryFiles(directory: string): Promise<string[]> {
+	try {
+		const entries = await readdir(directory, { withFileTypes: true });
+		const nested = await Promise.all(
+			entries.map(async (entry) => {
+				const fullPath = path.join(directory, entry.name);
+				if (entry.isDirectory()) return listMemoryFiles(fullPath);
+				if (entry.isFile() && isMemoryFile(entry.name)) return [fullPath];
+				return [];
+			}),
+		);
+		return nested.flat();
+	} catch (error) {
+		if (isNodeError(error) && error.code === "ENOENT") return [];
+		throw error;
+	}
+}
+
+function toIndexEntry(
+	memoryPath: string,
+	entry: MemoryEntry,
+): MemoryIndexEntry {
+	return {
+		id: entry.id,
+		type: entry.type,
+		title: entry.title,
+		path: formatDisplayPath(memoryPath),
+		scope: entry.scope,
+		skills: entry.skills ?? [],
+		compatible_skills: entry.compatible_skills ?? [],
+		excluded_skills: entry.excluded_skills ?? [],
+		confidence: entry.confidence,
+		hits: entry.hits,
+		updated_at: entry.updated_at,
+	};
+}
+
+function isMemoryFile(filename: string): boolean {
+	return [".md", ".yaml", ".yml", ".json"].includes(path.extname(filename));
+}
+
+async function writeIfMissing(file: string, content: string): Promise<void> {
+	try {
+		await writeAtomicFile(file, content, { overwrite: false });
+	} catch (error) {
+		if (isNodeError(error) && error.code === "EEXIST") return;
+		throw error;
+	}
+}
+
+async function gitOutput(
+	cwd: string,
+	args: string[],
+): Promise<string | undefined> {
+	try {
+		const { stdout } = await execFileAsync("git", args, { cwd });
+		const trimmed = stdout.trim();
+		return trimmed.length > 0 ? trimmed : undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+function sanitizePathSegment(value: string): string {
+	return value
+		.toLowerCase()
+		.replace(/[^a-z0-9._-]+/g, "-")
+		.replace(/^-+|-+$/g, "")
+		.slice(0, 64);
+}
+
+function emptyIndex(): MemoryIndex {
+	return { version: 1, updated_at: new Date().toISOString(), entries: [] };
+}
+
+function defaultRegistry(): string {
+	return `# Agent-learning procedures registry\n# Structured evidence entries are stored under the global OMP agent directory.\nversion: 1\nskills: []\n`;
+}
+
+function isNodeError(error: unknown): error is NodeJS.ErrnoException {
+	return error instanceof Error && "code" in error;
+}

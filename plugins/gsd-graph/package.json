@@ -1,0 +1,38 @@
+{
+  "name": "@ezxomp/gsd-graph",
+  "version": "0.1.0-ezxomp.0",
+  "description": "OMP extension: GSD knowledge graph + workflow execution engine. Knowledge-graph build/query/status/diff over .planning artifacts persisted to .gsd/graphs/, GRAPH.yaml run engine (create/list/status/next/complete), /gsd-graph command, and an optional session_start autoRebuild hook.",
+  "keywords": [
+    "omp-package",
+    "gsd",
+    "knowledge-graph",
+    "graphify"
+  ],
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "src",
+    "vendor",
+    "README.md",
+    "LICENSE"
+  ],
+  "peerDependencies": {
+    "@oh-my-pi/pi-coding-agent": "18.0.6"
+  },
+  "devDependencies": {
+    "typebox": "1.1.38"
+  },
+  "omp": {
+    "extensions": [
+      "./src/index.ts"
+    ],
+    "settings": {
+      "autoRebuild": {
+        "type": "boolean",
+        "default": false,
+        "label": "Auto-rebuild knowledge graph",
+        "description": "Rebuild the GSD knowledge graph at session start when a graph already exists but is older than 24 hours (missing graphs are built explicitly). Disabled by default; rebuilds are opt-in."
+      }
+    }
+  }
+}

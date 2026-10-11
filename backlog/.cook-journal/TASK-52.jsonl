@@ -1,0 +1,4 @@
+{"seq":0,"at":"2026-08-29T01:56:35.742Z","event":"intent","stage":"plan","note":"Operator directed dagr-producer enhancement to be completed before closing the workflow test. Adding TASK-52 to the active cook run and dispatching planner to decompose it."}
+{"seq":1,"at":"2026-08-29T01:56:40.555Z","event":"intent","stage":"plan","note":"Dispatch cook-planner for TASK-52: decompose dagr-producer enhancement (E1-E6 plan from TASK-51 notes) into atomic sub-tickets with RED tests; extend the facts-only packet."}
+{"seq":2,"at":"2026-08-29T02:39:02.535Z","event":"intent","stage":"plan","note":"Dispatching read-only scout for workflow recovery and typed kickback evidence."}
+{"seq":3,"at":"2026-08-29T02:39:06.174Z","event":"intent","stage":"plan","note":"Dispatching read-only scout for dagr lifecycle and end-to-end test evidence."}

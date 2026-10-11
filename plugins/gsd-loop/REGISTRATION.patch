@@ -1,0 +1,79 @@
+# REGISTRATION.patch — intended hunks for shared repo files (W1 constraint:
+# workers do not edit shared files; the integration owner applies these in one
+# serialized wave).
+
+## 1. .omp-plugin/marketplace.json — append to "plugins" array
+
+```json
+    {
+      "name": "gsd-loop",
+      "source": "./plugins/gsd-loop",
+      "description": "Autonomous GSD loop kernel for OMP (port of gsd-pi auto-mode loop).",
+      "version": "0.1.0-ezxomp.0",
+      "attribution": "Born in repo. Kernel-semantics port of gsd-pi auto-mode loop."
+    }
+```
+
+(unified-diff sketch against the current 12-entry array; insert in name-sorted
+or tail position consistent with how prior entries were appended — tail
+matches cook/backlog precedent):
+
+```diff
+--- a/.omp-plugin/marketplace.json
++++ b/.omp-plugin/marketplace.json
+@@ -60,4 +60,11 @@
+     {
+       "name": "pstack-suite",
+       ...
++    },
++    {
++      "name": "gsd-loop",
++      "source": "./plugins/gsd-loop",
++      "description": "Autonomous GSD loop kernel for OMP (port of gsd-pi auto-mode loop).",
++      "version": "0.1.0-ezxomp.0",
++      "attribution": "Born in repo. Kernel-semantics port of gsd-pi auto-mode loop."
+     }
+   ]
+```
+
+## 2. test/manifest.test.ts — EXPECTED arrays
+
+```diff
+--- a/test/manifest.test.ts
++++ b/test/manifest.test.ts
+@@ -14,6 +14,7 @@ const EXPECTED_PLUGINS = [
+ 	"code-nav",
+ 	"codesight", "experiences", "agent-learning", "compact-eng", "extensible-workflows",
+ 	"plannotator", "augment", "evo", "cook", "backlog", "pstack-suite",
++	"gsd-loop",
+ ];
+
+ const EXPECTED_PACKAGE_IDS: Record<string, string> = {
+@@ -33,6 +34,7 @@ const EXPECTED_PACKAGE_IDS: Record<string, string> = {
+ 	backlog: "@ezxomp/backlog",
+ 	"pstack-suite": "@ezxomp/pstack-suite",
++	"gsd-loop": "@ezxomp/gsd-loop",
+ };
+
+ const EXPECTED_VERSIONS: Record<string, string> = {
+@@ -40,6 +42,7 @@ const EXPECTED_VERSIONS: Record<string, string> = {
+ 	backlog: "0.1.0-ezxomp.0",
+ 	"pstack-suite": "1.0.0-ezxomp.0",
++	"gsd-loop": "0.1.0-ezxomp.0",
+ };
+```
+
+## 3. Root AGENTS.md — Child DOX Index line (plugins/AGENTS.md child index
+   lives in plugins/AGENTS.md, also a shared file)
+
+Root AGENTS.md, `## Child DOX Index` list — no direct root line required for
+plugins (they are indexed via the plugins/AGENTS.md line already present).
+plugins/AGENTS.md `## Child DOX Index` — append:
+
+```diff
+--- a/plugins/AGENTS.md
++++ b/plugins/AGENTS.md
+@@ (Child DOX Index)
+ - [`cook/AGENTS.md`](cook/AGENTS.md) — Backlog.md cookbook workflow consuming @ezxomp/backlog for all backlog tooling.
++- [`gsd-loop/AGENTS.md`](gsd-loop/AGENTS.md) — autonomous GSD loop kernel: per-cwd .gsd-loop/ state, pure kernel guard pipeline, gsd_loop_* tools + /gsd-loop command.
+```

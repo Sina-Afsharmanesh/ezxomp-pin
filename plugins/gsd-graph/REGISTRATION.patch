@@ -1,0 +1,71 @@
+# REGISTRATION.patch — intended shared-file hunks for @ezxomp/gsd-graph 0.1.0-ezxomp.0
+
+Integration owner applies these in one serialized wave. Workers MUST NOT edit
+the shared files directly (parallel-agent protocol).
+
+## 1. `.omp-plugin/marketplace.json` — append to `plugins[]`
+
+```json
+{
+  "name": "gsd-graph",
+  "source": "./plugins/gsd-graph",
+  "description": "GSD knowledge graph and workflow execution graph (GRAPH.yaml engine) for OMP, ported from gsd-pi.",
+  "version": "0.1.0-ezxomp.0",
+  "attribution": "Port of gsd-pi graph subsystems (workflow GRAPH.yaml engine + TS-native knowledge graph) to OMP."
+}
+```
+
+Context: last entry currently `pstack-suite` (alphabetical order is not
+enforced; keep existing order, append at end).
+
+## 2. `test/manifest.test.ts` — extend EXPECTED arrays
+
+```ts
+EXPECTED_PLUGINS:      add "gsd-graph" (after "pstack-suite")
+EXPECTED_PACKAGE_IDS:  "gsd-graph": "@ezxomp/gsd-graph",
+EXPECTED_VERSIONS:     "gsd-graph": "0.1.0-ezxomp.0",
+```
+
+Smoke sketch (test/smoke-plugins.test.ts):
+
+```ts
+describe("smoke: gsd-graph extension entry", () => {
+	test("gsd-graph entry registers the declared surface", () => {
+		const pkg = JSON.parse(readFileSync(join(PLUGINS, "gsd-graph", "package.json"), "utf-8"));
+		for (const ext of pkg.omp?.extensions ?? []) {
+			const content = readFileSync(join(PLUGINS, "gsd-graph", ext), "utf-8");
+			expect(content).toContain('setLabel("GSD Graph")');
+			// Tools live in src/tools.ts, not the entry file — assert names there.
+			const toolContent = readFileSync(join(PLUGINS, "gsd-graph", "src", "tools.ts"), "utf-8");
+			expect(toolContent).toContain('"gsd_graph"');
+			expect(toolContent).toContain('"gsd_graph_run"');
+			// command: /gsd-graph
+			expect(content).toContain('registerGsdGraphCommand');
+			// session_start autoRebuild hook
+			expect(content).toContain('session_start');
+		}
+	});
+});
+```
+
+(Also safe to add `"gsd-graph"` to the existing smoke registration-slugs and
+cross-plugin tool-name-uniqueness slug lists — the plugin declares exactly two
+tools, `gsd_graph` and `gsd_graph_run`, plus the `/gsd-graph` command and a
+`session_start` autoRebuild hook; no name collisions with the other plugins.)
+
+## 3. Root `AGENTS.md` — child DOX index line
+
+```md
+- [`plugins/gsd-graph/AGENTS.md`](plugins/gsd-graph/AGENTS.md) — GSD graph plugin contracts (GRAPH.yaml engine + knowledge graph, `.gsd/` persistence, naming rules).
+```
+
+## 4. `plugins/AGENTS.md` — optional
+
+If vendor-precedent lists are extended, add `plugins/gsd-graph/vendor/` beside
+the existing `plugins/evo/vendor/` and `plugins/cook/vendor/` mentions.
+
+## 5. `THIRD_PARTY_NOTICES.md` / `.gitignore` (root)
+
+No changes required: vendored js-yaml/argparse already covered via evo's
+entries (same packages, same versions 4.3.1 / 2.0.1); `.gsd/` state is
+project-local and upstream does not manage `.gitignore`.

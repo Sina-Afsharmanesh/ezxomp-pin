@@ -1,0 +1,1 @@
+{"seq":0,"at":"2026-08-30T00:07:37.251Z","event":"intent","stage":"plan","note":"Dispatching cook-planner to decompose TASK-56 into atomic sub-tickets. Expected side effect: cook_decompose creates child tickets (research first: Pi-dcp identification, pi-agenticoding, snapcompact/shake API surface; then spec/ADR; then rename; then implementation; then verify)."}

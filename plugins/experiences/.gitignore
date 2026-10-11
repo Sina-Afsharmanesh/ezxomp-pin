@@ -1,0 +1,30 @@
+node_modules/
+bun.lock
+*.log
+.DS_Store
+.test-tmp/
+.smoke-tmp/
+dist/
+.env
+.pi/
+scratchpads/
+.probe-*
+local:/
+settings
+.codesight/.omp-watch.lock
+.jeff/
+.codesight/
+.agents/
+# Keep the local plugin audit out of commits and remote marketplaces.
+/docs/plugin_proposal/audit_plugin.md
+.omp/*
+!.omp/skills/
+# CocoIndex Code (ccc)
+/.cocoindex_code/
+
+# Re-include only runtime-vendored files blocked by inherited `dist/` and `node_modules/` ignores.
+!runtime/vendor/huggingface-tokenizers/dist/
+!runtime/vendor/huggingface-tokenizers/dist/**
+!runtime/vendor/onnxruntime-common/package.json
+!runtime/vendor/onnxruntime-common/dist/
+!runtime/vendor/onnxruntime-common/dist/**

@@ -1,0 +1,6 @@
+# codesight: skip build/vendor/vcs trees (scanning + watching)
+.git/
+node_modules/
+target/
+dist/
+.prek-env/

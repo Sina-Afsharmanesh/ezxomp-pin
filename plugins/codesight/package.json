@@ -1,0 +1,92 @@
+{
+  "name": "@ezxomp/codesight",
+  "version": "0.2.2-ezxomp.0",
+  "type": "module",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "keywords": [
+    "omp-package",
+    "omp",
+    "codesight",
+    "developer-tools"
+  ],
+  "files": [
+    "src",
+    "codesight.bundle.js",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "THIRD_PARTY_NOTICES.md"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "omp": {
+    "extensions": [
+      "src/index.ts"
+    ],
+    "settings": {
+      "watchFiles": {
+        "type": "boolean",
+        "key": "watchFiles",
+        "label": "Watch files",
+        "description": "Run the bundled CodeSight CLI in watch mode during interactive sessions.",
+        "default": true
+      },
+      "regenerateWiki": {
+        "type": "boolean",
+        "key": "regenerateWiki",
+        "label": "Regenerate wiki",
+        "description": "Pass --wiki to the CodeSight watch process.",
+        "default": true
+      },
+      "showFooter": {
+        "type": "boolean",
+        "key": "showFooter",
+        "label": "Show footer",
+        "description": "Show CodeSight watcher and artifact health in the footer.",
+        "default": true
+      },
+      "showStartupModal": {
+        "type": "boolean",
+        "key": "showStartupModal",
+        "label": "Show startup modal",
+        "description": "Opt-in: open the CodeSight overlay at startup when artifacts are missing or stale (default off).",
+        "default": false
+      },
+      "notifyOnWatchError": {
+        "type": "boolean",
+        "key": "notifyOnWatchError",
+        "label": "Notify on watch error",
+        "description": "Warn once when the CodeSight watcher exits unexpectedly.",
+        "default": true
+      }
+    }
+  },
+  "scripts": {
+    "build:bundle": "bun run scripts/build-bundle.mjs",
+    "verify:bundle": "bun run scripts/build-bundle.mjs --check",
+    "check": "bun -e \"import('./src/index.ts').then(()=>{}).catch((err)=>{console.error(err);process.exit(1)})\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anh-chu/pi-codesight.git"
+  },
+  "homepage": "https://github.com/anh-chu/pi-codesight#readme",
+  "bugs": {
+    "url": "https://github.com/anh-chu/pi-codesight/issues"
+  },
+  "peerDependencies": {
+    "@oh-my-pi/pi-coding-agent": "18.0.6",
+    "@oh-my-pi/pi-tui": "18.0.6"
+  },
+  "dependencies": {
+    "@ezxomp/experiences": "workspace:*"
+  },
+  "devDependencies": {
+    "codesight": "1.19.0"
+  }
+}

@@ -1,0 +1,21 @@
+[Unit]
+Description=OMP Experiences Agent Experience scheduled Analyze (setup-rendered template)
+Documentation=https://github.com/misunders2d/pi-experiences#readme
+ConditionPathExists=@CONFIG_PATH@
+
+[Service]
+Type=oneshot
+# /experience setup renders absolute, quoted paths and installs the package-owned unit.
+ExecStart=@BUN_PATH@ @CLI_PATH@ scheduled --root @STATE_ROOT@ --user @USER_ID@
+TimeoutStartSec=150
+Nice=10
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=@STATE_ROOT@ @AGENT_DIR@
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=omp-experiences-analyze

@@ -1,0 +1,42 @@
+{
+  "name": "@ezxomp/lean-ctx",
+  "version": "0.1.7-ezxomp.5",
+  "description": "OMP-native lean-ctx integration plugin. Wires lean-ctx's 83 MCP context-intelligence tools, CCP session memory, knowledge graph, and .ctxpkg portability into OMP's hooks, memory, and checkpoint/rewind system. Keeps the LLM using lean-ctx tools wisely without steering rules.",
+  "keywords": [
+    "omp-package",
+    "lean-ctx",
+    "context-engineering",
+    "compression",
+    "memory",
+    "hooks"
+  ],
+  "license": "Apache-2.0",
+  "type": "module",
+  "files": [
+    "extensions",
+    "skills",
+    "README.md",
+    "LICENSE"
+  ],
+  "peerDependencies": {
+    "@oh-my-pi/pi-coding-agent": "18.0.6",
+    "@oh-my-pi/omptype": "18.0.6"
+  },
+  "devDependencies": {
+    "@oh-my-pi/omptype": "*",
+    "@oh-my-pi/pi-coding-agent": "*",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "*",
+    "js-yaml": "^4.3.1",
+    "typebox": "1.1.38",
+    "vitest": "^4.1.11"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "omp": {
+    "extensions": [
+      "./extensions/index.ts"
+    ]
+  }
+}

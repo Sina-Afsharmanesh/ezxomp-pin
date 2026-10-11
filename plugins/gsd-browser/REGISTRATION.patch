@@ -1,0 +1,91 @@
+# REGISTRATION.patch — @ezxomp/gsd-browser shared-repo hunks (W1)
+
+The integration owner applies these in one serialized wave (parallel-writer
+hazard, plan §Dependencies & risks #2). Plugin-local files under
+`plugins/gsd-browser/` are already committed in this worktree; ONLY the
+shared repo files below are described here.
+
+---
+
+## 1. `.omp-plugin/marketplace.json`
+
+Append to the `plugins` array (after the `pstack-suite` entry, before the
+closing `]`):
+
+```json
+        {
+            "name": "gsd-browser",
+            "source": "./plugins/gsd-browser",
+            "description": "GSD browser-tool surface for OMP: page fetch, Brave web search, DOM snapshot, navigation, and screenshots with GSD's honest-degradation reason codes.",
+            "version": "0.1.0-ezxomp.0",
+            "attribution": "Ported from @opengsd/gsd-core v1.12.0 (MIT) by ezxomp."
+        }
+```
+
+Note: the closing `}` of the previous entry gains a comma.
+
+---
+
+## 2. `test/manifest.test.ts`
+
+- `EXPECTED_PLUGINS`: append `"gsd-browser"` to the array (line ~13-17).
+- `EXPECTED_PACKAGE_IDS`: add `"gsd-browser": "@ezxomp/gsd-browser",`.
+- `EXPECTED_VERSIONS`: add `"gsd-browser": "0.1.0-ezxomp.0",`.
+
+---
+
+## 3. `test/smoke-plugins.test.ts`
+
+Smoke block sketch (match the file's existing per-plugin test pattern):
+
+```ts
+test("gsd-browser registers six tools and one command", async () => {
+	// register the extension against the fake pi host;
+	// assert exactly the tools:
+	//   gsd_browser_search, gsd_browser_fetch, gsd_browser_snapshot,
+	//   gsd_browser_navigate, gsd_browser_screenshot, gsd_browser_status
+	// and the command "gsd-browser".
+});
+```
+
+No duplicate tool names may be introduced (global duplicate check at
+`smoke-plugins.test.ts:91-108` stays green).
+
+---
+
+## 4. Root `AGENTS.md` — Child DOX Index
+
+Append one line to the Child DOX Index section (line ~143):
+
+```markdown
+- `plugins/gsd-browser/AGENTS.md` — gsd-browser tool suite: reason vocabulary, settings ownership, `.gitignore` gate
+```
+
+---
+
+## 5. `plugins/AGENTS.md` — Child DOX Index
+
+Append one line:
+
+```markdown
+- `gsd-browser/AGENTS.md` — gsd-browser: degradation reason codes, Brave key precedence, capture `.gitignore` gate, zero-runtime-dep surface
+```
+
+---
+
+## 6. `THIRD_PARTY_NOTICES.md` — gsd-core MIT section
+
+Append section:
+
+```markdown
+## @opengsd/gsd-core (browser-tool surface port)
+
+- Upstream: https://github.com/open-gsd/gsd-core
+- Upstream license: MIT (Copyright (c) GSD-core contributors — full text:
+  https://github.com/open-gsd/gsd-core/blob/main/LICENSE)
+- Used by: plugins/gsd-browser
+- Scope of port: feature-frozen port of the browser-tool surface only
+  (Brave web-search client semantics, injection-scanner patterns and rule
+  IDs, viewport presets, degradation reason vocabulary) into
+  `plugins/gsd-browser`, relicensed Apache-2.0 with this attribution.
+```

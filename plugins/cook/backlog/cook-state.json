@@ -1,0 +1,886 @@
+{
+  "chain": [],
+  "currentStage": 0,
+  "currentTaskId": null,
+  "taskIds": [
+    "TASK-32.5"
+  ],
+  "milestoneId": null,
+  "specDocId": null,
+  "reviewCycles": {
+    "TASK-1": 3
+  },
+  "maxReviewCycles": 3,
+  "lastFindings": {
+    "TASK-1": [
+      {
+        "source": "judge",
+        "file": "src/f0.ts",
+        "line": 1,
+        "what": "issue 0",
+        "kickTo": "implement"
+      },
+      {
+        "source": "judge",
+        "file": "src/f1.ts",
+        "line": 2,
+        "what": "issue 1",
+        "kickTo": "implement"
+      },
+      {
+        "source": "judge",
+        "file": "src/f2.ts",
+        "line": 3,
+        "what": "issue 2",
+        "kickTo": "implement"
+      }
+    ]
+  },
+  "agentLog": [
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:planner",
+      "role": "planner",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:27:26.642Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:researcher",
+      "role": "researcher",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:27:26.675Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:27:26.694Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:validator",
+      "role": "validator",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:27:26.714Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:judge",
+      "role": "judge",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:27:26.732Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:27:26.773Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:judge",
+      "role": "judge",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:27:26.811Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:planner",
+      "role": "planner",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:28:26.533Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:researcher",
+      "role": "researcher",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:28:26.544Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:28:26.550Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:validator",
+      "role": "validator",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:28:26.555Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:judge",
+      "role": "judge",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:28:26.561Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:28:26.575Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:audit",
+      "role": "audit",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:28:26.591Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:refute",
+      "role": "refute",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:28:26.598Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:planner",
+      "role": "planner",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:28:33.875Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:researcher",
+      "role": "researcher",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:28:33.908Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:28:33.924Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:validator",
+      "role": "validator",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:28:33.947Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:judge",
+      "role": "judge",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:28:33.966Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:28:34.005Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:audit",
+      "role": "audit",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:28:34.053Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:refute",
+      "role": "refute",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:28:34.070Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:planner",
+      "role": "planner",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:33:30.470Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:researcher",
+      "role": "researcher",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:33:30.488Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:33:30.501Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:validator",
+      "role": "validator",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:33:30.511Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:judge",
+      "role": "judge",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:33:30.521Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:33:30.546Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:audit",
+      "role": "audit",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:33:30.579Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:refute",
+      "role": "refute",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:33:30.590Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:planner",
+      "role": "planner",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:40:41.590Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:40:41.646Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:audit",
+      "role": "audit",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:40:41.684Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:refute",
+      "role": "refute",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:40:41.697Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:planner",
+      "role": "planner",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:41:56.516Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:scout",
+      "role": "scout",
+      "model": "@smol",
+      "timestamp": "2026-08-29T05:41:56.551Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:researcher",
+      "role": "researcher",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:41:56.563Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:41:56.576Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:validator",
+      "role": "validator",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:41:56.587Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:judge",
+      "role": "judge",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:41:56.598Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:41:56.630Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:audit",
+      "role": "audit",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:41:56.657Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:refute",
+      "role": "refute",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:41:56.665Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:planner",
+      "role": "planner",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:46:13.940Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:scout",
+      "role": "scout",
+      "model": "@smol",
+      "timestamp": "2026-08-29T05:46:13.963Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:researcher",
+      "role": "researcher",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:46:13.978Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:46:13.991Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:validator",
+      "role": "validator",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:46:14.002Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:judge",
+      "role": "judge",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:46:14.015Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:46:14.047Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:audit",
+      "role": "audit",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:46:14.088Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:refute",
+      "role": "refute",
+      "model": "(current)",
+      "timestamp": "2026-08-29T05:46:14.103Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:planner:0",
+      "role": "planner",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:50:00.615Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:scout:1",
+      "role": "scout",
+      "model": "@smol",
+      "timestamp": "2026-09-06T02:50:00.616Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:researcher:2",
+      "role": "researcher",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:50:00.617Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker:3",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:50:00.617Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:validator:5",
+      "role": "validator",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:50:00.618Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:judge:6",
+      "role": "judge",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:50:00.618Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker:8",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:50:00.620Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:audit:9",
+      "role": "audit",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:50:00.621Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:refute:11",
+      "role": "refute",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:50:00.622Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:planner:12",
+      "role": "planner",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:50:28.638Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:scout:13",
+      "role": "scout",
+      "model": "@smol",
+      "timestamp": "2026-09-06T02:50:28.639Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:researcher:14",
+      "role": "researcher",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:50:28.640Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker:15",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:50:28.640Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:validator:17",
+      "role": "validator",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:50:28.641Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:judge:18",
+      "role": "judge",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:50:28.642Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker:20",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:50:28.643Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:audit:21",
+      "role": "audit",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:50:28.645Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:refute:23",
+      "role": "refute",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:50:28.645Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:planner:24",
+      "role": "planner",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:52:06.765Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:scout:25",
+      "role": "scout",
+      "model": "@smol",
+      "timestamp": "2026-09-06T02:52:06.766Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:researcher:26",
+      "role": "researcher",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:52:06.767Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker:27",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:52:06.768Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:validator:29",
+      "role": "validator",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:52:06.769Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:judge:30",
+      "role": "judge",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:52:06.770Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker:32",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:52:06.772Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:audit:33",
+      "role": "audit",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:52:06.774Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:refute:35",
+      "role": "refute",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:52:06.775Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:planner:36",
+      "role": "planner",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:17.712Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:scout:37",
+      "role": "scout",
+      "model": "@smol",
+      "timestamp": "2026-09-06T02:53:17.720Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:researcher:38",
+      "role": "researcher",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:17.723Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker:39",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:17.726Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:validator:41",
+      "role": "validator",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:17.728Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:judge:42",
+      "role": "judge",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:17.742Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker:44",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:17.761Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:audit:45",
+      "role": "audit",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:17.783Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:refute:47",
+      "role": "refute",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:17.786Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:planner:48",
+      "role": "planner",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:43.755Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:scout:49",
+      "role": "scout",
+      "model": "@smol",
+      "timestamp": "2026-09-06T02:53:43.760Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:researcher:50",
+      "role": "researcher",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:43.761Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker:51",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:43.762Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:validator:53",
+      "role": "validator",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:43.763Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:judge:54",
+      "role": "judge",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:43.764Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker:56",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:43.774Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:audit:57",
+      "role": "audit",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:43.786Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:refute:59",
+      "role": "refute",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:43.787Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:planner:60",
+      "role": "planner",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:56.680Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:scout:61",
+      "role": "scout",
+      "model": "@smol",
+      "timestamp": "2026-09-06T02:53:56.688Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:researcher:62",
+      "role": "researcher",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:56.691Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker:63",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:56.693Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:validator:65",
+      "role": "validator",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:56.695Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:judge:66",
+      "role": "judge",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:56.697Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker:68",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:56.714Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:audit:69",
+      "role": "audit",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:56.760Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:refute:71",
+      "role": "refute",
+      "model": "(current)",
+      "timestamp": "2026-09-06T02:53:56.762Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:planner:72",
+      "role": "planner",
+      "model": "(current)",
+      "timestamp": "2026-09-09T22:34:09.627Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:scout:73",
+      "role": "scout",
+      "model": "@smol",
+      "timestamp": "2026-09-09T22:34:09.640Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:researcher:74",
+      "role": "researcher",
+      "model": "(current)",
+      "timestamp": "2026-09-09T22:34:09.647Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker:75",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-09-09T22:34:09.652Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:validator:77",
+      "role": "validator",
+      "model": "(current)",
+      "timestamp": "2026-09-09T22:34:09.657Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:judge:78",
+      "role": "judge",
+      "model": "(current)",
+      "timestamp": "2026-09-09T22:34:09.660Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:worker:80",
+      "role": "worker",
+      "model": "(current)",
+      "timestamp": "2026-09-09T22:34:09.689Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:audit:81",
+      "role": "audit",
+      "model": "(current)",
+      "timestamp": "2026-09-09T22:34:09.722Z"
+    },
+    {
+      "taskId": "TASK-X",
+      "stage": "dispatch:refute:83",
+      "role": "refute",
+      "model": "(current)",
+      "timestamp": "2026-09-09T22:34:09.725Z"
+    }
+  ],
+  "claims": {
+    "TASK-1": {
+      "by": "lane-1",
+      "at": "2026-08-28T00:00:00Z"
+    }
+  },
+  "convergence": {
+    "TASK-1": {
+      "judge": {
+        "cycles": 2,
+        "bonusGranted": true
+      }
+    }
+  },
+  "councilEpisodes": {},
+  "complexity": {
+    "TASK-1": "complex"
+  },
+  "maxParallelTasks": 1,
+  "adhdFrames": [],
+  "adhdIdeas": [],
+  "adhdShortlist": [],
+  "gateResults": {},
+  "cookmode": false,
+  "watch": {
+    "enabled": false,
+    "debounceMs": 250,
+    "trigger": "auto",
+    "lastFiredAt": null,
+    "watchId": null
+  },
+  "watchList": {},
+  "heartbeats": {}
+}

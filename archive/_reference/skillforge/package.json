@@ -1,0 +1,57 @@
+{
+	"name": "@ezxomp/skillforge",
+	"version": "0.2.5-ezxomp.1",
+	"description": "OMP extension — thin backward-compatibility publisher for @ezxomp/agent-learning (procedures lane)",
+	"type": "module",
+	"scripts": {
+		"format": "biome format --write .",
+		"lint": "biome lint .",
+		"biome:check": "biome check .",
+		"typecheck": "tsc --noEmit",
+		"check": "npm run biome:check && npm run typecheck"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/narumiruna/pi-skillforge.git"
+	},
+	"bugs": {
+		"url": "https://github.com/narumiruna/pi-skillforge/issues"
+	},
+	"homepage": "https://github.com/narumiruna/pi-skillforge#readme",
+	"keywords": [
+		"omp-package",
+		"omp",
+		"coding-agent",
+		"extension",
+		"skills",
+		"memory"
+	],
+	"files": [
+		"src",
+		"schemas",
+		"templates",
+		"examples",
+		"README.md",
+		"LICENSE"
+	],
+	"dependencies": {
+		"@ezxomp/agent-learning": "workspace:*"
+	},
+	"peerDependencies": {
+		"@oh-my-pi/pi-coding-agent": "18.0.6",
+		"@oh-my-pi/pi-utils": "18.0.6"
+	},
+	"omp": {
+		"extensions": [
+			"src/index.ts"
+		]
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.4.14",
+		"@oh-my-pi/pi-coding-agent": "18.0.6",
+		"@oh-my-pi/pi-utils": "18.0.6",
+		"@types/node": "^25.6.0",
+		"typescript": "^7.0.2"
+	}
+}

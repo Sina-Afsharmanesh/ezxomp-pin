@@ -1,0 +1,1 @@
+backlog_task_create rejects dependencies=[] as an empty --depends-on flag, although the tool schema documents an empty string array and no omission/null option; task creation cannot leave dependencies unset.

@@ -1,0 +1,24 @@
+# ezxomp — Project Context
+
+**Stack:** raw-http | none | javascript
+**Monorepo:** @ezxomp/agent-learning, @ezxomp/augment, @ezxomp/backlog, @ezxomp/better-custom, @ezxomp/code-nav, @ezxomp/codesight, @ezxomp/cook, @ezxomp/evo, @ezxomp/experiences, @ezxomp/extensible-workflows, @ezxomp/plannotator, @ezxomp/pstack-suite, @ezxomp/compact-eng
+
+68 routes | 0 models | 55 env vars | 1538 import links
+
+**API areas:** /v1, /api/ai, /uploads/, /api/plan, /api/share-html, /api/config, /api/image, /api/upload, /api/open-in, /api/draft
+
+**High-impact files** (change carefully):
+- plugins/cook/extensions/index.ts (imported by 46 files)
+- plugins/pstack-suite/src/commands/benny.ts (imported by 39 files)
+- plugins/pstack-suite/src/commands/ship.ts (imported by 37 files)
+- plugins/experiences/extensions/agent-experience/src/storage/private-root.ts (imported by 35 files)
+- plugins/pstack-suite/src/commands/deslop.ts (imported by 31 files)
+
+**Required env vars:** AL_SRC, AX_BUILD_OUTFILE, AX_SELECTOR_MODE, AX_SELECTOR_MODEL_SOURCE_ROOT, AX_SRC, AX_STATE_ROOT, BROWSER, C, CHOKIDAR_INTERVAL, CHOKIDAR_USEPOLLING, CLAUDE_CONFIG_DIR, CODESIGHT_NATIVE_AST, CODESIGHT_PLUGIN_DIR, CODEX_HOME, DAGR_BIN, HERDR_PANE_ID, JINA_API_KEY, LEARNING_REVIEW, PI_CODING_AGENT_DIR, PI_TODO_PATH, PLANNOTATOR_AGENT_TERMINAL_REMOTE, PLANNOTATOR_AI, PLANNOTATOR_ANNOTATE_HISTORY, PLANNOTATOR_BROWSER, PLANNOTATOR_CURSOR_SANDBOX, PLANNOTATOR_DATA_DIR, PLANNOTATOR_DEBUG, PLANNOTATOR_GLIMPSE, PLANNOTATOR_GUIDE_HISTORY, PLANNOTATOR_JINA, PLANNOTATOR_PASTE_URL, PLANNOTATOR_PORT, PLANNOTATOR_REMOTE, PLANNOTATOR_SEM_PATH, PLANNOTATOR_SHARE, PLANNOTATOR_SHARE_URL, PLANNOTATOR_TODO_PROVIDER, RUN_SMOKE, SSH_CONNECTION, VSCODE_TEXTMATE_DEBUG, XDG_CACHE_HOME, XDG_CONFIG_HOME
+
+---
+
+## Instructions for OpenAI Codex
+
+This project uses codesight for structured context. Read .codesight/CODESIGHT.md before exploring files.
+Routes: .codesight/routes.md | Schema: .codesight/schema.md | Dependencies: .codesight/graph.md

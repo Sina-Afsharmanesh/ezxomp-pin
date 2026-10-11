@@ -1,0 +1,127 @@
+{
+  "name": "ezxomp",
+  "owner": {
+    "name": "ezxomp"
+  },
+  "plugins": [
+    {
+      "name": "code-nav",
+      "source": "./plugins/code-nav",
+      "description": "Code navigation, definition, reference, implementation, trace, and AST-grep fork for OMP.",
+      "version": "0.5.0-ezxomp.0",
+      "attribution": "Forked from pi-code-nav. Ported to OMP 17.2.1 by ezxomp."
+    },
+    {
+      "name": "codesight",
+      "source": "./plugins/codesight",
+      "description": "CodeSight artifact reader, session-owned watcher, overlay, and plugin settings fork for OMP.",
+      "version": "0.2.2-ezxomp.0",
+      "attribution": "Forked from pi-codesight. Ported to OMP 17.2.1 by ezxomp."
+    },
+    {
+      "name": "experiences",
+      "source": "./plugins/experiences",
+      "description": "Experience capture, retrieval, selection, consolidation, scheduling, and CLI fork for OMP.",
+      "version": "0.1.49-ezxomp.1",
+      "attribution": "Forked from pi-experiences. Ported to OMP 17.2.1 by ezxomp."
+    },
+    {
+      "name": "agent-learning",
+      "source": "./plugins/agent-learning",
+      "description": "Unified agent learning for OMP \u2014 ezxomp plugin/tool catalog + skills.sh surface (safe-language policy), native-memory facts shim, skillforge evidence/procedures pipeline with human-gated patches, habits lane via @ezxomp/experiences, optional learning.review gate.",
+      "version": "0.1.0-ezxomp.0",
+      "attribution": "ezxomp original \u2014 consolidates the skills, skillforge, and experiences lanes (doc-5)."
+    },
+    {
+      "name": "compact-eng",
+      "source": "./plugins/compact-eng",
+      "description": "Compact Engineering governor and observer for OMP-native Shake, text compaction, and snapcompact.",
+      "version": "2.0.0-ezxomp.0",
+      "attribution": "Originated as Vendex pi-ultra-compact; renamed and substantially rearchitected by ezxomp around OMP-native composition."
+    },
+    {
+      "name": "extensible-workflows",
+      "source": "./plugins/extensible-workflows",
+      "description": "Saved-recipe persistence and authoring layer for OMP native Workflowz. Catalog, validate, store, and render.",
+      "version": "5.1.0-ezxomp.3",
+      "attribution": "Forked from vekexasia/pi-extensible-workflows by Vekexasia. Recast for OMP 17.2.1 by ezxomp."
+    },
+    {
+      "name": "augment",
+      "source": "./plugins/augment",
+      "description": "Augment-style prompt rewriting with persisted OMP settings and editor review.",
+      "version": "1.0.9-ezxomp.0",
+      "attribution": "Forked from pi-augment by sting8k. Ported to OMP 17.2.1 by ezxomp."
+    },
+    {
+      "name": "plannotator",
+      "source": "./plugins/plannotator",
+      "description": "Planning, annotation, code/PR review, browser server, and saved-state restoration fork for OMP.",
+      "version": "0.25.1-ezxomp.2",
+      "attribution": "Forked from backnotprop/plannotator by Backnotprop. Ported to OMP 17.2.1 by ezxomp."
+    },
+    {
+      "name": "evo",
+      "source": "./plugins/evo",
+      "description": "OMP extension: evo mode toggle. Restricts the main agent and/or subagents to a marketplace-plugin tool set (every registered tool incl. all marketplace-plugin tools, eval-first; read for protocol URIs only; blocks native write/bash/edit/glob/grep).",
+      "version": "0.1.7-ezxomp.5",
+      "attribution": "Forked from pi-evo-mode. Ported to OMP 17.2.1 by ezxomp."
+    },
+    {
+      "name": "cook",
+      "source": "./plugins/cook",
+      "description": "Backlog.md cookbook workflow plugin for OMP. Decomposes work into atomic sub-tickets and drives scout/planner/worker/validator/judge plus conditional audit/refute agents through OMP's native task tool, with ADHD divergent ideation, DAG iteration, and Done-gate enforcement.",
+      "version": "0.1.7-ezxomp.8",
+      "attribution": "Forked from pi-backlog-cook. Ported to OMP 17.2.1 by ezxomp."
+    },
+    {
+      "name": "backlog",
+      "source": "./plugins/backlog",
+      "description": "Backlog.md integration plugin for OMP. Registers the backlog_* tool suite over the backlog CLI and injects the canonical Backlog.md workflow instructions as the default system-prompt overlay for all agent work.",
+      "version": "0.1.0-ezxomp.0",
+      "attribution": "Born in ezxomp; tools extracted from @ezxomp/cook."
+    },
+    {
+      "name": "pstack-suite",
+      "source": "./plugins/pstack-suite",
+      "description": "Unified agent workflow command suite: code quality, PR review, docs, CI, team ops. The alternative workflow to the Backlog.md cookbook.",
+      "version": "1.0.0-ezxomp.0",
+      "attribution": "Born in ezxomp."
+    },
+    {
+      "name": "gsd-web",
+      "source": "./plugins/gsd-web",
+      "description": "OMP-native port of the GSD-Pi Web UI: Next.js 16 standalone dashboard with /gsd-web command, gsd_web_* tools, and an omp --mode rpc bridge.",
+      "version": "5.2.0-ezxomp.1",
+      "attribution": "Ported from open-gsd/gsd-pi web UI. Ported to OMP 18.0.6 by ezxomp."
+    },
+    {
+      "name": "gsd-browser",
+      "source": "./plugins/gsd-browser",
+      "description": "GSD browser-tool surface for OMP: page fetch, Brave web search, DOM snapshot, navigation, and screenshots with GSD's honest-degradation reason codes.",
+      "version": "0.1.0-ezxomp.0",
+      "attribution": "Ported from @opengsd/gsd-core v1.12.0 (MIT) by ezxomp."
+    },
+    {
+      "name": "gsd-loop",
+      "source": "./plugins/gsd-loop",
+      "description": "Autonomous GSD loop kernel for OMP (port of gsd-pi auto-mode loop).",
+      "version": "0.1.0-ezxomp.0",
+      "attribution": "Born in repo. Kernel-semantics port of gsd-pi auto-mode loop."
+    },
+    {
+      "name": "gsd-graph",
+      "source": "./plugins/gsd-graph",
+      "description": "GSD knowledge graph and workflow execution graph (GRAPH.yaml engine) for OMP, ported from gsd-pi.",
+      "version": "0.1.0-ezxomp.0",
+      "attribution": "Port of gsd-pi graph subsystems (workflow GRAPH.yaml engine + TS-native knowledge graph) to OMP."
+    },
+    {
+      "name": "better-custom",
+      "source": "./plugins/better-custom",
+      "description": "Typed /custom-provider wizard for adding, editing, and deleting custom model providers through native OMP UI, with an authenticated model browser registered in the /model seam.",
+      "version": "0.1.3-ezxomp.0",
+      "attribution": "Born in ezxomp."
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+type:session
+cwd=my-awesome-project
+timestamp=2026-01-20T10:00:00Z
+version=1
+id=session-001
+parentId=null
+
+type:message
+role=user content=Hello world
+
+type:message
+role=assistant content=Thanks for the help
+
+type:message
+role=user content=This worked perfectly
+
+type:message
+role=assistant content=Great
+
+type:message
+role=user content=All done

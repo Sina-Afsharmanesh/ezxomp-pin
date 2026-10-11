@@ -1,0 +1,39 @@
+node_modules/
+bun.lock
+*.log
+omp-session*
+.DS_Store
+.test-tmp/
+.smoke-tmp/
+dist/
+.env
+.pi/
+scratchpads/
+.probe-*
+local:/
+settings
+.codesight/.omp-watch.lock
+.codesight/
+.agents/
+# Keep the local plugin audit out of commits and remote marketplaces.
+/docs/plugin_proposal/audit_plugin.md
+.omp/*
+!.omp/skills/
+# CocoIndex Code (ccc)
+/.cocoindex_code/
+# Jeff (cook) — full mode: committed task registry under .jeff/
+# Exclude the machine-local hash-keyed run log only.
+.jeff/test-runs.jsonl
+# prek — hook environment stays local
+.prek-env/
+backlog/cook-state.json
+# 118MB fetched asset; blocks fresh checkouts (gix size limit)
+plugins/experiences/runtime/assets/local-embedding/multilingual-minilm-l12-int8-v1/model_int8.onnx
+
+# Generated context dumps — machine-local, never shared
+HERMES.md
+
+# Local agent/session config files — machine-local, never shared or committed.
+.cursorrules
+CLAUDE.md
+codex.md

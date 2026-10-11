@@ -1,0 +1,1 @@
+{"seq":0,"at":"2026-08-30T00:18:08.949Z","event":"intent","stage":"implement","note":"Dispatching cook-researcher (spike ticket, research label) to identify Pi-dcp and extract context patterns into a research doc. Expected side effect: backlog_doc_create type=research; ticket AC evidence recorded."}

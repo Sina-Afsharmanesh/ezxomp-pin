@@ -1,0 +1,2850 @@
+{
+  "finding_counts": {
+    "plugins/agent-learning/src/collapsed-row.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/agent-learning/src/directive.ts": {
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/agent-learning/src/facts.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/agent-learning/src/gate.ts": {
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/agent-learning/src/learning-command.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/agent-learning/src/procedures/extension.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/agent-learning/src/procedures/memory/capture.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/agent-learning/src/procedures/memory/commands.ts": {
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/agent-learning/src/procedures/memory/parse.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 4
+      }
+    },
+    "plugins/agent-learning/src/procedures/memory/retrieve.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/agent-learning/src/procedures/memory/validate.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/agent-learning/src/procedures/overlay.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/agent-learning/src/procedures/promotion/promotion.ts": {
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/agent-learning/src/procedures/store/experience.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/agent-learning/src/procedures/store/storage.ts": {
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/agent-learning/src/procedures/usage/capture.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/agent-learning/src/procedures/usage/extension.ts": {
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/agent-learning/src/read-skills.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 5
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/agent-learning/src/remote.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/agent-learning/src/review-gate.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/augment/src/context.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/augment/src/enhance.ts": {
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/augment/src/index.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/augment/src/intent.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/augment/src/model-routing.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/augment/src/parser.ts": {
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/augment/src/prompt-leverage.ts": {
+      "crap_critical": {
+        "count": 5
+      }
+    },
+    "plugins/augment/src/settings.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/augment/src/strategies/shared.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/backlog/extensions/helpers.ts": {
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/backlog/extensions/tools.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/better-custom/src/api-key.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/better-custom/src/config.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/better-custom/src/flows/add.ts": {
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/better-custom/src/flows/delete.ts": {
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/better-custom/src/flows/edit.ts": {
+      "complexity_critical": {
+        "count": 3
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 5
+      }
+    },
+    "plugins/better-custom/src/flows/shared.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/better-custom/src/index.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/better-custom/src/model-browser.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/better-custom/src/model-entry.ts": {
+      "complexity_critical": {
+        "count": 4
+      },
+      "crap_critical": {
+        "count": 9
+      },
+      "crap_high": {
+        "count": 7
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/better-custom/src/probe/developer-role.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/better-custom/src/probe/index.ts": {
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/better-custom/src/probe/metadata.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 5
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/better-custom/src/probe/ollama.ts": {
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/better-custom/src/ui/model-view.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/better-custom/src/ui/prompts.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 4
+      },
+      "crap_moderate": {
+        "count": 7
+      }
+    },
+    "plugins/better-custom/src/ui/select.ts": {
+      "complexity_critical": {
+        "count": 4
+      },
+      "crap_critical": {
+        "count": 4
+      }
+    },
+    "plugins/better-custom/src/url.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/code-nav/src/cache.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/code-nav/src/code-context.ts": {
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/code-nav/src/compare.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/code-nav/src/navigation-evidence.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/code-nav/src/navigation-intent.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/code-nav/src/navigation-planner.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/code-nav/src/plan-format.ts": {
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/code-nav/src/ranking.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/code-nav/src/reference-format.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/code-nav/src/sg-runner.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/code-nav/src/slices.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/code-nav/src/state.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/code-nav/src/symbol-fallback.ts": {
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/code-nav/src/symbol-normalization.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_moderate": {
+        "count": 6
+      }
+    },
+    "plugins/code-nav/src/symbol-reference-resolution.ts": {
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/code-nav/src/symbol-selection.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/code-nav/src/symbols.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/code-nav/src/tools.ts": {
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/code-nav/src/tools/ast-grep-replace.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/code-nav/src/tools/ast-grep-search.ts": {
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/code-nav/src/trace.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 2
+      }
+    },
+    "plugins/code-nav/src/workspace-path.ts": {
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/codesight/scripts/build-bundle.mjs": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/codesight/src/overlay.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/codesight/src/queries.ts": {
+      "complexity_critical": {
+        "count": 3
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/codesight/src/tools.ts": {
+      "crap_high": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/codesight/src/watcher.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 6
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 6
+      }
+    },
+    "plugins/cook/extensions/agents.ts": {
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/cook/extensions/autocomplete.ts": {
+      "crap_moderate": {
+        "count": 5
+      }
+    },
+    "plugins/cook/extensions/config.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 4
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/cook/extensions/cook-tools.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/cook/extensions/dagr.ts": {
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/cook/extensions/index.ts": {
+      "complexity_critical": {
+        "count": 3
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/cook/extensions/journal.ts": {
+      "crap_high": {
+        "count": 2
+      }
+    },
+    "plugins/cook/extensions/prompts.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/cook/extensions/renderers.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 5
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 5
+      }
+    },
+    "plugins/cook/extensions/state.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 12
+      }
+    },
+    "plugins/evo/extensions/evo/evoMain.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/evo/extensions/evo/evoSub.ts": {
+      "crap_critical": {
+        "count": 3
+      }
+    },
+    "plugins/evo/extensions/evo/frontmatter.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/evo/extensions/evo/generation-state.ts": {
+      "complexity_critical": {
+        "count": 3
+      },
+      "crap_critical": {
+        "count": 5
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/evo/extensions/evo/preflight.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/evo/extensions/evo/substate.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/evo/extensions/evo/tools.ts": {
+      "crap_high": {
+        "count": 2
+      }
+    },
+    "plugins/evo/extensions/index.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 3
+      }
+    },
+    "plugins/experiences/bin/experience-consolidate.mjs": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/index.ts": {
+      "complexity_critical": {
+        "count": 19
+      },
+      "complexity_high": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 32
+      },
+      "crap_high": {
+        "count": 29
+      },
+      "crap_moderate": {
+        "count": 21
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/break-in.ts": {
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/capture/extract.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/capture/origin.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/config.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/consolidate/commit.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/consolidate/math.ts": {
+      "crap_high": {
+        "count": 2
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/consolidate/model-adapter.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/consolidate/model-output.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 5
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/consolidate/observations.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/consolidate/proposals.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/consolidate/propose.ts": {
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/consolidate/runner.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/consolidate/standalone-model-adapter.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/conversation.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 2
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/conversational-tools.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 4
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/metrics.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/paths.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/provider-guidance.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/review.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 7
+      },
+      "crap_moderate": {
+        "count": 12
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/schedule/receipts.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/schedule/runner.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/schedule/systemd.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/selector-maintenance.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/selector-model.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 2
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/selector-vector.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/selector.ts": {
+      "complexity_critical": {
+        "count": 4
+      },
+      "crap_critical": {
+        "count": 5
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/semantic/core.ts": {
+      "crap_high": {
+        "count": 3
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/semantic/local-adapter.ts": {
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/semantic/local-model.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/semantic/service.ts": {
+      "complexity_critical": {
+        "count": 4
+      },
+      "crap_critical": {
+        "count": 6
+      },
+      "crap_high": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/semantic/storage.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 8
+      },
+      "crap_high": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/steering-context.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/steering-note.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/storage/backup.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 7
+      },
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/storage/checksum.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/storage/locks.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/storage/migrations.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 5
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/storage/observations.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 6
+      },
+      "crap_high": {
+        "count": 5
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/storage/private-root.ts": {
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/storage/redaction.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/storage/shared.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/extensions/agent-experience/src/storage/sqlite.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 7
+      }
+    },
+    "plugins/experiences/runtime/agent-experience/local-embedding-worker.mjs": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 2
+      }
+    },
+    "plugins/experiences/scripts/fetch-local-embedding-assets.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/scripts/test-agent-experience-phase1.mjs": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/scripts/test-agent-experience-phase10-semantic-dedupe.mjs": {
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/scripts/test-agent-experience-phase13-local-embedding.mjs": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/scripts/test-agent-experience-phase17-scheduled-analyze.mjs": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/scripts/test-agent-experience-phase19-vector-selector.mjs": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/scripts/test-agent-experience-phase20-context-selector.mjs": {
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/experiences/scripts/test-agent-experience-phase22-provider-guidance.mjs": {
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/scripts/test-agent-experience-phase4a-consolidation.mjs": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/scripts/test-agent-experience-phase4b-model-output.mjs": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/scripts/test-agent-experience-phase7b8.mjs": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/experiences/scripts/test-agent-experience-phase9-setup-analyze.mjs": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/experiences/scripts/verify-packed-install.mjs": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/extensible-workflows/src/gates.ts": {
+      "complexity_critical": {
+        "count": 3
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/extensible-workflows/src/index.ts": {
+      "complexity_critical": {
+        "count": 4
+      },
+      "crap_critical": {
+        "count": 6
+      },
+      "crap_high": {
+        "count": 5
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/extensible-workflows/src/library.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/extensible-workflows/src/p0-tools.ts": {
+      "complexity_critical": {
+        "count": 4
+      },
+      "crap_critical": {
+        "count": 9
+      },
+      "crap_high": {
+        "count": 4
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/extensible-workflows/src/runtime.ts": {
+      "complexity_critical": {
+        "count": 19
+      },
+      "crap_critical": {
+        "count": 24
+      },
+      "crap_high": {
+        "count": 17
+      },
+      "crap_moderate": {
+        "count": 17
+      }
+    },
+    "plugins/extensible-workflows/src/templates.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/extensible-workflows/src/workflow-overlay.ts": {
+      "complexity_critical": {
+        "count": 6
+      },
+      "crap_critical": {
+        "count": 11
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/extensible-workflows/src/worktree.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/annotate-outcome.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/assistant-message.ts": {
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/plannotator/config.ts": {
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/plannotator/current-pi-session.ts": {
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/plannotator/generated/agent-jobs.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/agent-review-message.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/agent-terminal.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/ai/context.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/generated/ai/endpoints.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/ai/providers/claude-agent-sdk.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/ai/providers/codex-app-server.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 7
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 6
+      }
+    },
+    "plugins/plannotator/generated/ai/providers/command-path.ts": {
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/generated/ai/providers/opencode-sdk.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/ai/providers/pi-events.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/ai/providers/pi-sdk-node.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 5
+      }
+    },
+    "plugins/plannotator/generated/ai/providers/pi-sdk.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/plannotator/generated/ai/session-manager.ts": {
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/annotate-args.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/annotate-client-lease.ts": {
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/plannotator/generated/annotate-reference-roots-node.ts": {
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/generated/claude-review.ts": {
+      "crap_high": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/generated/cli-pagination.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/code-file.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/code-nav.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/generated/codex-review.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/commit-avatars.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/plannotator/generated/commit-history.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/config.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/generated/data-dir.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/diff-paths.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/generated/draft.ts": {
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/external-annotation.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/feedback-templates.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/gitbutler-core.ts": {
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 5
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/plannotator/generated/guide-review.ts": {
+      "complexity_critical": {
+        "count": 7
+      },
+      "crap_critical": {
+        "count": 11
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/guide-store.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/html-assets-node.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/html-assets.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/generated/html-diff.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/generated/improvement-hooks.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/integrations-common.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/jj-core.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 5
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/marker-review.ts": {
+      "complexity_critical": {
+        "count": 3
+      },
+      "crap_critical": {
+        "count": 6
+      },
+      "crap_high": {
+        "count": 7
+      },
+      "crap_moderate": {
+        "count": 9
+      }
+    },
+    "plugins/plannotator/generated/port-range.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/pr-artifact-document.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 6
+      },
+      "crap_moderate": {
+        "count": 5
+      }
+    },
+    "plugins/plannotator/generated/pr-context-live.ts": {
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/generated/pr-github.ts": {
+      "complexity_critical": {
+        "count": 3
+      },
+      "crap_critical": {
+        "count": 7
+      },
+      "crap_high": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 6
+      }
+    },
+    "plugins/plannotator/generated/pr-gitlab.ts": {
+      "complexity_critical": {
+        "count": 5
+      },
+      "crap_critical": {
+        "count": 5
+      },
+      "crap_high": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/pr-stack.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/plannotator/generated/pr-types.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/project.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/prompts.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/reference-common.ts": {
+      "complexity_high": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/repo.ts": {
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/generated/resolve-file.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "complexity_high": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/review-args.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/generated/review-core.ts": {
+      "complexity_critical": {
+        "count": 6
+      },
+      "crap_critical": {
+        "count": 10
+      },
+      "crap_high": {
+        "count": 4
+      },
+      "crap_moderate": {
+        "count": 8
+      }
+    },
+    "plugins/plannotator/generated/review-skill-loader.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/plannotator/generated/review-workspace-node.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/review-workspace.ts": {
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/plannotator/generated/semantic-diff.ts": {
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 4
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/single-flight.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/source-save-node.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/source-save.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/storage.ts": {
+      "complexity_high": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/plannotator/generated/tour-review.ts": {
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/generated/url-to-markdown.ts": {
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/vcs-core.ts": {
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 10
+      }
+    },
+    "plugins/plannotator/generated/workspace-status.ts": {
+      "complexity_critical": {
+        "count": 3
+      },
+      "crap_critical": {
+        "count": 7
+      },
+      "crap_high": {
+        "count": 3
+      }
+    },
+    "plugins/plannotator/generated/worktree-pool.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/generated/worktree.ts": {
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/index.ts": {
+      "complexity_critical": {
+        "count": 4
+      },
+      "crap_critical": {
+        "count": 6
+      },
+      "crap_high": {
+        "count": 6
+      },
+      "crap_moderate": {
+        "count": 7
+      }
+    },
+    "plugins/plannotator/plannotator-browser.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/plannotator/plannotator-events.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/scripts/build-bundle.mjs": {
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/server/agent-jobs.ts": {
+      "complexity_critical": {
+        "count": 3
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/server/agent-terminal.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/server/ai-runtime.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/server/annotations.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/server/external-annotations.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/server/file-browser-watch.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/server/handlers.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/plannotator/server/helpers.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/server/integrations.ts": {
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/plannotator/server/network.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/server/open-in-apps.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/server/project.ts": {
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/server/reference.ts": {
+      "complexity_critical": {
+        "count": 3
+      },
+      "crap_critical": {
+        "count": 6
+      },
+      "crap_high": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/server/serverAnnotate.ts": {
+      "complexity_critical": {
+        "count": 3
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/server/serverPlan.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 2
+      }
+    },
+    "plugins/plannotator/server/serverReview.ts": {
+      "complexity_critical": {
+        "count": 5
+      },
+      "crap_critical": {
+        "count": 7
+      },
+      "crap_high": {
+        "count": 6
+      },
+      "crap_moderate": {
+        "count": 8
+      }
+    },
+    "plugins/plannotator/server/vcs.ts": {
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/todo-providers/pi-todos.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/plannotator/tool-scope.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/commands/arena.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/commands/backlog-doc.ts": {
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/pstack-suite/src/commands/benny.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "plugins/pstack-suite/src/commands/blast.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/commands/ci.ts": {
+      "complexity_critical": {
+        "count": 3
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/commands/deslop.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/pstack-suite/src/commands/docs.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/commands/how.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/commands/mode.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 5
+      }
+    },
+    "plugins/pstack-suite/src/commands/pr-canvas.ts": {
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/pstack-suite/src/commands/pr.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/commands/quality.ts": {
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/commands/review-common.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/commands/review.ts": {
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/commands/setup.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      }
+    },
+    "plugins/pstack-suite/src/commands/ship.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 2
+      }
+    },
+    "plugins/pstack-suite/src/commands/tdd.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/commands/verify.ts": {
+      "complexity_critical": {
+        "count": 3
+      },
+      "crap_critical": {
+        "count": 3
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/commands/weekly.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/commands/why.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/events.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/index.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/pstack-suite/src/overlay/confirm-overlay.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/pstack-suite/src/overlay/findings-overlay.ts": {
+      "complexity_critical": {
+        "count": 2
+      },
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/pstack-suite/src/overlay/progress-overlay.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 5
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/pstack-suite/src/overlay/render.ts": {
+      "crap_high": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/push-confirm.ts": {
+      "crap_moderate": {
+        "count": 1
+      }
+    },
+    "plugins/pstack-suite/src/run.ts": {
+      "crap_high": {
+        "count": 4
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "plugins/pstack-suite/src/runner.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/pstack-suite/src/ship-flow.ts": {
+      "crap_high": {
+        "count": 3
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "plugins/pstack-suite/src/utils.ts": {
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "scripts/import-upstreams.ts": {
+      "complexity_critical": {
+        "count": 4
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 4
+      }
+    },
+    "scripts/install-local.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      }
+    },
+    "scripts/scaffold-plugin.ts": {
+      "crap_critical": {
+        "count": 2
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 3
+      }
+    },
+    "scripts/verify-omp.ts": {
+      "complexity_critical": {
+        "count": 3
+      },
+      "crap_critical": {
+        "count": 4
+      },
+      "crap_high": {
+        "count": 1
+      },
+      "crap_moderate": {
+        "count": 2
+      }
+    },
+    "scripts/verify-scaffold.ts": {
+      "complexity_critical": {
+        "count": 1
+      },
+      "crap_critical": {
+        "count": 1
+      },
+      "crap_high": {
+        "count": 2
+      },
+      "crap_moderate": {
+        "count": 6
+      }
+    }
+  },
+  "runtime_coverage_findings": [],
+  "target_keys": [
+    "plugins/code-nav/src/slices.ts:dead code",
+    "plugins/plannotator/todo-providers/index.ts:dead code",
+    "plugins/code-nav/src/format.ts:dead code",
+    "plugins/better-custom/src/probe/index.ts:dead code",
+    "plugins/better-custom/src/url.ts:high impact",
+    "plugins/pstack-suite/src/overlay/confirm-overlay.ts:high impact",
+    "plugins/extensible-workflows/src/runtime.ts:high impact",
+    "plugins/experiences/extensions/agent-experience/src/consolidate/runner.ts:high impact",
+    "plugins/better-custom/src/ui/select.ts:high impact",
+    "plugins/experiences/extensions/agent-experience/src/consolidate/commit.ts:high impact",
+    "plugins/better-custom/src/flows/shared.ts:high impact",
+    "plugins/codesight/src/overlay.ts:dead code",
+    "plugins/pstack-suite/src/overlay/progress-overlay.ts:high impact",
+    "plugins/better-custom/src/config.ts:dead code",
+    "plugins/cook/extensions/renderers.ts:dead code",
+    "plugins/code-nav/src/symbol-normalization.ts:high impact",
+    "plugins/experiences/extensions/agent-experience/src/storage/sqlite.ts:high impact",
+    "plugins/agent-learning/src/procedures/usage/capture.ts:dead code",
+    "plugins/experiences/extensions/agent-experience/src/steering-note.ts:dead code",
+    "plugins/agent-learning/src/procedures/usage/extension.ts:dead code",
+    "plugins/cook/extensions/autocomplete.ts:dead code",
+    "plugins/evo/extensions/evo/generation-state.ts:high impact",
+    "plugins/better-custom/src/ui/model-view.ts:dead code",
+    "plugins/experiences/extensions/agent-experience/src/storage/locks.ts:high impact",
+    "plugins/experiences/extensions/agent-experience/index.ts:high impact",
+    "plugins/pstack-suite/src/commands/ci.ts:dead code",
+    "plugins/extensible-workflows/src/worktree.ts:complexity",
+    "plugins/pstack-suite/src/commands/verify.ts:untested risk",
+    "plugins/evo/extensions/evo/substate.ts:dead code",
+    "plugins/experiences/extensions/agent-experience/src/consolidate/model-adapter.ts:high impact",
+    "plugins/experiences/extensions/agent-experience/src/schedule/receipts.ts:high impact",
+    "plugins/experiences/extensions/agent-experience/src/semantic/core.ts:high impact",
+    "plugins/experiences/extensions/agent-experience/src/consolidate/observations.ts:high impact",
+    "plugins/code-nav/src/symbol-backends.ts:dead code",
+    "plugins/codesight/src/format.ts:high impact",
+    "plugins/evo/extensions/evo/preflight.ts:dead code",
+    "plugins/agent-learning/src/procedures/memory/capture.ts:dead code",
+    "plugins/evo/extensions/evo/evoSub.ts:churn+complexity",
+    "plugins/extensible-workflows/src/p0-tools.ts:dead code",
+    "plugins/experiences/extensions/agent-experience/src/storage/backup.ts:high impact",
+    "plugins/pstack-suite/src/commands/mode.ts:dead code",
+    "plugins/experiences/extensions/agent-experience/src/semantic/storage.ts:high impact",
+    "plugins/experiences/extensions/agent-experience/src/selector.ts:high impact",
+    "plugins/pstack-suite/src/run.ts:dead code",
+    "plugins/experiences/extensions/agent-experience/src/consolidate/model-output.ts:high impact",
+    "plugins/extensible-workflows/src/library.ts:complexity",
+    "plugins/experiences/extensions/agent-experience/src/semantic/local-adapter.ts:high impact",
+    "plugins/experiences/extensions/agent-experience/src/semantic/local-model.ts:high impact",
+    "plugins/experiences/extensions/agent-experience/src/review.ts:high impact",
+    "plugins/experiences/extensions/agent-experience/src/conversational-tools.ts:complexity",
+    "plugins/experiences/extensions/agent-experience/src/steering-context.ts:high impact",
+    "plugins/better-custom/src/api-key.ts:high impact",
+    "plugins/cook/extensions/config.ts:untested risk",
+    "plugins/cook/extensions/state.ts:high impact",
+    "plugins/agent-learning/src/read-skills.ts:dead code",
+    "plugins/experiences/extensions/agent-experience/src/semantic/service.ts:high impact",
+    "plugins/agent-learning/src/procedures/store/experience.ts:complexity",
+    "plugins/experiences/extensions/agent-experience/src/conversation.ts:untested risk",
+    "plugins/experiences/extensions/agent-experience/src/storage/observations.ts:high impact",
+    "plugins/plannotator/server/serverPlan.ts:complexity",
+    "plugins/code-nav/src/symbols.ts:complexity",
+    "plugins/evo/extensions/evo/tools.ts:dead code",
+    "plugins/better-custom/src/model-browser.ts:high impact",
+    "plugins/experiences/extensions/agent-experience/src/capture/extract.ts:untested risk",
+    "plugins/codesight/src/stale.ts:high impact",
+    "plugins/better-custom/src/model-entry.ts:high impact",
+    "plugins/cook/extensions/index.ts:complexity",
+    "plugins/plannotator/todo-providers/pi-todos.ts:dead code",
+    "plugins/experiences/extensions/agent-experience/src/consolidate/context.ts:high impact",
+    "plugins/augment/src/intent.ts:dead code",
+    "plugins/experiences/extensions/agent-experience/src/consolidate/proposals.ts:high impact",
+    "plugins/experiences/extensions/agent-experience/src/storage/private-root.ts:high impact",
+    "plugins/code-nav/src/reference-format.ts:untested risk",
+    "plugins/experiences/extensions/agent-experience/src/provider-guidance.ts:complexity",
+    "plugins/experiences/extensions/agent-experience/src/storage/checksum.ts:high impact",
+    "plugins/experiences/extensions/agent-experience/src/storage/redaction.ts:high impact",
+    "plugins/experiences/scripts/test-helpers.mjs:high impact",
+    "plugins/extensible-workflows/src/index.ts:complexity",
+    "plugins/code-nav/src/compare.ts:complexity",
+    "plugins/experiences/extensions/agent-experience/src/storage/migrations.ts:untested risk",
+    "plugins/cook/extensions/cook-tools.ts:complexity",
+    "plugins/cook/extensions/watch.ts:complexity",
+    "plugins/extensible-workflows/src/workflow-overlay.ts:complexity",
+    "plugins/plannotator/plannotator-browser.ts:complexity",
+    "plugins/agent-learning/src/procedures/memory/parse.ts:high impact",
+    "plugins/better-custom/src/probe/metadata.ts:untested risk",
+    "plugins/extensible-workflows/src/gates.ts:untested risk",
+    "plugins/pstack-suite/src/commands/ship.ts:complexity",
+    "plugins/pstack-suite/src/commands/blast.ts:untested risk",
+    "plugins/experiences/extensions/agent-experience/src/selector-model.ts:untested risk",
+    "plugins/cook/extensions/dagr.ts:complexity",
+    "plugins/backlog/extensions/helpers.ts:untested risk",
+    "plugins/codesight/src/watcher.ts:complexity",
+    "plugins/plannotator/plannotator-events.ts:complexity",
+    "plugins/plannotator/assistant-message.ts:high impact",
+    "plugins/pstack-suite/src/commands/pr.ts:complexity",
+    "plugins/plannotator/generated/ai/providers/pi-sdk-node.ts:complexity",
+    "plugins/plannotator/generated/review-core.ts:complexity",
+    "plugins/plannotator/generated/workspace-status.ts:untested risk",
+    "plugins/plannotator/server/serverAnnotate.ts:complexity",
+    "plugins/plannotator/server/reference.ts:complexity",
+    "plugins/plannotator/server/serverReview.ts:complexity",
+    "plugins/code-nav/src/navigation-planner.ts:complexity",
+    "plugins/codesight/src/queries.ts:untested risk",
+    "plugins/experiences/extensions/agent-experience/src/break-in.ts:untested risk",
+    "plugins/experiences/extensions/agent-experience/src/consolidate/math.ts:untested risk",
+    "plugins/agent-learning/src/procedures/memory/validate.ts:complexity",
+    "plugins/experiences/runtime/agent-experience/local-embedding-worker.mjs:untested risk",
+    "plugins/plannotator/generated/diff-paths.ts:untested risk",
+    "plugins/better-custom/src/flows/edit.ts:complexity",
+    "plugins/plannotator/generated/ai/providers/pi-sdk.ts:complexity",
+    "plugins/plannotator/generated/html-assets.ts:untested risk",
+    "plugins/experiences/scripts/test-agent-experience-phase9-setup-analyze.mjs:complexity",
+    "plugins/plannotator/config.ts:untested risk",
+    "plugins/plannotator/server/open-in-apps.ts:complexity",
+    "scripts/verify-omp.ts:complexity",
+    "plugins/plannotator/server/external-annotations.ts:complexity",
+    "plugins/plannotator/generated/pr-artifact-document.ts:complexity",
+    "plugins/plannotator/generated/source-save-node.ts:complexity",
+    "plugins/plannotator/generated/external-annotation.ts:complexity",
+    "plugins/plannotator/index.ts:complexity",
+    "plugins/experiences/scripts/test-agent-experience-phase1.mjs:complexity",
+    "plugins/pstack-suite/src/commands/benny.ts:complexity",
+    "plugins/plannotator/server/agent-jobs.ts:complexity",
+    "plugins/plannotator/generated/pr-gitlab.ts:complexity",
+    "plugins/plannotator/generated/marker-review.ts:complexity",
+    "plugins/plannotator/generated/ai/providers/opencode-sdk.ts:complexity",
+    "plugins/plannotator/generated/ai/providers/claude-agent-sdk.ts:complexity",
+    "plugins/backlog/extensions/tools.ts:complexity"
+  ]
+}

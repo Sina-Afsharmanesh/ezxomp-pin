@@ -1,0 +1,37 @@
+{
+  "name": "@ezxomp/backlog",
+  "version": "0.1.0-ezxomp.0",
+  "description": "Backlog.md integration plugin for OMP. Registers the full backlog_* tool suite over the backlog CLI, shared task helpers, and the Backlog.md workflow + quality-standards instruction overlay that is injected as the default system-prompt source for all agent work.",
+  "keywords": [
+    "omp-package",
+    "backlog",
+    "backlog.md",
+    "tasks",
+    "instructions"
+  ],
+  "license": "Apache-2.0",
+  "type": "module",
+  "files": [
+    "extensions",
+    "tests",
+    "README.md",
+    "LICENSE"
+  ],
+  "peerDependencies": {
+    "@oh-my-pi/pi-coding-agent": "18.0.6"
+  },
+  "devDependencies": {
+    "@oh-my-pi/pi-coding-agent": "*",
+    "@biomejs/biome": "*",
+    "typebox": "1.1.38",
+    "vitest": "*"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "omp": {
+    "extensions": [
+      "./extensions/index.ts"
+    ]
+  }
+}

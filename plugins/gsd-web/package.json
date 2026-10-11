@@ -1,0 +1,52 @@
+{
+	"name": "@ezxomp/gsd-web",
+	"version": "5.2.0-ezxomp.1",
+	"description": "OMP-native port of the GSD-Pi Web UI: full Next.js 16 App Router dashboard (views, onboarding, command surface, terminals, multi-project) served by a committed standalone Node host, driven through an omp --mode rpc bridge.",
+	"keywords": ["omp-package"],
+	"license": "MIT",
+	"type": "module",
+	"files": ["extensions", "tools", "server", "web", "scripts"],
+	"peerDependencies": {
+		"@oh-my-pi/pi-coding-agent": "18.0.6",
+		"@oh-my-pi/pi-ai": "18.0.6"
+	},
+	"devDependencies": {
+		"@modelcontextprotocol/sdk": "^1",
+		"get-east-asian-width": "1.6.0",
+		"marked": "15.0.12",
+		"typebox": "1.1.38"
+	},
+	"omp": {
+		"extensions": ["./extensions/index.ts"],
+		"settings": {
+			"host": {
+				"type": "enum",
+				"default": "auto",
+				"values": ["auto", "127.0.0.1", "localhost", "::1"]
+			},
+			"port": {
+				"type": "number",
+				"default": 0,
+				"min": 0,
+				"max": 65535,
+				"step": 1
+			},
+			"noAuth": {
+				"type": "boolean",
+				"default": false
+			},
+			"allowUnauthenticatedLAN": {
+				"type": "boolean",
+				"default": false
+			},
+			"daemonMode": {
+				"type": "boolean",
+				"default": false
+			},
+			"openBrowser": {
+				"type": "boolean",
+				"default": false
+			}
+		}
+	}
+}

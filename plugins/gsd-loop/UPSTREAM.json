@@ -1,0 +1,7 @@
+{
+  "originalName": "gsd-pi auto loop",
+  "url": "https://tangled.org/expi.tngl.sh/gsd-pi (src/resources/extensions/gsd/auto/loop.ts)",
+  "integrity": "sha256-born-in-repo",
+  "localForkVersion": "0.1.0-ezxomp.0",
+  "note": "Kernel-semantics port of the gsd-pi auto-mode loop (loop.ts iteration contract, guard catalog, persistence model) onto OMP extension surfaces. Born in this repository; no source files imported verbatim."
+}

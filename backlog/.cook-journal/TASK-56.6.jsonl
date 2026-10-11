@@ -1,0 +1,1 @@
+{"seq":0,"at":"2026-08-30T01:33:02.909Z","event":"intent","stage":"implement","note":"Dispatching cook-planner (decision authority) to author the clean-cutover rename ADR (TASK-56.6). Expected side effect: backlog_decision_create linked to TASK-56; AC evidence on the ticket."}

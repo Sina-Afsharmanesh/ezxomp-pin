@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "asset_version": "multilingual-minilm-l12-int8-v1",
+  "provider": "local-experience-onnx",
+  "model": "Xenova/paraphrase-multilingual-MiniLM-L12-v2@2c4055b12046f11709e9df2c122e59ffbdc2f900",
+  "revision": "2c4055b12046f11709e9df2c122e59ffbdc2f900",
+  "fetched_at": "2026-08-10T17:22:35.825Z",
+  "license": "Apache-2.0 + MIT runtime",
+  "total_bytes": 148618669,
+  "files": [
+    {
+      "name": "model_int8.onnx",
+      "bytes": 118054609,
+      "sha256": "d6ea442ff6a891daefed7c83b2f596fc5dc66bf697e4d006236f64f34bbcf4c8"
+    },
+    {
+      "name": "tokenizer.json",
+      "bytes": 17082913,
+      "sha256": "b60b6b43406a48bf3638526314f3d232d97058bc93472ff2de930d43686fa441"
+    },
+    {
+      "name": "tokenizer_config.json",
+      "bytes": 496,
+      "sha256": "3f5961b9ac86288cccdb97f32fb848d6187c78e1603958c53f3ea1f296b7d8a2"
+    },
+    {
+      "name": "config.json",
+      "bytes": 673,
+      "sha256": "05b570bff786faa5c4604152aa16f19f77ed6dfc31e47dd0f3dd987078693ac7"
+    },
+    {
+      "name": "ort-wasm-simd-threaded.wasm",
+      "bytes": 13479978,
+      "sha256": "d1ab1b94b16a65b29d710d0b587b29e7bed336827577623913479b8afe8113e6"
+    }
+  ]
+}

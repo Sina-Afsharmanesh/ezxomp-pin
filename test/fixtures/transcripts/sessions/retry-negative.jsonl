@@ -1,0 +1,36 @@
+type:session
+version=2
+id=session-020
+parentId=null
+cwd=retry-negative
+timestamp=2026-01-22T10:00:00Z
+
+type:message
+role=user content=starting setup
+
+type:message
+role=assistant content=thinking...
+
+type:message
+role=user content=still struggling here
+
+type:message
+role=assistant content=attempting again
+
+type:message
+role=user content=that failed, retrying
+
+type:message
+role=assistant content=working on it
+
+type:message
+role=user content=another angle this time
+
+type:message
+role=assistant content=trying
+
+type:message
+role=user content=ok fine, one more try
+
+type:message
+role=assistant content=final attempt

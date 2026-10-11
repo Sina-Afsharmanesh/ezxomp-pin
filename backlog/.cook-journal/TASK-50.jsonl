@@ -1,0 +1,3 @@
+{"seq": 0, "at": "2026-08-29T01:06:41.369Z", "event": "intent", "stage": "capture", "note": "demo kickoff: cook full chain on TASK-50"}
+{"seq": 1, "at": "2026-08-29T01:06:51.256Z", "event": "intent", "stage": "plan", "note": "dispatch cook-planner: design plan + decompose TASK-50 into atomic sub-tickets"}
+{"seq": 2, "at": "2026-08-29T01:10:08.862Z", "event": "record", "stage": "plan", "note": "operator input: dagr.json missing discovered; root-caused pushDagr-only projection; TASK-50.1 created for buildRunDoc E150 mismatch"}

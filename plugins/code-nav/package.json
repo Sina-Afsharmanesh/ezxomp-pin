@@ -1,0 +1,66 @@
+{
+"name": "@ezxomp/code-nav",
+"version": "0.5.0-ezxomp.0",
+"description": "Exact symbol navigation companion for OMP, built to sit between CodeSight discovery and native LSP operations.",
+  "type": "module",
+  "main": "src/index.ts",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anh-chu/pi-code-nav.git"
+  },
+  "homepage": "https://github.com/anh-chu/pi-code-nav#readme",
+  "bugs": {
+    "url": "https://github.com/anh-chu/pi-code-nav/issues"
+  },
+  "keywords": [
+    "omp-package",
+    "omp",
+    "extension",
+    "lsp",
+    "navigation",
+    "codesight",
+    "symbols"
+  ],
+  "files": [
+    "src",
+    "docs",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "omp": {
+    "extensions": [
+      "src/index.ts"
+    ]
+  },
+  "scripts": {
+    "check": "node --experimental-strip-types -e \"import('./src/index.ts').catch((err) => { console.error(err); process.exit(1); })\"",
+    "bench:harness": "node --experimental-strip-types benchmarks/automation/run-harness-benchmarks.mjs",
+    "bench:harness:pilot": "node --experimental-strip-types benchmarks/automation/run-harness-benchmarks.mjs --ids A-01,B-01,E-01",
+    "bench:live": "node benchmarks/automation/run-live-benchmarks.mjs",
+    "bench:live:pilot": "node benchmarks/automation/run-live-benchmarks.mjs --ids A-01,B-01,E-01",
+    "bench:live:optional:c01": "node benchmarks/automation/run-live-benchmarks.mjs --ids C-01",
+    "bench:live:raw": "node benchmarks/automation/run-live-benchmarks.mjs --stack raw",
+    "bench:live:raw:pilot": "node benchmarks/automation/run-live-benchmarks.mjs --stack raw --ids A-01,B-01,E-01",
+    "bench:live:raw:optional:c01": "node benchmarks/automation/run-live-benchmarks.mjs --stack raw --ids C-01",
+    "bench:live:raw:smoke": "node benchmarks/automation/run-live-benchmarks.mjs --stack raw --ids E-01,A-01,B-01",
+    "bench:live:raw:dev": "node benchmarks/automation/run-live-benchmarks.mjs --stack raw --ids A-01,A-02,A-03,B-01,B-02,B-03,E-01,F-03",
+    "bench:live:raw:milestone": "node benchmarks/automation/run-live-benchmarks.mjs --stack raw --ids A-01,A-02,A-03,B-01,B-02,B-03,D-02,E-01,F-03",
+    "bench:live:smoke": "node benchmarks/automation/run-live-benchmarks.mjs --ids E-01,A-01,B-01",
+    "bench:live:dev": "node benchmarks/automation/run-live-benchmarks.mjs --ids A-01,A-02,A-03,B-01,B-02,B-03,E-01,F-03",
+    "bench:live:expanded": "node benchmarks/automation/run-live-benchmarks.mjs --ids A-01,A-02,A-03,B-01,B-02,B-03,D-02,E-01,F-03",
+    "bench:live:milestone": "node benchmarks/automation/run-live-benchmarks.mjs --ids A-01,A-02,A-03,B-01,B-02,B-03,D-02,E-01,F-03",
+    "bench:live:full": "node benchmarks/automation/run-live-benchmarks.mjs"
+  },
+  "peerDependencies": {
+    "@oh-my-pi/pi-coding-agent": "18.0.6"
+  },
+  "devDependencies": {
+    "@marcfargas/pi-test-harness": "^0.6.1",
+    "@types/node": "^25.6.0"
+  }
+}

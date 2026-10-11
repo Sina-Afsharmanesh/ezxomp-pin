@@ -1,0 +1,37 @@
+{
+  "name": "@ezxomp/evo",
+  "version": "0.1.7-ezxomp.5",
+  "description": "OMP extension: evo mode toggle. Restricts the main agent and/or subagents to a marketplace-plugin tool set (every registered tool incl. all marketplace-plugin tools, eval-first; read for protocol URIs only; blocks native write/bash/edit/glob/grep).",
+  "keywords": [
+    "omp-package",
+    "evo-mode",
+    "eval-first",
+    "tool-restriction",
+    "hooks"
+  ],
+  "license": "Apache-2.0",
+  "type": "module",
+  "files": [
+    "extensions",
+    "skills",
+    "README.md",
+    "LICENSE"
+  ],
+  "peerDependencies": {
+    "@oh-my-pi/pi-coding-agent": "18.0.6",
+    "@oh-my-pi/omptype": "*"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "vitest": "^4.1.11"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "omp": {
+    "extensions": [
+      "./extensions/index.ts"
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "@ezxomp/compact-eng",
+  "version": "2.0.0-ezxomp.0",
+  "description": "Compact Engineering governor and observer for OMP-native Shake, text compaction, and snapcompact",
+  "type": "module",
+  "license": "MIT",
+  "author": "Vendex (pi-ultra-compact origin), ezxomp (Compact Engineering rearchitecture)",
+  "repository": { "type": "git", "url": "git+https://tangled.org/expi.tngl.sh/ezxomp", "directory": "plugins/compact-eng" },
+  "keywords": ["omp-package", "compact-eng", "compaction", "context-management", "shake", "snapcompact"],
+  "omp": {
+    "extensions": ["extensions/index.ts"],
+    "skills": ["skills"],
+    "settings": {
+      "autoCompact": { "type": "boolean", "default": true },
+      "watermark": { "type": "number", "default": 0.7, "min": 0.01, "max": 0.99, "step": 0.01 },
+      "watermarkTokens": { "type": "number", "min": 1, "step": 1, "description": "Optional absolute trigger; unset uses percentage only." },
+      "releaseWatermark": { "type": "number", "default": 0.55, "min": 0, "max": 0.98, "step": 0.01 },
+      "outputHeadroomTokens": { "type": "number", "default": 4096, "min": 0, "step": 1 },
+      "mode": { "type": "enum", "default": "text", "values": ["text", "snapcompact"] },
+      "cooldownTurns": { "type": "number", "default": 2, "min": 0, "step": 1 },
+      "maxConsecutiveFailures": { "type": "number", "default": 3, "min": 1, "step": 1 },
+      "circuitCooldownTurns": { "type": "number", "default": 5, "min": 1, "step": 1 },
+      "minProgressTokens": { "type": "number", "default": 4096, "min": 0, "step": 1 }
+    }
+  },
+  "peerDependencies": { "@oh-my-pi/pi-coding-agent": "18.0.6" },
+  "files": ["extensions", "skills", "AGENTS.md", "README.md", "CHANGELOG.md", "UPSTREAM.json", "LICENSE"],
+  "engines": { "bun": ">=1.3.14" }
+}
