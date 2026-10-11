@@ -24,7 +24,8 @@ import type { ExtensionAPI, ExtensionContext } from "@oh-my-pi/pi-coding-agent";
 import { HEARTBEAT_INTERVALS } from "./constants.ts";
 import { defaultCookState, loadCookState, saveCookState, syncFromBacklog, createStoreContext, chainNameAndDefinition } from "./state.ts";
 import { loadModelConfig } from "./config.ts";
-import { startWatcher, stopWatcher, pollWatchedTasks, __resetWatchState, __resetAllState, getLastWatchSummary } from "./watch.ts";
+import { syncWatcher, stopWatcher, pollWatchedTasks, __resetWatchState, __resetAllState, getLastWatchSummary } from "./watch.ts";
+import { withCookLock } from "./coordination.ts";
 import { cookmodePrompt, getSystemPromptForStage } from "./prompts.ts";
 import {
 	getTaskJson,
@@ -61,13 +62,15 @@ export default function (pi: ExtensionAPI): void {
 
 	// ── Hooks (events) ───────────────────────────────────────────────────────
 	pi.on("turn_start", async (_event, ctx) => {
+		return withCookLock(ctx.cwd, async () => {
 		sc.currentCwd = ctx.cwd;
 		sc.hasUI = ctx.hasUI;
 		sc.lastUi = ctx.hasUI ? ctx.ui : null;
 		registerCookAutocompleteProvider(ctx);
 		const key = sc.normalizeCwd(sc.currentCwd);
 		const reloaded = loadCookState(sc.currentCwd);
-		let state = reloaded.chain?.length || !sc.stores.get(key) ? reloaded : sc.stores.get(key)!;
+		let state = reloaded;
+		sc.stores.set(key, state);
 
 		if (state.chain?.length && state.currentTaskId) {
 			try {
@@ -97,9 +100,11 @@ export default function (pi: ExtensionAPI): void {
 				);
 			}
 		}
+		state = loadCookState(ctx.cwd);
 		sc.stores.set(key, state);
 		sc.refreshWidget();
 		if (state.chain.length) await cookTools.refreshDagr(ctx);
+		}).catch((error) => notify(ctx, `Cook reconciliation failed (fail-closed): ${error instanceof Error ? error.message : String(error)}`, "error"));
 	});
 
 	pi.on("before_agent_start", (event) => {
@@ -335,7 +340,12 @@ export default function (pi: ExtensionAPI): void {
 		sc.lastUi = ctx.hasUI ? ctx.ui : null;
 		registerCookAutocompleteProvider(ctx);
 		const config = loadModelConfig(sc.currentCwd);
-		sc.stores.set(sc.normalizeCwd(sc.currentCwd), loadCookState(sc.currentCwd));
+		try {
+			sc.stores.set(sc.normalizeCwd(sc.currentCwd), loadCookState(sc.currentCwd));
+		} catch (error) {
+			notify(ctx, `Cook startup blocked by state corruption: ${error instanceof Error ? error.message : String(error)}`, "error");
+			return;
+		}
 		// Auto-sync shipped agent profiles: fresh OMP installs get all ten
 		// cook-* profiles without running /cook install; plugin updates
 		// re-sync stale frontmatter (version+hash marker check, cheap when
@@ -373,23 +383,7 @@ export default function (pi: ExtensionAPI): void {
 		if (sc.getStore().cookmode) {
 			notify(ctx, "Cookmode is ON. /cook off to exit.", "info");
 		}
-		const state = sc.getStore();
-		if (state.watch.enabled) {
-			const watchCwd = sc.currentCwd;
-			startWatcher(
-				watchCwd,
-				pi,
-				state,
-				(firedAt, firedWatchId) => {
-					const current = sc.getStoreFor(watchCwd);
-					if (!current.watch.enabled || current.watch.watchId !== firedWatchId) return false;
-					sc.setStoreFor(watchCwd, { ...current, watch: { ...current.watch, lastFiredAt: firedAt } });
-					return sc.normalizeCwd(watchCwd) === sc.normalizeCwd(sc.currentCwd);
-				},
-				() => sc.getStoreFor(watchCwd),
-				() => sc.currentCwd,
-			);
-		}
+		syncWatcher(pi, sc, ctx.cwd);
 		sc.refreshWidget();
 	});
 

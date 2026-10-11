@@ -344,44 +344,38 @@ function modelOptionsWithInfo(id: string, fallback: ModelOptions, detected?: Mod
   else if (effortOptions && effortOptions.length > 0) {
     // Council-corrected ordered tier projection (doc-24 / TASK-113.3): treat
     // the advertised list as ordered wire values. 'none' is a disable sentinel
-    // and never a fallback. Recognized canonical/alias tiers keep same-name
-    // selectors with their raw spelling; any provider-native tier (e.g.
-    // 'ultra') projects the full remaining ordered list monotonically onto the
+    // and never a fallback. Entirely canonical/alias lists keep same-name
+    // selectors with raw spelling; any provider-native tier (e.g. 'ultra')
+    // projects the entire ordered list monotonically onto the
     // six positive host selectors with verbatim values. More than six positive
     // tiers exceeds the host control surface: leave the map unset (explicitly
     // unsupported) rather than silently truncating.
     const positiveTiers = effortOptions.filter((raw) => canonicalEffort(raw) !== "off");
     if (positiveTiers.length > 6) {
-      // Unsupported: future host-vocabulary expansion is outside TASK-113.
+      delete options.thinkingLevelMap;
     } else {
       const map: ThinkingLevelMap = {};
       const selectors: ReasoningEffort[] = ["minimal", "low", "medium", "high", "xhigh", "max"];
-      const used = new Set<ReasoningEffort>();
-      const remainingValues: string[] = [];
-      for (const raw of positiveTiers) {
-        const level = canonicalEffort(raw);
-        if (level && level !== "off" && !used.has(level)) {
-          map[level] = raw;
-          used.add(level);
-        } else if (!level || level === "off") {
-          remainingValues.push(raw);
-        }
-      }
-      const availableSelectors = selectors.filter((s) => !used.has(s));
-      for (let i = 0; i < remainingValues.length && i < availableSelectors.length; i++) {
-        map[availableSelectors[i]] = remainingValues[i];
+      const hasNativeTier = positiveTiers.some((raw) => canonicalEffort(raw) === undefined);
+      for (let i = 0; i < positiveTiers.length; i++) {
+        const raw = positiveTiers[i];
+        const level = hasNativeTier ? selectors[i] : canonicalEffort(raw);
+        if (level && level !== "off" && map[level] === undefined) map[level] = raw;
       }
       if (Object.keys(map).length > 0) options.thinkingLevelMap = map;
     }
   }
 
   if (detectedRecord?.reasoning !== undefined) {
-    if (info.reasoning === false) options.reasoning = "off";
+    if (info.reasoning === false) {
+      options.reasoning = "off";
+      delete options.thinkingLevelMap;
+    }
     else if (options.reasoning === undefined || options.reasoning === "off") options.reasoning = "high";
   } else if (options.reasoning === undefined) {
     options.reasoning = info.reasoning === false ? "off" : "high";
   }
-  if (info.alwaysThinking === true) {
+  if (info.alwaysThinking === true && info.reasoning !== false) {
     options.reasoning = "minimal";
     options.thinkingLevelMap = { off: null };
   }
@@ -408,6 +402,8 @@ export function buildModelEntry(id: string, opts: ModelOptions = {}, ceilingOver
     entry.thinking = translated;
   } else if (options.reasoning !== undefined && options.reasoning !== "off") {
     applyReasoning(entry, options.reasoning, ceilingOverrides);
+  } else if (options.reasoning === "off") {
+    entry.reasoning = false;
   }
   return entry;
 }
@@ -445,7 +441,7 @@ function buildProviderConfigFromInput(input: BuildProviderConfigInput): Provider
     : serializeApiKey(input.apiKey as Parameters<typeof serializeApiKey>[0], ollama ? "ollama" : undefined);
   if (serializedKey !== undefined) provider.apiKey = serializedKey;
   if (ollama) {
-    provider.apiKey = "ollama";
+    if (serializedKey === undefined) provider.apiKey = "ollama";
     // Kept false unless probe evidence proves support: 9router-fronted Ollama
     // providers 400 with "json: cannot unmarshal bool into Go value of type
     // api.ToolProperty" on tools-bearing chat completions, so never claim

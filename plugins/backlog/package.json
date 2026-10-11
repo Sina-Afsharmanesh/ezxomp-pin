@@ -1,6 +1,6 @@
 {
   "name": "@ezxomp/backlog",
-  "version": "0.1.0-ezxomp.0",
+  "version": "0.1.0-ezxomp.1",
   "description": "Backlog.md integration plugin for OMP. Registers the full backlog_* tool suite over the backlog CLI, shared task helpers, and the Backlog.md workflow + quality-standards instruction overlay that is injected as the default system-prompt source for all agent work.",
   "keywords": [
     "omp-package",

@@ -1,6 +1,6 @@
 {
   "name": "@ezxomp/augment",
-  "version": "1.0.9-ezxomp.0",
+  "version": "1.0.9-ezxomp.1",
   "description": "Augment-style prompt rewriter for OMP — one command, stronger prompts",
   "keywords": [
     "omp-package",

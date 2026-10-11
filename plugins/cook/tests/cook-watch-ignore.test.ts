@@ -9,6 +9,7 @@ import makePi, {
 	type PiStub,
 	type CtxStub,
 } from "./__mocks__/pi-coding-agent";
+import { stopWatcher } from "../extensions/watch.ts";
 
 // TASK-34 regression: the backlog/ fs.watch callback must ignore entries that
 // are internal to the cook machinery itself. state save (cook-state.json),
@@ -66,6 +67,7 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
+	stopWatcher();
 	rmSync(workDir, { recursive: true, force: true });
 });
 

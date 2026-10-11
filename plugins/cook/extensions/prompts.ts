@@ -140,7 +140,7 @@ export function getSystemPromptForStage(stage: string, role: string): string {
 				"4. Append notes using backlog_task_edit --append-notes",
 				"5. Verify AC with objective evidence — run tests, show output, not just 'looks good'",
 				"6. Reject final summaries that lack verification evidence",
-				"7. Journal the gate intent before running it and the gate record after it with cook_journal; include the exact checked hash and result.",
+				"7. Journal gate intent before running it and record after with cook_journal({task_id,event:'gate',stage:'verify',dispatch_stage,hash,green,note}); use exact dispatch_stage from the verifier dispatch and the checked revision hash.",
 				"8. Never dispatch cook-judge on a red gate. If validation fails, return a typed finding {source,file,line,what,kickTo} with source=validator and kickTo=implement for the worker.",
 				"9. Maintain only facts you directly verify, invalidate, create, or move in the context packet; never reconstruct it independently.",
 			].join("\n"),

@@ -1,9 +1,9 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 import type { ExtensionAPI, ExtensionContext } from "@oh-my-pi/pi-coding-agent";
 import { STATE_FILE, CHAIN_PATTERNS, MOD_ID } from "./constants.ts";
 import type { CookState, StoreContext, TaskInfo } from "./types.ts";
 import { getTaskJson, runBacklogCli } from "@ezxomp/backlog/extensions/index.ts";
+import { canonicalCookRoot, readCookFile, withCookLockSync, writeCookFileAtomic } from "./coordination.ts";
 
 /** OMP's string-array widget has no width callback; keep a fixed, testable cap. */
 export const WIDGET_MAX_WIDTH = 160;
@@ -21,9 +21,23 @@ function taskKey(id: string): string {
 	return id.trim().toUpperCase();
 }
 
-function isTerminalTask(task: Pick<TaskInfo, "status">): boolean {
-	const status = task.status.trim().toLowerCase();
-	return status === "done" || status === "archived";
+export function isTerminalStatus(status: string): boolean {
+	return ["done", "archived", "closed"].includes(status.trim().toLowerCase());
+}
+
+export function isReadyTask(task: TaskInfo, tasks: TaskInfo[], claims: CookState["claims"]): boolean {
+	const status = task.status.trim().toLowerCase().replace(/\s+/g, " ");
+	if (!["todo", "to do", "in progress"].includes(status)) return false;
+	if (Object.keys(claims).some((id) => taskKey(id) === taskKey(task.id))) return false;
+	return (task.dependencies ?? []).every((dependency) =>
+		tasks.some((entry) => taskKey(entry.id) === taskKey(dependency) && isTerminalStatus(entry.status)),
+	);
+}
+
+export function compareReadyTasks(a: TaskInfo, b: TaskInfo): number {
+	const priorities: Record<string, number> = { high: 0, medium: 1, low: 2 };
+	const rank = (task: TaskInfo) => priorities[task.priority?.trim().toLowerCase() ?? ""] ?? 3;
+	return rank(a) - rank(b) || a.id.localeCompare(b.id, undefined, { numeric: true });
 }
 
 async function getAllTasksStrict(pi: ExtensionAPI, cwd: string): Promise<TaskInfo[] | null> {
@@ -37,6 +51,11 @@ async function getAllTasksStrict(pi: ExtensionAPI, cwd: string): Promise<TaskInf
 	try {
 		const tasks = JSON.parse(result.stdout).tasks;
 		if (!Array.isArray(tasks)) return null;
+		if (!tasks.every((task) => task && typeof task === "object" &&
+			typeof task.id === "string" && typeof task.status === "string" &&
+			(task.parent_task_id === undefined || typeof task.parent_task_id === "string") &&
+			(task.parentTaskId === undefined || typeof task.parentTaskId === "string") &&
+			(task.dependencies === undefined || Array.isArray(task.dependencies)))) return null;
 		return tasks.map((task: Record<string, unknown>) => ({
 			...task,
 			parent_task_id: (task.parent_task_id ?? task.parentTaskId) as string | undefined,
@@ -77,10 +96,7 @@ export function widgetCountsFor(state: CookState, tasks: TaskInfo[] | undefined)
 	// with no tasks and must not accidentally reuse watchList as a substitute.
 	if (!tasks) {
 		const watched = Object.values(state.watchList ?? {});
-		const done = watched.filter((task) => {
-			const status = task.lastStatus.trim().toLowerCase();
-			return status === "done" || status === "archived";
-		}).length;
+		const done = watched.filter((task) => isTerminalStatus(task.lastStatus)).length;
 		return { ready: 0, done, total: watched.length };
 	}
 
@@ -91,16 +107,8 @@ export function widgetCountsFor(state: CookState, tasks: TaskInfo[] | undefined)
 		: [];
 	if (!children.length) return { ready: 0, done: 0, total: 0 };
 
-	const terminalIds = new Set(
-		tasks.filter(isTerminalTask).map((task) => taskKey(task.id)),
-	);
-	const done = children.filter(isTerminalTask).length;
-	const ready = children.filter((task) =>
-		!isTerminalTask(task) &&
-		(task.dependencies ?? [])
-			.filter((dependency) => !parentKey || taskKey(dependency) !== parentKey)
-			.every((dependency) => terminalIds.has(taskKey(dependency))),
-	).length;
+	const done = children.filter((task) => isTerminalStatus(task.status)).length;
+	const ready = children.filter((task) => isReadyTask(task, tasks, state.claims)).length;
 	return { ready, done, total: children.length };
 }
 
@@ -158,7 +166,7 @@ async function readWidgetTasks(pi: ExtensionAPI, cwd: string): Promise<TaskInfo[
 	}
 }
 function statePathFor(cwd: string): string {
-	return join(cwd, STATE_FILE);
+	return join(canonicalCookRoot(cwd), STATE_FILE);
 }
 
 export function defaultCookState(): CookState {
@@ -197,27 +205,76 @@ export function defaultCookState(): CookState {
 }
 
 export function loadCookState(cwd: string): CookState {
+	const path = statePathFor(cwd);
+	const content = readCookFile(path, "state");
+	if (content === undefined) return defaultCookState();
 	try {
-		const p = statePathFor(cwd);
-		if (existsSync(p)) {
-			const loaded = { ...defaultCookState(), ...JSON.parse(readFileSync(p, "utf-8")) } as CookState;
-			// Legacy tolerance: string claim values (pre-6.0 shape) normalize lazily; consumers
-			// reading claims must handle both shapes. See extensions/journal.ts claimClaim.
-			if (loaded.maxParallelTasks === undefined || loaded.maxParallelTasks === null) {
-				loaded.maxParallelTasks = 1;
-			}
-			return loaded;
-		}
-	} catch {}
-	return defaultCookState();
+		const parsed: unknown = JSON.parse(content);
+		if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) throw new Error("expected a state object");
+		const fields = parsed as Record<string, unknown>;
+		const defaults = defaultCookState();
+		validateCookState(fields, true);
+		const loaded = { ...defaults, ...fields, watch: { ...defaults.watch, ...(fields.watch as object) } } as CookState;
+		validateCookState(loaded as unknown as Record<string, unknown>);
+		return loaded;
+	} catch (error) {
+		throw new Error(`Invalid Cook state: ${path}; restore valid state before continuing`, { cause: error });
+	}
 }
 
 export function saveCookState(cwd: string, state: CookState): void {
-	try {
-		const p = statePathFor(cwd);
-		mkdirSync(dirname(p), { recursive: true });
-		writeFileSync(p, JSON.stringify(state, null, 2));
-	} catch {}
+	withCookLockSync(cwd, () => {
+		validateCookState(state as unknown as Record<string, unknown>);
+		writeCookFileAtomic(statePathFor(cwd), JSON.stringify(state, null, 2));
+	});
+}
+
+function validateCookState(parsed: Record<string, unknown>, partial = false): void {
+	for (const [key, fallback] of Object.entries(defaultCookState())) {
+		const value = parsed[key];
+		if (value === undefined) continue;
+		const valid = Array.isArray(fallback) ? Array.isArray(value)
+			: typeof fallback === "object" && fallback !== null ? typeof value === "object" && value !== null && !Array.isArray(value)
+			: fallback === null ? value === null || typeof value === "string"
+			: fallback === undefined ? typeof value === "string"
+			: typeof value === typeof fallback;
+		if (!valid) throw new Error(`invalid ${key}`);
+	}
+	if (partial) return;
+	const state = parsed as unknown as CookState;
+	if (![state.currentStage, state.maxReviewCycles, state.maxParallelTasks].every(Number.isSafeInteger) ||
+		state.currentStage < 0 || state.maxReviewCycles < 1 || state.maxParallelTasks < 1) throw new Error("invalid stage or limits");
+	if (![...state.chain, ...state.taskIds, ...state.adhdFrames].every((value) => typeof value === "string")) throw new Error("invalid task or stage IDs");
+	for (const claim of Object.values(state.claims)) {
+		if (typeof claim === "string") continue; // Legacy lane-only claim format.
+		if (typeof claim !== "object" || claim === null || Array.isArray(claim) ||
+			typeof claim.by !== "string" || typeof claim.at !== "string") throw new Error("invalid claim");
+	}
+	const watch = state.watch;
+	if (typeof watch.enabled !== "boolean" || !Number.isFinite(watch.debounceMs) || watch.debounceMs < 0 ||
+		!["auto", "manual"].includes(watch.trigger) ||
+		[watch.lastFiredAt, watch.watchId].some((value) => value !== null && typeof value !== "string")) throw new Error("invalid watch");
+}
+
+/** Apply only locally changed leaves; untouched disk fields belong to their latest writer. */
+function mergeStateDelta(previous: unknown, next: unknown, current: unknown): unknown {
+	if (JSON.stringify(previous) === JSON.stringify(next)) return current;
+	if (Array.isArray(previous) && Array.isArray(next) && Array.isArray(current) &&
+		previous.every((value, index) => JSON.stringify(value) === JSON.stringify(next[index]))) {
+		return [...current, ...next.slice(previous.length)];
+	}
+	if (typeof previous !== "object" || previous === null || Array.isArray(previous) ||
+		typeof next !== "object" || next === null || Array.isArray(next)) return next;
+	const before = previous as Record<string, unknown>;
+	const after = next as Record<string, unknown>;
+	const merged: Record<string, unknown> = Object.create(null);
+	if (typeof current === "object" && current !== null && !Array.isArray(current)) Object.assign(merged, current);
+	for (const key of new Set([...Object.keys(before), ...Object.keys(after)])) {
+		if (JSON.stringify(before[key]) === JSON.stringify(after[key])) continue;
+		if (!(key in after)) delete merged[key];
+		else merged[key] = mergeStateDelta(before[key], after[key], merged[key]);
+	}
+	return merged;
 }
 
 /**
@@ -231,17 +288,6 @@ export function completeChain(state: CookState): CookState {
 	return { ...state, currentStage: last, currentTaskId: null };
 }
 
-function advanceToTask(state: CookState, next: TaskInfo): CookState {
-	const firstWork = state.chain.findIndex((stage) =>
-		["implement", "explore", "review"].includes(stage),
-	);
-	return {
-		...state,
-		currentTaskId: next.id,
-		currentStage: firstWork >= 0 ? firstWork : state.currentStage,
-		taskIds: Array.from(new Set([...state.taskIds, next.id])),
-	};
-}
 
 export async function syncFromBacklog(
 	pi: ExtensionAPI,
@@ -249,80 +295,20 @@ export async function syncFromBacklog(
 	state: CookState,
 ): Promise<CookState> {
 	if (!state.chain.length || !state.currentTaskId) return state;
-
-
 	try {
 		const task = await getTaskJson(pi, state.currentTaskId, cwd);
-		// Null = unreadable/transient (CLI hiccup, missing binary): no-op.
-		// Vanished-task hygiene lives in pollWatchedTasks instead.
-		if (!task) return state;
-
-		if (task.status === "In Progress") return state;
+		if (!task || !isTerminalStatus(task.status)) return state;
 		const all = await getAllTasksStrict(pi, cwd);
 		if (!all) return state;
-		const byId = new Map(all.map((entry) => [entry.id.toUpperCase(), entry]));
-
-		// Preferred: advance to a ready sibling under the done task's parent.
-		const parentId = task.parent_task_id;
-		if ((task.status === "Done" || task.status === "Archived") && parentId) {
-			const done = new Set(
-				all
-					.filter((entry) => entry.status === "Done" || entry.status === "Archived")
-					.map((entry) => entry.id.toUpperCase()),
-			);
-			const ready = all
-				.filter(
-					(entry) =>
-						entry.parent_task_id?.toUpperCase() === parentId.toUpperCase() &&
-						entry.status !== "Done" &&
-						entry.status !== "Archived" &&
-						entry.dependencies.every((dependency) => done.has(dependency.toUpperCase())),
-				)
-				.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
-			if (ready.length > 0) {
-				const next = ready[0];
-				let statusEdit: Awaited<ReturnType<typeof runBacklogCli>>;
-				try {
-					statusEdit = await runBacklogCli(pi, ["task", "edit", next.id, "-s", "In Progress"], cwd);
-				} catch {
-					return state;
-				}
-				if (statusEdit.code !== 0) return state;
-				return advanceToTask(state, next);
-			}
-			// Parent exhausted — fall through to tracked-task recovery.
-		}
-
-		const trackedActive = state.taskIds
-			.map((id) => byId.get(id.toUpperCase()))
-			.filter((entry): entry is NonNullable<typeof entry> => Boolean(entry) && entry!.status === "In Progress");
-		if (trackedActive.length === 1) {
-			return advanceToTask(state, trackedActive[0]!);
-		}
-
-		if (task.status !== "Done" && task.status !== "Archived") return state;
-
-		// Leaf / top-level task, or exhausted parent: recover the next
-		// actionable task from the ones this cook session tracks. Without
-		// this the widget dead-ends on IMPLEMENT forever (TASK-15.6 case).
-		const pending = state.taskIds
-			.map((id) => byId.get(id.toUpperCase()))
-			.filter((t): t is NonNullable<typeof t> => Boolean(t) && t!.status !== "Done" && t!.status !== "Archived")
-			.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
-
-		if (pending.length > 0) {
-			const next = pending[0]!;
-			let statusEdit: Awaited<ReturnType<typeof runBacklogCli>>;
-			try {
-				statusEdit = await runBacklogCli(pi, ["task", "edit", next.id, "-s", "In Progress"], cwd);
-			} catch {
-				return state;
-			}
-			if (statusEdit.code !== 0) return state;
-			return advanceToTask(state, next);
-		}
-
-		// Nothing actionable left in the session's tracked set — done.
+		// Reconciliation never activates or selects another task. Open siblings
+		// remain with their owners until an explicit cook_next transaction.
+		const parent = task.parent_task_id ? taskKey(task.parent_task_id) : undefined;
+		const open = all.some((entry) => taskKey(entry.id) !== taskKey(task.id) &&
+			!isTerminalStatus(entry.status) && (parent
+				? entry.parent_task_id !== undefined && taskKey(entry.parent_task_id) === parent
+				: (entry.parent_task_id !== undefined && taskKey(entry.parent_task_id) === taskKey(task.id)) ||
+					state.taskIds.some((id) => taskKey(id) === taskKey(entry.id))));
+		if (open) return state;
 		return completeChain(state);
 	} catch {
 		return state;
@@ -366,6 +352,7 @@ function cookActivityParts(state: CookState): { stage: string; role: string; tas
 export function createStoreContext(pi: ExtensionAPI): StoreContext {
 	const stores = new Map<string, CookState>();
 	const taskSnapshots = new Map<string, TaskInfo[] | undefined>();
+	const baselines = new Map<string, { source: CookState; snapshot: CookState }>();
 	let currentCwd = process.cwd();
 	let lastUi: ExtensionContext["ui"] | null = null;
 	let hasUI = false;
@@ -395,9 +382,7 @@ export function createStoreContext(pi: ExtensionAPI): StoreContext {
 	};
 	const observedUi = new WeakMap<object, ActivityObserver>();
 
-	function normalizeCwd(cwd: string): string {
-		return cwd.replace(/\/+$/, "") || "/";
-	}
+	const normalizeCwd = canonicalCookRoot;
 
 	function getStoreFor(cwd: string): CookState {
 		const key = normalizeCwd(cwd);
@@ -406,7 +391,10 @@ export function createStoreContext(pi: ExtensionAPI): StoreContext {
 			s = loadCookState(key);
 			stores.set(key, s);
 		}
-		return s;
+		if (baselines.get(key)?.source !== s) {
+			baselines.set(key, { source: s, snapshot: structuredClone(s) });
+		}
+		return structuredClone(s);
 	}
 
 	function getStore(): CookState {
@@ -563,9 +551,17 @@ export function createStoreContext(pi: ExtensionAPI): StoreContext {
 
 	function setStoreFor(cwd: string, next: CookState): void {
 		const key = normalizeCwd(cwd);
-		stores.set(key, next);
-		saveCookState(key, next);
-		pi.appendEntry(MOD_ID, next);
+		withCookLockSync(key, () => {
+			const cached = stores.get(key);
+			const baseline = baselines.get(key);
+			const disk = loadCookState(key);
+			const previous = baseline && baseline.source === cached ? baseline.snapshot : cached ?? disk;
+			const committed = mergeStateDelta(previous, next, disk) as CookState;
+			saveCookState(key, committed);
+			stores.set(key, committed);
+			baselines.set(key, { source: committed, snapshot: structuredClone(committed) });
+			pi.appendEntry(MOD_ID, committed);
+		});
 		if (key === normalizeCwd(currentCwd)) {
 			const token = ++activityGeneration;
 			refreshWidget(token);

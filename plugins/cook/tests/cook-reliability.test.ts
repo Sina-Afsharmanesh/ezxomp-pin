@@ -109,10 +109,13 @@ describe("cook orchestration reliability", () => {
 			currentTaskId: "TASK-1",
 			taskIds: ["TASK-1"],
 		});
+		await invoke("cook_dispatch_validator", { task_id: "TASK-1" }, ctx);
+		const dispatch = sc.getStoreFor(workDir).agentLog.at(-1)!;
 		expect((await invoke("cook_journal", {
 			task_id: "TASK-1",
 			event: "gate",
 			stage: "verify",
+			dispatch_stage: dispatch.stage,
 			hash: "red-receipt",
 			green: false,
 		}, ctx)).isError).toBeUndefined();

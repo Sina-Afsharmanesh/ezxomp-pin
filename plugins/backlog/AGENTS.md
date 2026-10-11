@@ -9,17 +9,19 @@ Backlog.md integration plugin for OMP. Registers the `backlog_*` tool suite over
 
 ## Local Contracts
 - Imports `Type` from `typebox` (not `@oh-my-pi/omptype/typebox`). OMP's marketplace install does not run npm/bun install, so peer packages are not on the plugin's module resolution path; the host ships the original `typebox` in the plugin node_modules.
-- Peer dep: `@oh-my-pi/pi-coding-agent` 17.3.8.
+- Peer dep: `@oh-my-pi/pi-coding-agent` 18.0.6.
 - `registerBacklogTools(pi, sc)` takes a `BacklogToolsContext` (`{ currentCwd: string }`). Cook passes its full `StoreContext`; the standalone entry passes `{ currentCwd: process.cwd() }`.
 - Instruction strings in `extensions/instructions.ts` MUST stay verbatim output of `backlog instructions overview|task-creation|task-execution|task-finalization` (backlog.md 1.50.1). Regenerate from the CLI when upgrading backlog.md; never paraphrase.
 - The overlay hook is unconditional — this plugin is the default instruction source for general model work.
+- Document creation is complete only after content/tags update succeeds; partial failures retain the created ID and return an error with update-only recovery, never create a duplicate.
+- Public document types map to CLI `specification|guide|other`; create tags use the supported follow-up update command.
 
 ## Work Guidance
 - Sub-modules under `extensions/`: `types.ts`, `helpers.ts`, `tools.ts`, `instructions.ts`, `index.ts`.
 - Tool additions belong in `tools.ts` wrapping `backlog <command>` flags 1:1; keep descriptions aligned with `backlog <command> --help`.
 
 ## Verification
-- `bun test plugins/backlog` (vitest, see `tests/`) from repo root; type-check via root `just check`.
+- `bun run --cwd plugins/backlog test` from repo root runs Vitest; type-check via root `just check`.
 
 ## Child DOX Index
 No child AGENTS.md files needed.

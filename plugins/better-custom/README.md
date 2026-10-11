@@ -73,6 +73,8 @@ The add flow and metadata refresh can probe compatible gateway endpoints. Preset
 
 Model metadata is merged in tiers: probe results take precedence, known local rules fill gaps, and built-in defaults fill anything still unknown. This keeps manually entered models usable while letting a gateway supply its own context, output, vision, and reasoning information.
 
+Explicit `reasoning: false` disables thinking even when an older saved model enabled it. Refresh preserves custom effort wire overrides when the gateway supplies no new effort tiers. If any advertised positive tier is provider-native, the complete ordered list maps monotonically onto host effort selectors; entirely canonical lists retain their same-name selectors.
+
 ## YAML and JSON configuration
 
 The wizard preserves the discovered models-config path and format. When Bun YAML support is available, YAML is parsed and written with Bun. Without it, the YAML path can use indented JSON, which is valid YAML. A genuine YAML document that needs YAML parsing without that capability fails with a clear error and is not overwritten.
@@ -84,6 +86,7 @@ Choose a literal key, an environment reference, a shell-command reference, or no
 - `$OPENAI_API_KEY` stores an environment-variable reference.
 - `!command` stores a shell-command reference.
 - Literal keys, environment references, and command references are stored verbatim in the models configuration.
+- Ollama uses `ollama` as its placeholder only without a supplied credential; authenticated Ollama gateways keep their literal or reference key.
 - The wizard resolves a reference itself only for an explicit probe. Independently, once a provider is registered, the host model registry may resolve references during registration (see "Native /model registration"). Resolved credentials are never logged by this extension.
 
 The models configuration is not a secret store. Protect its filesystem permissions and avoid placing a literal key there when an environment reference is suitable.

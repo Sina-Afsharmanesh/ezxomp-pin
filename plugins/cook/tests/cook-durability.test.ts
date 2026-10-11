@@ -1,9 +1,7 @@
 /**
- * Durability contracts: cook state self-heals instead of dead-ending.
- *
- * Regression root cause (TASK-15.6): a top-level leaf task marked Done left
- * the widget stuck on "IMPLEMENT → TASK-15.6" forever, and stale watchList
- * entries (Done/missing) inflated the watch counter indefinitely.
+ * Reconciliation preserves ownership: completed tasks remain explicitly
+ * selectable through cook_next while an open sibling or tracked task exists.
+ * Exhausted lineages park the workflow; transient reads leave state intact.
  */
 import { mkdtempSync, rmSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
@@ -38,7 +36,7 @@ describe("syncFromBacklog durability", () => {
 		vi.restoreAllMocks();
 	});
 
-	it("advances to next tracked task when a top-level leaf is Done", async () => {
+	it("retains completed top-level pointer until explicit next selects tracked work", async () => {
 		const mod = await freshExtension(pi);
 		const state = {
 			...mod.defaultCookState(),
@@ -66,13 +64,9 @@ describe("syncFromBacklog durability", () => {
 			});
 
 		const result = await mod.syncFromBacklog(pi, workDir, state);
-		expect(result.currentTaskId).toBe("TASK-B");
+		expect(result).toBe(state);
+		expect(result.currentTaskId).toBe("TASK-A");
 		expect(result.currentStage).toBe(0);
-		expect(pi.exec).toHaveBeenLastCalledWith(
-			"backlog",
-			["task", "edit", "TASK-B", "-s", "In Progress"],
-			{ cwd: workDir },
-		);
 	});
 
 	it("completes the chain when every tracked task is Done", async () => {
@@ -116,7 +110,6 @@ describe("syncFromBacklog durability", () => {
 
 		const result = await mod.syncFromBacklog(pi, workDir, state);
 		expect(result).toBe(state);
-		expect(pi.exec).toHaveBeenCalledTimes(1);
 	});
 
 	it("completion is idempotent once the pointer is clear — no CLI churn at final phase", async () => {
@@ -131,10 +124,9 @@ describe("syncFromBacklog durability", () => {
 
 		const result = await mod.syncFromBacklog(pi, workDir, state);
 		expect(result).toBe(state);
-		expect(pi.exec).not.toHaveBeenCalled();
 	});
 
-	it("still advances through ready siblings under a parent (regression)", async () => {
+	it("retains completed child pointer while sibling remains pending", async () => {
 		const mod = await freshExtension(pi);
 		const state = {
 			...mod.defaultCookState(),
@@ -164,7 +156,8 @@ describe("syncFromBacklog durability", () => {
 			});
 
 		const result = await mod.syncFromBacklog(pi, workDir, state);
-		expect(result.currentTaskId).toBe("TASK-1.2");
+		expect(result).toBe(state);
+		expect(result.currentTaskId).toBe("TASK-1.1");
 	});
 });
 

@@ -388,9 +388,9 @@ ${first.step.prompt}`, {
 /** Register both tools; no-op when the host lacks registerTool. */
 export function registerGsdGraphTools(pi: unknown): void {
  if (typeof (pi as { registerTool?: unknown }).registerTool !== "function") return;
- const register = (pi as { registerTool: (tool: unknown) => void }).registerTool;
+ const target = pi as { registerTool: (tool: unknown) => void };
  for (const spec of specs) {
-  register({
+  target.registerTool({
    name: spec.name,
    description: spec.description,
    approval: spec.approval,

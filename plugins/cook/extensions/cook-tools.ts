@@ -4,17 +4,19 @@
 // node_modules, so import the JSON-Schema builder from there instead.
 import { Type } from "typebox";
 import { resolve } from "node:path";
-import type { ExtensionAPI, ExtensionContext } from "@oh-my-pi/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext, ToolDefinition } from "@oh-my-pi/pi-coding-agent";
 import type { TSchema } from "@oh-my-pi/pi-ai";
 import { CHAIN_PATTERNS, ROLES } from "./constants.ts";
 import type { Role } from "./constants.ts";
-import type { AdhdIdea, StoreContext, TaskInfo, TypedFinding } from "./types.ts";
+import type { AdhdIdea, AgentLogEntry, StoreContext, TaskInfo, TypedFinding } from "./types.ts";
 import { getTaskJson, getAllTasks, computeReadySet, readyChildren, runBacklogCli } from "@ezxomp/backlog/extensions/index.ts";
 import { describeModel, formatModelForContext, listModels, loadModelConfig, resolveCookConfig, saveModelConfig, runModelConfigWizard, validateModelSelection } from "./config.ts";
 import { proposeChain, formatChainProposal, cookKickoffMessage } from "./prompts.ts";
 import { installCookAgents, ompHome } from "./agents.ts";
-import { defaultCookState, chainNameAndDefinition, widgetCountsFor } from "./state.ts";
-import { appendIntent, appendRecord, appendGate, appendExternal, readJournal } from "./journal.ts";
+import { defaultCookState, loadCookState, chainNameAndDefinition, widgetCountsFor, isReadyTask, compareReadyTasks, isTerminalStatus } from "./state.ts";
+import { withCookLock } from "./coordination.ts";
+import { syncWatcher } from "./watch.ts";
+import { appendIntent, appendRecord, appendGate, appendExternal, readJournal, type JournalEntry } from "./journal.ts";
 import { projectDagr, buildDagrProjectionInput } from "./dagr.ts";
 import { CookDagOverlay, cookToolRenderers, type CookDagOverlayResult } from "./renderers.ts";
 
@@ -64,8 +66,52 @@ async function loadTasksStrict(
 	}
 }
 
+function currentAttempt(journal: JournalEntry[]): number {
+	return journal.findLast((entry) => entry.event === "intent" && entry.stage === "cycle")?.seq ?? -1;
+}
+
+function currentDispatches(log: AgentLogEntry[], journal: JournalEntry[], taskId: string, role?: string): AgentLogEntry[] {
+	const boundary = currentAttempt(journal);
+	return log.filter((dispatch) => dispatch.taskId.toUpperCase() === taskId.toUpperCase() &&
+		(!role || dispatch.role === role) && journal.some((entry) => entry.event === "intent" &&
+			entry.stage === dispatch.stage && entry.seq > boundary));
+}
+
+function dispatchTerminal(journal: JournalEntry[], dispatch: AgentLogEntry): JournalEntry | undefined {
+	const intent = journal.findLast((entry) => entry.event === "intent" && entry.stage === dispatch.stage);
+	return intent && (journal.findLast((entry) => entry.seq > intent.seq && entry.stage === dispatch.stage && entry.event === "gate" && entry.note === "red") ??
+		journal.findLast((entry) => entry.seq > intent.seq && entry.stage === dispatch.stage && entry.event === "record") ??
+		journal.findLast((entry) => entry.seq > intent.seq && entry.stage === dispatch.stage && entry.event === "gate"));
+}
+
+function supersedeAttempt(cwd: string, sc: StoreContext, taskId: string, role: "validator" | "judge", dispatchStage?: string): string | undefined {
+	if (!dispatchStage) return undefined;
+	const journal = readJournal(cwd, taskId);
+	const orphan = currentDispatches(sc.getStoreFor(cwd).agentLog, journal, taskId, role).find((entry) => entry.stage === dispatchStage);
+	if (!orphan || dispatchTerminal(journal, orphan)) return "supersede must identify an unsettled current dispatch of this role.";
+	appendIntent(cwd, taskId, "cycle", `Explicitly superseded orphan ${dispatchStage}; dispatch fresh specialists for this attempt.`);
+	return undefined;
+}
+
 // fallow-ignore-next-line complexity
 export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refreshDagr: (ctx: ExtensionContext) => Promise<void> } {
+	function registerTool<P extends TSchema>(definition: ToolDefinition<P>): void {
+		pi.registerTool<P>({
+			...definition,
+			async execute(id, params, signal, onUpdate, ctx) {
+				try {
+					const target = definition.name === "cook_reset" && params && typeof params === "object" &&
+						"cwd" in params && typeof params.cwd === "string" ? params.cwd : ctx.cwd;
+					return await withCookLock(target, async () => {
+						sc.stores.set(sc.normalizeCwd(target), loadCookState(target));
+						return definition.execute(id, params, signal, onUpdate, ctx);
+					});
+				} catch (error) {
+					return { content: [{ type: "text", text: `Cook transaction failed (fail-closed): ${error instanceof Error ? error.message : String(error)}` }], isError: true };
+				}
+			},
+		});
+	}
 	/**
 	 * Build the dispatch payload a cook_dispatch_* tool hands back to the
 	 * orchestrator. Durable contract, not prose to re-interpret: the exact
@@ -148,6 +194,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			catch (error) { return { ok: false, text: `journal intent failed (fail-closed): ${error instanceof Error ? error.message : String(error)}` }; }
 			sc.setStore({ ...cs, agentLog: [...cs.agentLog, { taskId, stage, role: roleName, model: loadModelConfig(ctx.cwd)[roleName as Role] ?? "(current)", timestamp }] });
 			record = `Record the specialist outcome with cook_record_result and dispatch_stage="${stage}".`;
+			if (roleName === "validator") record += ` Validator gate: cook_journal({task_id:"${taskId}",event:"gate",stage:"verify",dispatch_stage:"${stage}",hash:<checked revision>,green:<result>}).`;
 			await pushDagr(ctx);
 		}
 		return {
@@ -259,12 +306,14 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 	 */
 	const checkGateGreen = (taskId: string): string | null => {
 		const cs = sc.getStore();
-		const gates = cs.gateResults?.[taskId] ?? [];
-		const last = gates[gates.length - 1];
-		const journalGate = [...readJournal(sc.currentCwd, taskId)]
-			.reverse()
-			.find((entry) => entry.event === "gate" && entry.stage === "verify");
-		const isRed = last?.passed === false || journalGate?.note === "red";
+		const journal = readJournal(sc.currentCwd, taskId);
+		const validators = currentDispatches(cs.agentLog, journal, taskId, "validator");
+		const isRed = validators.length
+			? validators.some((entry) => {
+				const terminal = dispatchTerminal(journal, entry);
+				return terminal?.event === "gate" ? terminal.note === "red" : terminal?.event === "record" && JSON.parse(terminal.note ?? "{}").outcome !== "success";
+			})
+			: journal.some((entry) => entry.seq > currentAttempt(journal) && entry.event === "gate" && entry.stage === "verify" && entry.note === "red");
 		if (isRed) {
 			return (
 				"BLOCKED: the full-suite gate is RED for " + taskId +
@@ -348,7 +397,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 
 
 
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_config",
 		label: "cook_config",
 		description:
@@ -460,7 +509,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			};
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_propose",
 		label: "cook_propose",
 		description: "Propose a workflow chain for a task.",
@@ -500,7 +549,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			};
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_start",
 		label: "cook_start",
 		description: "Start an approved workflow chain for a task.",
@@ -551,8 +600,15 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 					content: [{ type: "text", text: `Cannot start cook: task activation failed: ${statusEdit.stderr || statusEdit.stdout}` }],
 					isError: true,
 				};
+			const prior = sc.getStore();
+			appendIntent(ctx.cwd, task.id, "cycle", "Workflow started; prior stage attempts superseded.");
 			sc.setStore({
 				...defaultCookState(),
+				claims: prior.claims,
+				maxParallelTasks: prior.maxParallelTasks,
+				watch: prior.watch,
+				watchList: prior.watchList,
+				agentLog: prior.agentLog,
 				chain: chain.map((p) => p.name),
 				currentStage: 0,
 				currentTaskId: task.id.toUpperCase(),
@@ -570,7 +626,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			};
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_status",
 		label: "cook_status",
 		description: "Show the current cook workflow state.",
@@ -600,7 +656,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			return { content: [{ type: "text", text: lines.join("\n") }] };
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_advance",
 		label: "cook_advance",
 		description: "Advance to the next phase of the active workflow chain.",
@@ -630,49 +686,21 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 					audit: "audit",
 					refute: "refute",
 				};
-				const stageDispatches = cs.agentLog.filter(
-					(entry) =>
-						entry.taskId.toUpperCase() === cs.currentTaskId?.toUpperCase() &&
-						entry.role === roleForStage[stage],
-				);
-				const pendingDispatch = stageDispatches.find((entry) => {
-					const intent = [...journal]
-						.reverse()
-						.find((journalEntry) => journalEntry.event === "intent" && journalEntry.stage === entry.stage);
-					return (
-						!!intent &&
-						!journal.some(
-							(journalEntry) =>
-								journalEntry.seq > intent.seq &&
-								journalEntry.stage === entry.stage &&
-								(journalEntry.event === "record" || journalEntry.event === "gate"),
-						)
-					);
-				});
+				const stageDispatches = currentDispatches(cs.agentLog, journal, cs.currentTaskId, roleForStage[stage]);
+				const pendingDispatch = stageDispatches.find((entry) => !dispatchTerminal(journal, entry));
 				if (pendingDispatch)
 					return {
 						content: [{ type: "text", text: `Cannot advance: dispatch "${pendingDispatch.stage}" has no durable completion record.` }],
 						isError: true,
 					};
 				for (const dispatch of stageDispatches) {
-					const intent = [...journal]
-						.reverse()
-						.find((entry) => entry.event === "intent" && entry.stage === dispatch.stage);
-					const dispatchTerminal = [...journal]
-						.reverse()
-						.find(
-							(entry) =>
-								!!intent &&
-								entry.seq > intent.seq &&
-								entry.stage === dispatch.stage &&
-								(entry.event === "record" || entry.event === "gate"),
-						);
-					if (dispatchTerminal?.event === "gate" && dispatchTerminal.note !== "green")
+					const dispatchReceipt = dispatchTerminal(journal, dispatch);
+					if (dispatchReceipt?.event === "gate" && dispatchReceipt.note !== "green")
 						return { content: [{ type: "text", text: `Cannot advance: dispatch "${dispatch.stage}" has a red gate.` }], isError: true };
-					if (dispatchTerminal?.event === "record") {
+					if (dispatchReceipt?.event === "record") {
 						let dispatchOutcome: unknown;
 						try {
-							dispatchOutcome = JSON.parse(dispatchTerminal.note ?? "").outcome;
+							dispatchOutcome = JSON.parse(dispatchReceipt.note ?? "").outcome;
 						} catch {
 							dispatchOutcome = undefined;
 						}
@@ -683,23 +711,11 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 							};
 					}
 				}
-				const latestDispatch = [...cs.agentLog]
-					.reverse()
-					.find(
-						(entry) =>
-							entry.taskId.toUpperCase() === cs.currentTaskId?.toUpperCase() &&
-							entry.role === roleForStage[stage],
-					);
-				const intentStages = new Set([stage, ...(latestDispatch ? [latestDispatch.stage] : [])]);
-				const latestIntent = [...journal]
-					.reverse()
-					.find((entry) => entry.event === "intent" && !!entry.stage && intentStages.has(entry.stage));
-				const terminal = [...journal].reverse().find((entry) =>
-					(entry.event === "record" || entry.event === "gate") &&
-					!!entry.stage &&
-					intentStages.has(entry.stage) &&
-					(!latestIntent || entry.seq > latestIntent.seq),
-				);
+				const latestDispatch = stageDispatches.at(-1);
+				const boundary = currentAttempt(journal);
+				const latestIntent = journal.findLast((entry) => entry.event === "intent" && entry.stage === stage && entry.seq > boundary);
+				const terminal = latestDispatch ? dispatchTerminal(journal, latestDispatch) : journal.findLast((entry) =>
+					entry.event === "record" && entry.stage === stage && entry.seq > (latestIntent?.seq ?? boundary));
 				if (!terminal)
 					return { content: [{ type: "text", text: `Cannot advance: stage "${stage}" has no durable completion record.` }], isError: true };
 				if (terminal.event === "gate" && terminal.note !== "green")
@@ -727,7 +743,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			};
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_adhd_diverge",
 		label: "cook_adhd_diverge",
 		description: "Spawn isolated frames for divergent ideation.",
@@ -757,7 +773,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			};
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_adhd_focus",
 		label: "cook_adhd_focus",
 		description: "Critic pass: score, cluster, prune, deepen.",
@@ -799,7 +815,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			};
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_dispatch_planner",
 		label: "cook_dispatch_planner",
 		description:
@@ -831,7 +847,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			return { content: [{ type: "text", text: payload.text }], isError: !payload.ok };
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_dispatch_scout",
 		label: "cook_dispatch_scout",
 		description: "Dispatch a pure searcher. It returns facts with sources, no judgment.",
@@ -855,7 +871,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			return { content: [{ type: "text", text: payload.text }], isError: !payload.ok };
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_dispatch_researcher",
 		label: "cook_dispatch_researcher",
 		description:
@@ -887,7 +903,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			return { content: [{ type: "text", text: payload.text }], isError: !payload.ok };
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_dispatch_worker",
 		label: "cook_dispatch_worker",
 		description:
@@ -918,16 +934,17 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			return { content: [{ type: "text", text: payload.text }], isError: !payload.ok };
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_dispatch_validator",
 		label: "cook_dispatch_validator",
 		description:
 			"Dispatch the verifier (cook-validator) via the native task tool.",
 		parameters: Type.Object({
 			task_id: Type.String(),
+			supersede: Type.Optional(Type.String({ description: "Exact unsettled dispatch to supersede after proving its specialist orphaned; begins a fresh attempt." })),
 		}) as unknown as TSchema,
 		...cookToolRenderers("validator"),
-		async execute(_id, params: { task_id: string }, _signal, _onUpdate, ctx) {
+		async execute(_id, params: { task_id: string; supersede?: string }, _signal, _onUpdate, ctx) {
 			const taskId = params.task_id as string;
 			if (!taskId || taskId.trim() === '') {
 				return {
@@ -935,7 +952,9 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 					isError: true,
 				};
 			}
-			const brief = `VALIDATOR → ${params.task_id}\n1. Full test suite (the gate ALWAYS re-runs after any repair)\n2. Check AC — verify each with objective evidence\n3. Record gate evidence (hash, green, clean) via cook_journal gate\n4. --append-notes\nOn failure: return a typed finding {source:"validator", file, line, what, kickTo:"implement"} for the worker.`;
+			const supersession = supersedeAttempt(ctx.cwd, sc, taskId.trim().toUpperCase(), "validator", params.supersede);
+			if (supersession) return { content: [{ type: "text", text: supersession }], isError: true };
+			const brief = `VALIDATOR → ${params.task_id}\n1. Full test suite (the gate ALWAYS re-runs after any repair)\n2. Check AC — verify each with objective evidence\n3. Record gate via cook_journal({task_id,event:"gate",stage:"verify",dispatch_stage:<exact identity from dispatch payload>,hash:<checked revision>,green:<result>})\n4. --append-notes\nOn failure: return a typed finding {source:"validator", file, line, what, kickTo:"implement"} for the worker.`;
 			try { appendIntent(ctx.cwd, params.task_id, "verify", "gate run"); }
 			catch (error) {
 				return { content: [{ type: "text", text: `journal intent failed (fail-closed): ${error instanceof Error ? error.message : String(error)}` }], isError: true };
@@ -944,16 +963,17 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			return { content: [{ type: "text", text: payload.text }], isError: !payload.ok };
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_dispatch_judge",
 		label: "cook_dispatch_judge",
 		description:
 			"Dispatch the independent reviewer (cook-judge) via the native task tool.",
 		parameters: Type.Object({
 			task_id: Type.String(),
+			supersede: Type.Optional(Type.String({ description: "Exact unsettled dispatch to supersede after proving its specialist orphaned; begins a fresh attempt." })),
 		}) as unknown as TSchema,
 		...cookToolRenderers("judge"),
-		async execute(_id, params: { task_id: string }, _signal, _onUpdate, ctx) {
+		async execute(_id, params: { task_id: string; supersede?: string }, _signal, _onUpdate, ctx) {
 			const taskId = params.task_id as string;
 			if (!taskId || taskId.trim() === '') {
 				return {
@@ -961,6 +981,8 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 					isError: true,
 				};
 			}
+			const supersession = supersedeAttempt(ctx.cwd, sc, taskId.trim().toUpperCase(), "judge", params.supersede);
+			if (supersession) return { content: [{ type: "text", text: supersession }], isError: true };
 			// Red gate: never judge on a red gate (post-6.0 hardening).
 			const canonicalTaskId = taskId.trim().toUpperCase();
 			const gateBlock = checkGateGreen(canonicalTaskId);
@@ -986,7 +1008,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			return { content: [{ type: "text", text: payload.text }], isError: !payload.ok };
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_decompose",
 		label: "cook_decompose",
 		description:
@@ -1200,34 +1222,18 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 					isError: true,
 				};
 
-			const done = new Set(
-				loaded.tasks
-					.filter((task) => task.status === "Done" || task.status === "Archived")
-					.map((task) => task.id.toUpperCase()),
-			);
-			const claimed = new Set(Object.keys(cs.claims).map((taskId) => taskId.toUpperCase()));
 			const children = loaded.tasks.filter(
 				(task) => task.parent_task_id?.toUpperCase() === parentId.toUpperCase(),
 			);
-			const ready = children
-				.filter(
-					(task) =>
-						task.status !== "Done" &&
-						task.status !== "Archived" &&
-						!claimed.has(task.id.toUpperCase()) &&
-						task.dependencies.every((dependency) => done.has(dependency.toUpperCase())),
-				)
-				.sort((a, b) => a.id.localeCompare(b.id, undefined, { numeric: true }));
+			const ready = children.filter((task) => isReadyTask(task, loaded.tasks, cs.claims)).sort(compareReadyTasks);
 			if (!ready.length) {
-				const open = children.filter(
-					(task) => task.status !== "Done" && task.status !== "Archived",
-				);
+				const open = children.filter((task) => !isTerminalStatus(task.status));
 				if (open.length) {
 					return {
 						content: [
 							{
 								type: "text",
-								text: `No ready sub-tickets (${open.length} blocked on dependencies: ${open.map((o) => o.id).join(", ")}). Resolve blockers or review the dependency edges.`,
+							text: `No ready sub-tickets (${open.length} open: ${open.map((o) => o.id).join(", ")}). Review claims, statuses, and dependencies.`,
 							},
 						],
 					};
@@ -1256,16 +1262,17 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 					isError: true,
 				};
 			}
+			sc.setStore({ ...cs, claims: { ...cs.claims, [claimKey]: claim } });
 			const statusEdit = await runBacklogCliSafe(
 				pi,
 				["task", "edit", next.id, "-s", "In Progress"],
 				ctx.cwd,
 			);
-			if (statusEdit.code !== 0)
-				return {
-					content: [{ type: "text", text: `Claim activation failed after intent: ${statusEdit.stderr || statusEdit.stdout}` }],
-					isError: true,
-				};
+			if (statusEdit.code !== 0) {
+				sc.setStore({ ...sc.getStore(), claims: cs.claims });
+				return { content: [{ type: "text", text: `Claim activation failed after intent: ${statusEdit.stderr || statusEdit.stdout}` }], isError: true };
+			}
+			appendIntent(ctx.cwd, next.id, "cycle", "Claimed new working attempt; old dispatches superseded.");
 
 			// Reset chain to the first working phase (skip capture/plan) and move pointer
 			const firstWork = cs.chain.findIndex((s) =>
@@ -1276,7 +1283,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 				currentTaskId: next.id,
 				currentStage: firstWork >= 0 ? firstWork : cs.currentStage,
 				taskIds: Array.from(new Set([...cs.taskIds, next.id])),
-				claims: { ...cs.claims, [claimKey]: claim },
+				claims: sc.getStore().claims,
 			});
 			await pushDagr(ctx);
 
@@ -1290,7 +1297,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 				],
 			};
 	};
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_next",
 		label: "cook_next",
 		description:
@@ -1302,7 +1309,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_install",
 		label: "cook_install",
 		description:
@@ -1325,7 +1332,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			};
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_validate",
 		label: "cook_validate",
 		description: "Validate cook workflow invariants.",
@@ -1448,7 +1455,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			};
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_reset",
 		label: "cook_reset",
 		description:
@@ -1461,8 +1468,9 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 		async execute(_id, params: { cwd?: string }, _signal, _onUpdate, ctx) {
 			bindContext(ctx);
 			const target = params.cwd ?? ctx.cwd;
+			sc.getStoreFor(target);
 			sc.setStoreFor(target, defaultCookState());
-						return {
+			return {
 				content: [
 					{
 						type: "text",
@@ -1472,7 +1480,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			};
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_stop",
 		label: "cook_stop",
 		description:
@@ -1511,7 +1519,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			};
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_rewind",
 		label: "cook_rewind",
 		description:
@@ -1557,6 +1565,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 					],
 					isError: true,
 				};
+			if (cs.currentTaskId) appendIntent(ctx.cwd, cs.currentTaskId, "cycle", `Rewind to ${cs.chain[targetIndex]}; old attempts superseded.`);
 			sc.setStore({ ...cs, currentStage: targetIndex });
 			await pushDagr(ctx);
 			return {
@@ -1569,7 +1578,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			};
 		},
 	});
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_watch",
 		label: "cook_watch",
 		description:
@@ -1618,7 +1627,8 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 						watchId,
 					},
 				});
-								return {
+				syncWatcher(pi, sc, ctx.cwd);
+				return {
 					content: [
 						{
 							type: "text",
@@ -1637,7 +1647,8 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 						watchId: null,
 					},
 				});
-								return {
+				syncWatcher(pi, sc, ctx.cwd);
+				return {
 					content: [{ type: "text", text: "Watch OFF" }],
 				};
 			}
@@ -1715,14 +1726,12 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 
 	// ── jeff 6.0 sync: parallel DAG drain + journal + snapshot ───────────────
 
-	const isTerminalStatus = (status: string): boolean =>
-		["done", "archived", "closed"].includes(status.trim().toLowerCase());
 
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_ready",
 		label: "cook_ready",
 		description:
-			"Print the ready set as text lines {id | title | priority | deps}. Ready = todo/In Progress, unclaimed, all deps satisfied. Order: priority, then id.",
+			"Print ready tasks {id | title | priority | deps}. Eligible To Do/todo/In Progress, unclaimed, terminal dependencies. Rank high, medium, low, unprioritized; then ID.",
 		parameters: Type.Object({}) as unknown as TSchema,
 		...cookToolRenderers("ready"),
 		// fallow-ignore-next-line complexity
@@ -1736,25 +1745,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 					isError: true,
 				};
 			const tasks = loaded.tasks;
-			const taskById = new Map(tasks.map((t) => [t.id.toUpperCase(), t]));
-			const claimed = new Set(Object.keys(cs.claims).map((taskId) => taskId.toUpperCase()));
-			const ready = tasks.filter((task) => {
-				const status = task.status.trim().toLowerCase();
-				if (status !== "todo" && status !== "in progress") return false;
-				if (claimed.has(task.id.toUpperCase())) return false;
-				const deps = (task as unknown as { dependencies?: string[] }).dependencies ?? [];
-				return deps.every((dep) => {
-					const depTask = taskById.get(dep.trim().toUpperCase());
-					return depTask ? isTerminalStatus(depTask.status) : false;
-				});
-			});
-			// fallow-ignore-next-line complexity
-			ready.sort((a, b) => {
-				const pa = (a.priority ?? "").toLowerCase();
-				const pb = (b.priority ?? "").toLowerCase();
-				if (pa !== pb) return pa < pb ? -1 : 1;
-				return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
-			});
+			const ready = tasks.filter((task) => isReadyTask(task, tasks, cs.claims)).sort(compareReadyTasks);
 			if (!ready.length)
 				return { content: [{ type: "text", text: "Ready set is empty." }] };
 			return {
@@ -1768,7 +1759,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 		},
 	});
 
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_claim",
 		label: "cook_claim",
 		description:
@@ -1807,6 +1798,8 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 				const holder = typeof existing === "string" ? existing : existing.by;
 				return { content: [{ type: "text", text: "Refused: " + task.id + " is already claimed by " + holder + "." }], isError: true };
 			}
+			if (!isReadyTask(task, loaded.tasks, cs.claims))
+				return { content: [{ type: "text", text: `Refused: ${task.id} status ${task.status} is not eligible for work.` }], isError: true };
 			const activeClaims = Object.keys(cs.claims).length;
 			if (activeClaims >= (cs.maxParallelTasks ?? 1)) {
 				return {
@@ -1823,13 +1816,12 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 					isError: true,
 				};
 			}
-			const statusEdit = await runBacklogCliSafe(pi, ["task", "edit", task.id, "-s", "In Progress"], ctx.cwd);
-			if (statusEdit.code !== 0)
-				return {
-					content: [{ type: "text", text: `Claim activation failed after intent: ${statusEdit.stderr || statusEdit.stdout}` }],
-					isError: true,
-				};
 			sc.setStore({ ...cs, claims: { ...cs.claims, [task.id.toUpperCase()]: claim } });
+			const statusEdit = await runBacklogCliSafe(pi, ["task", "edit", task.id, "-s", "In Progress"], ctx.cwd);
+			if (statusEdit.code !== 0) {
+				sc.setStore({ ...sc.getStore(), claims: cs.claims });
+				return { content: [{ type: "text", text: `Claim activation failed after intent: ${statusEdit.stderr || statusEdit.stdout}` }], isError: true };
+			}
 			await pushDagr(ctx);
 			return {
 				content: [{ type: "text", text: "Claimed " + task.id + " by " + claim.by + " at " + claim.at + " (" + (activeClaims + 1) + "/" + (cs.maxParallelTasks ?? 1) + " lanes active). Journal intent written. Open the lane now." }],
@@ -1837,7 +1829,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 		},
 	});
 
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_release",
 		label: "cook_release",
 		description: "Release a task claim. Errors if the task is unclaimed.",
@@ -1866,7 +1858,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 		},
 	});
 
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_claims",
 		label: "cook_claims",
 		description: "List active task claims with age.",
@@ -1891,7 +1883,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 		},
 	});
 
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_snapshot",
 		label: "cook_snapshot",
 		description:
@@ -1927,7 +1919,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 		},
 	});
 
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_record_result",
 		label: "cook_record_result",
 		description:
@@ -2068,24 +2060,26 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 				refute: "refute",
 			};
 			const expectedRole = roleForResultStage[stage];
-			const dispatchCandidates = sc.getStoreFor(ctx.cwd).agentLog.filter(
-				(entry) =>
-					entry.taskId.toUpperCase() === taskId &&
-					(!expectedRole || entry.role === expectedRole),
-			);
 			const existingJournal = readJournal(ctx.cwd, taskId);
+			const dispatchCandidates = currentDispatches(cs.agentLog, existingJournal, taskId, expectedRole);
+			if (requestedDispatchStage && !dispatchCandidates.some((entry) => entry.stage === requestedDispatchStage))
+				return { content: [{ type: "text", text: `dispatch_stage "${requestedDispatchStage}" is stale or belongs to another task/role.` }], isError: true };
+			if (!requestedDispatchStage && cs.agentLog.some((entry) => entry.taskId.toUpperCase() === taskId && entry.role === expectedRole) && !dispatchCandidates.length)
+				return { content: [{ type: "text", text: "Fresh dispatch required for this recovery attempt." }], isError: true };
+			const pendingCandidates = dispatchCandidates.filter((entry) => !dispatchTerminal(existingJournal, entry));
+			if (!requestedDispatchStage && pendingCandidates.length > 1)
+				return { content: [{ type: "text", text: "Parallel results require exact dispatch_stage." }], isError: true };
 			const latestDispatch = requestedDispatchStage
 				? dispatchCandidates.find((entry) => entry.stage === requestedDispatchStage)
-				: dispatchCandidates.find(
-					(entry) =>
-						!existingJournal.some(
-							(journalEntry) =>
-								journalEntry.stage === entry.stage &&
-								(journalEntry.event === "record" || journalEntry.event === "gate"),
-						),
-				);
+				: pendingCandidates[0] ?? dispatchCandidates.find((entry) => dispatchTerminal(existingJournal, entry)?.event === "gate");
+			if (latestDispatch && dispatchTerminal(existingJournal, latestDispatch)?.event === "record")
+				return { content: [{ type: "text", text: "Dispatch result already recorded; dispatch a fresh specialist." }], isError: true };
 			if (requestedDispatchStage && !latestDispatch)
 				return { content: [{ type: "text", text: `dispatch_stage "${requestedDispatchStage}" does not match this task and result role.` }], isError: true };
+			if (!latestDispatch && dispatchCandidates.length)
+				return { content: [{ type: "text", text: "Dispatch batch already recorded; dispatch fresh specialists." }], isError: true };
+			if (params.outcome === "success" && latestDispatch?.role === "validator" && dispatchTerminal(existingJournal, latestDispatch)?.event === "gate" && dispatchTerminal(existingJournal, latestDispatch)?.note === "red")
+				return { content: [{ type: "text", text: "Red validator gate cannot be overwritten by a successful result; repair and dispatch a fresh validator." }], isError: true };
 			try {
 				appendRecord(ctx.cwd, taskId, stage, resultNote);
 				if (latestDispatch && latestDispatch.stage !== stage)
@@ -2097,35 +2091,27 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 				};
 			}
 			const postResultJournal = readJournal(ctx.cwd, taskId);
-			const pendingRoleDispatch = dispatchCandidates.some(
-				(dispatch) =>
-					!postResultJournal.some(
-						(entry) =>
-							entry.stage === dispatch.stage &&
-							(entry.event === "record" || entry.event === "gate"),
-					),
-			);
+			const pendingRoleDispatch = dispatchCandidates.some((dispatch) => !dispatchTerminal(postResultJournal, dispatch));
+			const failures = dispatchCandidates.flatMap((dispatch) => {
+				const intent = postResultJournal.findLast((entry) => entry.event === "intent" && entry.stage === dispatch.stage);
+				const record = intent && postResultJournal.findLast((entry) => entry.seq > intent.seq && entry.stage === dispatch.stage && entry.event === "record");
+				if (!record) return [];
+				const result = JSON.parse(record.note ?? "{}") as { outcome?: string; finding?: TypedFinding };
+				return result.outcome !== "success" && result.finding ? [result.finding] : [];
+			});
 
 			// Keep convergence bookkeeping alongside the durable record.  A
 			// negative judge/validator result is a rework cycle, while findings
 			// are additive so a scoped repair cannot discard a sibling blocker
 			// reported by the other reviewer.
-			const finding = params.finding;
+			const finding = pendingRoleDispatch ? (params.outcome !== "success" ? params.finding : undefined) :
+				[...failures].sort((a, b) => cs.chain.indexOf(a.kickTo) - cs.chain.indexOf(b.kickTo))[0] ??
+				(params.outcome !== "success" ? params.finding : undefined);
 			let nextState = sc.getStoreFor(ctx.cwd);
 			let capEscalation: "bonus" | "council" | undefined;
-			if (finding && params.outcome !== "success") {
+			if (finding) {
 				const previousFindings = nextState.lastFindings[taskId] ?? [];
-				const latestCycleBoundary =
-					[...existingJournal]
-						.reverse()
-						.find((entry) => {
-							if (entry.event !== "record" || entry.stage !== "implement" || !entry.note) return false;
-							try {
-								return (JSON.parse(entry.note) as { outcome?: string }).outcome === "success";
-							} catch {
-								return false;
-							}
-						})?.seq ?? -1;
+				const latestCycleBoundary = currentAttempt(existingJournal);
 				const sameSourceAlreadyRecorded = existingJournal.some((entry) => {
 					if (entry.seq <= latestCycleBoundary || entry.event !== "record" || !entry.note) return false;
 					try {
@@ -2137,17 +2123,9 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 				const retainedFindings = sameSourceAlreadyRecorded
 					? previousFindings
 					: previousFindings.filter((prior) => prior.source !== finding.source);
-				const survivingFindings = [
-					...retainedFindings.filter(
-						(prior) =>
-							!(
-								prior.source === finding.source &&
-								prior.file === finding.file &&
-								prior.line === finding.line
-							),
-					),
-					finding,
-				];
+				const incomingFindings = !pendingRoleDispatch && failures.length ? failures : [finding];
+				const survivingFindings = [...retainedFindings.filter((prior) => !incomingFindings.some((item) =>
+					item.source === prior.source && item.file === prior.file && item.line === prior.line)), ...incomingFindings];
 				const priorCycles = nextState.reviewCycles[taskId] ?? 0;
 				let escalation: "bonus" | "council" | undefined;
 				if (!pendingRoleDispatch && finding.source === "judge" && priorCycles >= nextState.maxReviewCycles) {
@@ -2216,11 +2194,11 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			}
 
 			let next = stage;
-			if (params.outcome !== "success" && params.finding) {
+			if (finding) {
 				if (pendingRoleDispatch) {
 					await pushDagr(ctx);
 					return {
-						content: [{ type: "text", text: `Recorded ${params.finding.source} result for ${taskId}; parallel sibling dispatches remain pending. Recovery has not started.` }],
+						content: [{ type: "text", text: `Recorded ${finding.source} result for ${taskId}; parallel sibling dispatches remain pending. Recovery has not started.` }],
 					};
 				}
 				const reachedCouncil = capEscalation === "council";
@@ -2243,7 +2221,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 						...councilState,
 						councilEpisodes: {
 							...councilState.councilEpisodes,
-							[taskId]: { status: "pending", finding: params.finding },
+							[taskId]: { status: "pending", finding },
 						},
 					});
 					await pushDagr(ctx);
@@ -2255,13 +2233,14 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 						isError: true,
 					};
 				}
-				next = params.finding.kickTo;
+				next = finding.kickTo;
 				try {
+					appendIntent(ctx.cwd, taskId, "cycle", `Recovery to ${next}; prior dispatches superseded, history retained.`);
 					appendIntent(
 						ctx.cwd,
 						taskId,
 						next,
-						`Fresh ${next} result required after ${params.finding.source} finding at ${stage}.`,
+						`Fresh ${next} result required after ${finding.source} finding at ${stage}.`,
 					);
 				} catch (error) {
 					return {
@@ -2269,19 +2248,19 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 						isError: true,
 					};
 				}
-				sc.setStoreFor(ctx.cwd, { ...sc.getStoreFor(ctx.cwd), currentStage: recoveryIndex });
+				sc.setStoreFor(ctx.cwd, { ...sc.getStoreFor(ctx.cwd), currentStage: cs.chain.indexOf(finding.kickTo) });
 			}
 			await pushDagr(ctx);
 			return {
 				content: [{
 					type: "text",
-					text: `Recorded ${params.outcome} result for ${taskId} at ${stage}. Next: ${next}`,
+					text: `Recorded ${params.outcome} result for ${taskId} at ${stage}. Next: ${next}${finding && params.outcome === "success" ? " (earlier sibling failed)" : ""}`,
 				}],
 			};
 		},
 	});
 
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_journal",
 		label: "cook_journal",
 		description:
@@ -2293,34 +2272,26 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 			note: Type.Optional(Type.String()),
 			hash: Type.Optional(Type.String()),
 			green: Type.Optional(Type.Boolean()),
+			dispatch_stage: Type.Optional(Type.String({ description: "Exact current validator dispatch identity; required to settle verify." })),
 		}) as unknown as TSchema,
 		...cookToolRenderers("journal"),
 		// fallow-ignore-next-line complexity
-		async execute(_id, params: { task_id: string; event: "intent" | "external" | "gate"; stage?: string; note?: string; hash?: string; green?: boolean }, _signal, _onUpdate, ctx) {
+		async execute(_id, params: { task_id: string; event: "intent" | "external" | "gate"; stage?: string; note?: string; hash?: string; green?: boolean; dispatch_stage?: string }, _signal, _onUpdate, ctx) {
 			bindContext(ctx);
 			try {
 				if (params.event === "gate") {
 					if (!params.stage?.trim() || !params.hash?.trim() || typeof params.green !== "boolean")
 						return { content: [{ type: "text", text: "Journal gate requires non-empty stage/hash and boolean green." }], isError: true };
 					const journalTaskId = params.task_id.trim().toUpperCase();
-					const entry = appendGate(ctx.cwd, journalTaskId, params.stage, params.hash, params.green);
-					const latestValidator = [...sc.getStore().agentLog]
-						.reverse()
-						.find(
-							(log) =>
-								log.taskId.toUpperCase() === journalTaskId &&
-								log.role === "validator",
-						);
-					if (latestValidator && latestValidator.stage !== params.stage) {
-						appendGate(
-							ctx.cwd,
-							journalTaskId,
-							latestValidator.stage,
-							params.hash,
-							params.green,
-						);
-					}
 					const cs = sc.getStore();
+					const journal = readJournal(ctx.cwd, journalTaskId);
+					const validators = currentDispatches(cs.agentLog, journal, journalTaskId, "validator");
+					const dispatch = params.dispatch_stage ? validators.find((entry) => entry.stage === params.dispatch_stage) : undefined;
+					if (params.dispatch_stage && (params.stage !== "verify" || !dispatch || dispatchTerminal(journal, dispatch)))
+						return { content: [{ type: "text", text: "Gate must match an unsettled current verify dispatch for this task." }], isError: true };
+					if ((params.stage === "verify" && validators.length && !dispatch) || params.stage.startsWith("dispatch:"))
+						return { content: [{ type: "text", text: "Verify gate requires exact dispatch_stage; standalone gates never complete dispatches." }], isError: true };
+					const entry = appendGate(ctx.cwd, journalTaskId, dispatch?.stage ?? params.stage, params.hash, params.green);
 					const gate = {
 						checks: [{ item: params.stage, ok: params.green, note: params.note ?? params.hash }],
 						passed: params.green,
@@ -2347,7 +2318,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 		},
 	});
 
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_dispatch_refute",
 		label: "cook_dispatch_refute",
 		description:
@@ -2382,7 +2353,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 		},
 	});
 
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_dispatch_audit",
 		label: "cook_dispatch_audit",
 		description: "Dispatch the conditional independent security auditor (cook-audit) via the native task tool.",
@@ -2412,7 +2383,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 		},
 	});
 
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_dispatch_council",
 		label: "cook_dispatch_council",
 		description: "Dispatch the three mutually blind convergence-council inquiry lanes as one parallel native task batch.",
@@ -2468,7 +2439,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 		},
 	});
 
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_dispatch_council_synthesis",
 		label: "cook_dispatch_council_synthesis",
 		description: "Dispatch the council synthesis specialist after three mutually blind inquiry votes.",
@@ -2537,7 +2508,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 		},
 	});
 
-	pi.registerTool<TSchema>({
+	registerTool({
 		name: "cook_record_council",
 		label: "cook_record_council",
 		description: "Record council synthesis and apply its single typed recovery route.",
@@ -2562,6 +2533,7 @@ export function registerCookTools(pi: ExtensionAPI, sc: StoreContext): { refresh
 					.find((entry) => entry.taskId.toUpperCase() === taskId.toUpperCase() && entry.role === "council-synthesis");
 				if (synthesisDispatch)
 					appendRecord(ctx.cwd, taskId, synthesisDispatch.stage, JSON.stringify({ outcome: "success", route: params.route, receipt }));
+				appendIntent(ctx.cwd, taskId, "cycle", "Council recovery; prior attempts superseded.");
 				appendIntent(ctx.cwd, taskId, params.route, `Fresh ${params.route} result required after council synthesis.`);
 			} catch (error) {
 				return { content: [{ type: "text", text: `Council record failed (fail-closed): ${error instanceof Error ? error.message : String(error)}` }], isError: true };
@@ -2583,7 +2555,9 @@ pi.registerCommand("cook", {
 		description:
 			"Cook workflow. /cook enters cookmode; /cook start|stop|status controls watch mode; /cook <desc> starts a workflow; /cook off exits cookmode.",
 		async handler(input, ctx) {
-			bindContext(ctx);
+			return withCookLock(ctx.cwd, async () => {
+				sc.stores.set(sc.normalizeCwd(ctx.cwd), loadCookState(ctx.cwd));
+				bindContext(ctx);
 			const arg: string = typeof input === "string" ? input.trim() : "";
 
 			// Bare /cook → toggle cookmode on (skill-style: the host agent becomes
@@ -2737,7 +2711,8 @@ pi.registerCommand("cook", {
 							);
 							return;
 						}
-						sc.setStore({ ...s, watch: { ...s.watch, enabled: true } });
+						sc.setStore({ ...s, watch: { ...s.watch, enabled: true, watchId: crypto.randomUUID() } });
+						syncWatcher(pi, sc, ctx.cwd);
 						notify(ctx,
 							"Watch started. File changes will trigger the cook workflow.",
 							"info",
@@ -2754,6 +2729,7 @@ pi.registerCommand("cook", {
 						return;
 					}
 					sc.setStore({ ...s, watch: { ...s.watch, enabled: false } });
+					syncWatcher(pi, sc, ctx.cwd);
 					notify(ctx,
 						"Watch stopped. File changes will no longer trigger the cook workflow.",
 						"info",
@@ -2769,6 +2745,9 @@ pi.registerCommand("cook", {
 					return;
 				}
 			}
+			}).catch((error) => {
+				notify(ctx, `Cook transaction failed (fail-closed): ${error instanceof Error ? error.message : String(error)}`, "error");
+			});
 		},
 	});
 	return { refreshDagr: pushDagr };

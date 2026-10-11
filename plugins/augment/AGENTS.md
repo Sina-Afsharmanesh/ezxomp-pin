@@ -17,6 +17,7 @@ Augment-style prompt rewriter for OMP. Rewrites user prompts into stronger, more
 - Settings (declared in `package.json` `omp.settings`): `rewriteMode` (`auto|plain|execution-contract`), `maxOutputTokens` (default 1200), `timeoutMs` (default 45000), `conversationContextDepth` (default 4), `outputStyleFamily` (`auto|claude|gpt`), `reviewBeforeSend` (default true)
 - Intent detection: 9 intents (implement, debug, refactor, review, research, docs, test-fix, explain, general); effort scaling Light/Standard/Deep
 - Model-family aware output style (Claude XML vs GPT compact bullets)
+- Provider errors fail immediately with a bounded diagnostic; partial error responses are never accepted or retried as malformed output. User cancellation remains distinct from timeout failure.
 
 ## Work Guidance
 - Keep the rewrite contract grounded: `src/contracts.ts` and `src/prompt-leverage.ts` define the structured output blocks — do not drift from them.

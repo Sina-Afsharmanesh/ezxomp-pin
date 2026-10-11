@@ -20,6 +20,8 @@ This subtree owns the @ezxomp/better-custom package, its host-neutral types, and
 
 Prefer the smallest existing OMP primitive at each integration edge. Preserve unknown provider/model fields during edits, avoid logging credential values, and keep interactive behavior behind the command/UI context seams.
 
+Provider renames persist before live registry synchronization and success notice. Probe reasoning evidence preserves `false` through parsing, model construction, and refresh; refreshed `false` clears stale host/legacy thinking fields and persists `reasoning: false` to block host reference defaults. Without fresh tier evidence, refresh preserves custom wire effort overrides. Ollama's placeholder applies only when no credential was supplied; literal, `$ENV`, and `!command` references remain unchanged.
+
 Gateway detection (src/probe/ollama.ts) is strictly ordered: OmniRoute's `/api/health` marker (`status: "ok"` + non-empty timestamp, no API key) before the 9router `/api/version` shape, before native `/api/tags`; a confirmed marker selects the real `/v1/models` catalog even when empty. Effort tiers are open-vocabulary — raw gateway spellings persist as `effortMap` values (`none` is a disable sentinel; provider-native values like `ultra` project monotonically onto the six positive host selectors; more than six positive tiers leave the map unset). `tool_calling`, `attachment`, `structured_output`, and `temperature` are catalog-shape evidence only: no host sink, never persisted. The `omniroute` gateway preset applies to OpenAI-style flows only; `ollama-chat` auto-detects via the health marker.
 
 ## Verification

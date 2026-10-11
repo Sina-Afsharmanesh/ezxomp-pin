@@ -8,7 +8,8 @@ import {
   mutateModelEntry,
   readModelOptions,
 } from "../model-entry.ts";
-import type { HostModelEntry, ModelMutationProperty } from "../model-entry.ts";
+import type { HostModelEntry, ModelMutationProperty, ModelProbeMetadata } from "../model-entry.ts";
+import { refreshBetterCustomProviders } from "../model-browser.ts";
 import type { ProbeFetch } from "../probe/index.ts";
 import { PROVIDER_STYLES } from "../types.ts";
 import type { CommandContext, ProviderConfig, ProviderStyle } from "../types.ts";
@@ -373,6 +374,7 @@ async function renameProvider(
     }
     try {
       saveModelsConfig({ ...config, providers }, options.configTarget);
+      refreshBetterCustomProviders({ ...config, providers });
       ctx.ui.notify("Renamed provider \"" + providerId + "\" to \"" + nextId + "\".", "success");
       return true;
     } catch (error) {
@@ -515,6 +517,30 @@ function sameSerializedModels(left: readonly unknown[], right: readonly unknown[
   return left.length === right.length && left.every((entry, index) => JSON.stringify(entry) === JSON.stringify(right[index]));
 }
 
+function mergeProbedModel(model: HostModelEntry, id: string, info: ModelProbeMetadata, style: ProviderStyle): ProviderModel {
+  const settings = readModelOptions(model);
+  delete settings.api;
+  const refreshed = buildModelEntry(
+    id,
+    modelOptionsFromProbe(info, { ...settings, api: style }, id),
+  ) as HostModelEntry;
+  const next = { ...model };
+  if (info.reasoning === false) {
+    delete next.reasoning;
+    delete next.thinking;
+    delete next.thinkingLevelMap;
+  } else if (info.thinkingLevelMap === undefined && info.effortOptions === undefined
+    && info.reasoningEffortOptions === undefined && info.alwaysThinking === undefined
+    && (next.thinking !== undefined || next.thinkingLevelMap !== undefined)) {
+    // Without fresh tier evidence, keep custom wire effort overrides.
+    if (info.reasoning === undefined) delete refreshed.reasoning;
+    delete refreshed.thinking;
+  } else {
+    delete next.thinkingLevelMap;
+  }
+  return { ...next, ...refreshed } as ProviderModel;
+}
+
 /**
  * Merge probed gateway metadata into stored models under the add-path
  * authority rule: observed fields overwrite stale or locally defaulted values
@@ -533,13 +559,7 @@ function mergeProbedModels(
     const id = modelIdOf(model);
     const info = collected.infoById.get(id);
     if (!info || typeof model === "string") return model;
-    const settings = readModelOptions(model);
-    delete settings.api;
-    const refreshed = buildModelEntry(
-      id,
-      modelOptionsFromProbe(info, { ...settings, api: currentStyle }, id),
-    ) as HostModelEntry;
-    return { ...(model as HostModelEntry), ...refreshed } as ProviderModel;
+    return mergeProbedModel(model as HostModelEntry, id, info, currentStyle);
   });
   if (additions.length === 0 && sameSerializedModels(merged, models)) return undefined;
   const entries = additions.map((id) => buildModelEntry(

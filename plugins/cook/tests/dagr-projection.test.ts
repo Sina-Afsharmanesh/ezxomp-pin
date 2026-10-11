@@ -141,14 +141,14 @@ describe("dagr projection", () => {
 			],
 			claims: { "TASK-2": { by: "cook-worker", at: "2026-08-28T00:03:00Z" } },
 			agentLog: [
-				{ taskId: "TASK-1", stage: "dispatch:validator", role: "validator", model: "demo", timestamp: "2026-08-28T00:01:00Z" },
+				{ taskId: "TASK-1", stage: "dispatch:validator:0", role: "validator", model: "demo", timestamp: "2026-08-28T00:01:00Z" },
 			],
 			journalByTask: {
 				"TASK-1": [
-					{ seq: 0, at: "2026-08-28T00:01:00Z", event: "intent", stage: "dispatch:validator", note: "validator dispatched" },
-					{ seq: 1, at: "2026-08-28T00:02:00Z", event: "gate", stage: "dispatch:validator", hash: "abc123", note: "green" },
+					{ seq: 0, at: "2026-08-28T00:01:00Z", event: "intent", stage: "dispatch:validator:0", note: "validator dispatched" },
+					{ seq: 1, at: "2026-08-28T00:02:00Z", event: "gate", stage: "dispatch:validator:0", hash: "abc123", note: "green" },
 				],
-				"TASK-2": [{ seq: 0, at: "2026-08-28T00:03:00Z", event: "intent", stage: "dispatch:worker", note: "worker dispatched" }],
+				"TASK-2": [{ seq: 0, at: "2026-08-28T00:03:00Z", event: "intent", stage: "dispatch:worker:0", note: "worker dispatched" }],
 			},
 		});
 
@@ -188,15 +188,15 @@ describe("dagr projection", () => {
 			],
 			claims: {},
 			agentLog: [
-				{ taskId: "TASK-1", stage: "dispatch:worker", role: "worker", model: "demo", timestamp: "2026-08-28T00:01:00Z" },
-				{ taskId: "TASK-1", stage: "dispatch:worker", role: "worker", model: "demo", timestamp: "2026-08-28T00:03:00Z" },
+				{ taskId: "TASK-1", stage: "dispatch:worker:0", role: "worker", model: "demo", timestamp: "2026-08-28T00:01:00Z" },
+				{ taskId: "TASK-1", stage: "dispatch:worker:2", role: "worker", model: "demo", timestamp: "2026-08-28T00:03:00Z" },
 			],
 			journalByTask: {
 				"TASK-1": [
-					{ seq: 0, at: "2026-08-28T00:01:00Z", event: "intent", stage: "dispatch:worker", note: "first" },
-					{ seq: 1, at: "2026-08-28T00:02:00Z", event: "record", stage: "dispatch:worker", note: "first reported" },
-					{ seq: 2, at: "2026-08-28T00:03:00Z", event: "intent", stage: "dispatch:worker", note: "second" },
-					{ seq: 3, at: "2026-08-28T00:04:00Z", event: "record", stage: "dispatch:worker", note: "second reported" },
+					{ seq: 0, at: "2026-08-28T00:01:00Z", event: "intent", stage: "dispatch:worker:0", note: "first" },
+					{ seq: 1, at: "2026-08-28T00:02:00Z", event: "record", stage: "dispatch:worker:0", note: "first reported" },
+					{ seq: 2, at: "2026-08-28T00:03:00Z", event: "intent", stage: "dispatch:worker:2", note: "second" },
+					{ seq: 3, at: "2026-08-28T00:04:00Z", event: "record", stage: "dispatch:worker:2", note: "second reported" },
 				],
 			},
 		});
@@ -222,17 +222,17 @@ describe("dagr projection", () => {
 			],
 			claims: {},
 			agentLog: [
-				{ taskId: "TASK-A", stage: "dispatch:validator", role: "validator", timestamp: "2026-08-28T00:01:00Z" },
-				{ taskId: "TASK-B", stage: "dispatch:validator", role: "validator", timestamp: "2026-08-28T00:01:00Z" },
+				{ taskId: "TASK-A", stage: "dispatch:validator:0", role: "validator", timestamp: "2026-08-28T00:01:00Z" },
+				{ taskId: "TASK-B", stage: "dispatch:validator:0", role: "validator", timestamp: "2026-08-28T00:01:00Z" },
 			],
 			journalByTask: {
 				"TASK-A": [
-					{ seq: 0, at: "2026-08-28T00:01:00Z", event: "intent", stage: "dispatch:validator" },
-					{ seq: 1, at: "2026-08-28T00:02:00Z", event: "gate", stage: "dispatch:validator", hash: "gate-a", note: "green" },
+					{ seq: 0, at: "2026-08-28T00:01:00Z", event: "intent", stage: "dispatch:validator:0" },
+					{ seq: 1, at: "2026-08-28T00:02:00Z", event: "gate", stage: "dispatch:validator:0", hash: "gate-a", note: "green" },
 				],
 				"TASK-B": [
-					{ seq: 0, at: "2026-08-28T00:01:00Z", event: "intent", stage: "dispatch:validator" },
-					{ seq: 1, at: "2026-08-28T00:02:00Z", event: "gate", stage: "dispatch:validator", hash: "gate-b", note: "green" },
+					{ seq: 0, at: "2026-08-28T00:01:00Z", event: "intent", stage: "dispatch:validator:0" },
+					{ seq: 1, at: "2026-08-28T00:02:00Z", event: "gate", stage: "dispatch:validator:0", hash: "gate-b", note: "green" },
 				],
 			},
 		});
@@ -251,11 +251,11 @@ describe("dagr projection", () => {
 			startedAt: "2026-08-28T00:00:00Z",
 			tasks: [{ id: "TASK-1", title: "validate", status: "In Progress" }],
 			claims: {},
-			agentLog: [{ taskId: "TASK-1", stage: "dispatch:validator", role: "validator", timestamp: "2026-08-28T00:01:00Z" }],
+			agentLog: [{ taskId: "TASK-1", stage: "dispatch:validator:0", role: "validator", timestamp: "2026-08-28T00:01:00Z" }],
 			journalByTask: {
 				"TASK-1": [
-					{ seq: 0, at: "2026-08-28T00:01:00Z", event: "intent", stage: "dispatch:validator" },
-					{ seq: 1, at: "2026-08-28T00:02:00Z", event: "gate", stage: "dispatch:validator", hash: "gate-red", note: "red" },
+					{ seq: 0, at: "2026-08-28T00:01:00Z", event: "intent", stage: "dispatch:validator:0" },
+					{ seq: 1, at: "2026-08-28T00:02:00Z", event: "gate", stage: "dispatch:validator:0", hash: "gate-red", note: "red" },
 				],
 			},
 		});
@@ -271,9 +271,9 @@ describe("dagr projection", () => {
 			startedAt: "2026-08-28T00:00:00Z",
 			tasks: [{ id: "TASK-1", title: "worker", status: "In Progress" }],
 			claims: {},
-			agentLog: [{ taskId: "TASK-1", stage: "dispatch:worker", role: "worker", timestamp: "2026-08-28T00:05:00Z" }],
+			agentLog: [{ taskId: "TASK-1", stage: "dispatch:worker:0", role: "worker", timestamp: "2026-08-28T00:05:00Z" }],
 			journalByTask: {
-				"TASK-1": [{ seq: 0, at: "2026-08-28T00:02:00Z", event: "record", stage: "dispatch:worker", note: "old result" }],
+				"TASK-1": [{ seq: 0, at: "2026-08-28T00:02:00Z", event: "record", stage: "dispatch:worker:0", note: "old result" }],
 			},
 		});
 		expect(input.attempts[0]).toMatchObject({
@@ -295,14 +295,14 @@ describe("dagr projection", () => {
 			tasks: [{ id: "TASK-1", title: "worker", status: "In Progress" }],
 			claims: {},
 			agentLog: [
-				{ taskId: "TASK-1", stage: "dispatch:worker", role: "worker", timestamp: "2026-08-28T00:01:00Z" },
-				{ taskId: "TASK-1", stage: "dispatch:worker", role: "worker", timestamp: "2026-08-28T00:02:00Z" },
+				{ taskId: "TASK-1", stage: "dispatch:worker:0", role: "worker", timestamp: "2026-08-28T00:01:00Z" },
+				{ taskId: "TASK-1", stage: "dispatch:worker:1", role: "worker", timestamp: "2026-08-28T00:02:00Z" },
 			],
 			journalByTask: {
 				"TASK-1": [
-					{ seq: 0, at: "2026-08-28T00:01:00Z", event: "intent", stage: "dispatch:worker" },
-					{ seq: 1, at: "2026-08-28T00:02:00Z", event: "intent", stage: "dispatch:worker" },
-					{ seq: 2, at: "2026-08-28T00:03:00Z", event: "record", stage: "dispatch:worker", note: "second result" },
+					{ seq: 0, at: "2026-08-28T00:01:00Z", event: "intent", stage: "dispatch:worker:0" },
+					{ seq: 1, at: "2026-08-28T00:02:00Z", event: "intent", stage: "dispatch:worker:1" },
+					{ seq: 2, at: "2026-08-28T00:03:00Z", event: "record", stage: "dispatch:worker:1", note: "second result" },
 				],
 			},
 		});
@@ -320,11 +320,11 @@ describe("dagr projection", () => {
 			startedAt: "2026-08-28T00:00:00Z",
 			tasks: [{ id: "TASK-1", title: "validate", status: "In Progress" }],
 			claims: {},
-			agentLog: [{ taskId: "TASK-1", stage: "dispatch:validator", role: "validator", timestamp: "2026-08-28T00:01:00Z" }],
+			agentLog: [{ taskId: "TASK-1", stage: "dispatch:validator:0", role: "validator", timestamp: "2026-08-28T00:01:00Z" }],
 			journalByTask: {
 				"TASK-1": [
-					{ seq: 0, at: "2026-08-28T00:01:00Z", event: "intent", stage: "dispatch:validator" },
-					{ seq: 1, at: "2026-08-28T00:02:00Z", event: "gate", stage: "dispatch:validator", hash: "", note: "unknown" },
+					{ seq: 0, at: "2026-08-28T00:01:00Z", event: "intent", stage: "dispatch:validator:0" },
+					{ seq: 1, at: "2026-08-28T00:02:00Z", event: "gate", stage: "dispatch:validator:0", hash: "", note: "unknown" },
 				],
 			},
 		});
@@ -343,14 +343,14 @@ describe("dagr projection", () => {
 			tasks: [{ id: "TASK-1", title: "worker", status: "In Progress" }],
 			claims: {},
 			agentLog: [
-				{ taskId: "TASK-1", stage: "dispatch:worker", role: "worker", timestamp: at },
-				{ taskId: "TASK-1", stage: "dispatch:worker", role: "worker", timestamp: at },
+				{ taskId: "TASK-1", stage: "dispatch:worker:0", role: "worker", timestamp: at },
+				{ taskId: "TASK-1", stage: "dispatch:worker:1", role: "worker", timestamp: at },
 			],
 			journalByTask: {
 				"TASK-1": [
-					{ seq: 0, at, event: "intent", stage: "dispatch:worker" },
-					{ seq: 1, at, event: "intent", stage: "dispatch:worker" },
-					{ seq: 2, at: "2026-08-28T00:02:00.000Z", event: "record", stage: "dispatch:worker", note: "second result" },
+					{ seq: 0, at, event: "intent", stage: "dispatch:worker:0" },
+					{ seq: 1, at, event: "intent", stage: "dispatch:worker:1" },
+					{ seq: 2, at: "2026-08-28T00:02:00.000Z", event: "record", stage: "dispatch:worker:1", note: "second result" },
 				],
 			},
 		});

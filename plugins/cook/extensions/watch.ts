@@ -1,7 +1,7 @@
-import { watch } from "node:fs";
-import { join } from "node:path";
+import { readdirSync, watch, type FSWatcher } from "node:fs";
+import { join, relative } from "node:path";
 import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
-import type { CookState, TaskInfo } from "./types.ts";
+import type { CookState, StoreContext, TaskInfo } from "./types.ts";
 import { runBacklogCli } from "@ezxomp/backlog/extensions/index.ts";
 
 /** How long a Done entry stays on the watch list before pruning. */
@@ -27,7 +27,108 @@ export function getLastWatchSummary(cwd: string): string {
 	return lastWatchSummaries.get(normalizeCwd(cwd)) ?? "";
 }
 
-export function startWatcher(
+function isIgnoredWatchPath(filename: string): boolean {
+	return filename.split(/[\\/]/).some((part) =>
+		part.startsWith(".") || part === "cook-state.json" || part === "cook-config.json" || part === "config.yml",
+	);
+}
+
+/** Linux needs one native watcher per directory; never follow links out of backlog. */
+function watchDirectoryTree(root: string, onChange: (filename: string) => void): { close(): void } {
+	const watchers = new Map<string, FSWatcher>();
+	let closed = false;
+	const closeDirectory = (directory: string, watcher: FSWatcher): void => {
+		try {
+			watcher.close();
+		} catch {
+			// Already-failed watchers must not prevent the remaining resources closing.
+		}
+		if (watchers.get(directory) === watcher) watchers.delete(directory);
+	};
+	const close = (): void => {
+		closed = true;
+		for (const [directory, watcher] of watchers) closeDirectory(directory, watcher);
+	};
+	const reconcile = (): void => {
+		const directories = new Set<string>();
+		const visit = (directory: string): void => {
+			try {
+				if (!watchers.has(directory)) {
+					const watcher = watch(directory, {}, (eventType, filename) => {
+						if (closed || !filename) return;
+						const changedPath = relative(root, join(directory, filename.toString()));
+						if (isIgnoredWatchPath(changedPath)) return;
+						if (eventType === "rename") {
+							const changedDirectory = join(directory, filename.toString());
+							for (const [watchedDirectory, watched] of watchers) {
+								if (watchedDirectory === changedDirectory || watchedDirectory.startsWith(`${changedDirectory}/`)) {
+									closeDirectory(watchedDirectory, watched);
+								}
+							}
+							reconcile();
+						}
+						onChange(changedPath);
+					});
+					watchers.set(directory, watcher);
+					watcher.on?.("error", () => {
+						closeDirectory(directory, watcher);
+					});
+				}
+				const entries = readdirSync(directory, { withFileTypes: true });
+				directories.add(directory);
+				for (const entry of entries) {
+					if (entry.isDirectory() && !isIgnoredWatchPath(entry.name)) visit(join(directory, entry.name));
+				}
+			} catch {
+				// Missing or unreadable directories must not abort startup or event delivery.
+			}
+		};
+		visit(root);
+		for (const [directory, watcher] of watchers) {
+			if (!directories.has(directory)) {
+				closeDirectory(directory, watcher);
+			}
+		}
+	};
+	reconcile();
+	return { close };
+}
+
+/** Synchronize native resources with the current project's persisted watch settings. */
+export function syncWatcher(pi: ExtensionAPI, sc: StoreContext, cwd: string): void {
+	const ownerCwd = sc.normalizeCwd(cwd);
+	if (ownerCwd !== sc.normalizeCwd(sc.currentCwd)) return;
+	const state = sc.getStoreFor(ownerCwd);
+	if (!state.watch.enabled) {
+		stopWatcher(ownerCwd);
+		return;
+	}
+	startWatcher(
+		ownerCwd,
+		pi,
+		state,
+		(firedAt, firedWatchId) => {
+			const current = sc.getStoreFor(ownerCwd);
+			if (!current.watch.enabled || current.watch.watchId !== firedWatchId) return false;
+			try {
+				sc.setStoreFor(ownerCwd, { ...current, watch: { ...current.watch, lastFiredAt: firedAt } });
+			} catch {
+				if (ownerCwd === sc.normalizeCwd(sc.currentCwd)) {
+					pi.sendMessage(
+						{ customType: "cook-watch-error", content: [{ type: "text", text: "Cook watch could not persist its timestamp; watch trigger skipped." }] },
+						{ triggerTurn: false },
+					);
+				}
+				return false;
+			}
+			return ownerCwd === sc.normalizeCwd(sc.currentCwd);
+		},
+		() => sc.getStoreFor(ownerCwd),
+		() => sc.normalizeCwd(sc.currentCwd),
+	);
+}
+
+function startWatcher(
 	cwd: string,
 	pi: ExtensionAPI,
 	state: CookState,
@@ -38,19 +139,17 @@ export function startWatcher(
 	stopWatcher();
 	const watchDir = join(cwd, "backlog");
 	try {
-		const watcher = watch(watchDir, {}, (_eventType, filename) => {
+		const watcher = watchDirectoryTree(watchDir, (filename) => {
 			const scheduledState = getState();
 			if (!scheduledState.watch.enabled) return;
-			// Hotfix TASK-34: state/config/dotfile churn inside backlog/ must not enqueue
-			// system-sourced steering advisories (self-sustaining cascade across
-			// concurrent cook sessions). Only genuine task/doc changes alert.
-			if (!filename || filename === 'cook-state.json' || filename === 'cook-config.json' || filename.startsWith('.')) return;
+			// Only task/doc changes alert; state/config/dotfile churn is filtered by the tree.
 			const scheduledWatchId = scheduledState.watch.watchId;
 			const debounceMs = scheduledState.watch.debounceMs;
 			if (watchDebounceTimer) {
 				clearTimeout(watchDebounceTimer as Parameters<typeof clearTimeout>[0]);
 			}
 			watchDebounceTimer = globalThis.setTimeout(() => {
+				watchDebounceTimer = null;
 				const fireState = getState();
 				if (!fireState.watch.enabled || fireState.watch.watchId !== scheduledWatchId) return;
 				const firedAt = new Date().toISOString();
@@ -63,7 +162,7 @@ export function startWatcher(
 						customType: `cook-watch/${fireState.watch.watchId}`,
 						content: [{ type: "text", text: `Backlog file changed: ${filename}` }],
 					},
-					{ triggerTurn: true },
+					{ triggerTurn: fireState.watch.trigger === "auto" },
 				);
 			}, debounceMs);
 		});

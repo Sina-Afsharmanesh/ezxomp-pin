@@ -55,7 +55,7 @@ interface InstallMarker {
 	files: Record<string, string>; // profile name -> FNV-1a hash of shipped template
 }
 
-export const COOK_AGENTS_VERSION = "0.1.7-ezxomp.8";
+export const COOK_AGENTS_VERSION = "0.1.7-ezxomp.9";
 
 function templateHash(content: string): string {
 	// FNV-1a is sufficient here: this is a drift sentinel, not security.

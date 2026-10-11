@@ -1,235 +1,140 @@
-/**
- * Tests for syncFromBacklog — reconciles CookState with actual Backlog.md task status.
- *
- * Verifies that cook state auto-advances when tasks are marked Done via
- * backlog_task_edit without calling cook_* tools.
- */
-import { mkdtempSync, rmSync, mkdirSync, writeFileSync } from "node:fs";
+import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import path from "node:path";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { join } from "node:path";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
+import { defaultCookState, syncFromBacklog, isReadyTask, isTerminalStatus, compareReadyTasks } from "../extensions/state.ts";
+import type { CookState, TaskInfo } from "../extensions/types.ts";
 
-import makePi, {
-	__resetHandlers,
-	makeCtx,
-	type PiStub,
-} from "./__mocks__/pi-coding-agent";
+let cwd: string;
+beforeEach(() => { cwd = mkdtempSync(join(tmpdir(), "cook-sync-")); });
+afterEach(() => { rmSync(cwd, { recursive: true, force: true }); });
 
-async function freshExtension(pi: PiStub): Promise<typeof import("../extensions/index.ts")> {
-	vi.resetModules?.();
-	const mod = await import("../extensions/index.ts");
-	mod.default(pi as never);
-	return mod;
+function task(id: string, status: string, extra: Partial<TaskInfo> = {}): TaskInfo {
+	return { id, status, title: id, dependencies: [], assignee: [], ...extra } as TaskInfo;
 }
 
-describe("syncFromBacklog", () => {
-	let workDir: string;
-	let pi: PiStub;
+/** An editable task repository makes accidental activation observable in task status. */
+function repository(tasks: TaskInfo[]): { pi: ExtensionAPI } {
+	const pi = {
+		exec: async (_command: string, args: string[]) => {
+			if (args[1] === "edit") {
+				const target = tasks.find((entry) => entry.id === args[2]);
+				if (target) target.status = args[args.indexOf("-s") + 1];
+				return { code: 0, stdout: "", stderr: "" };
+			}
+			const value = args[1] === "list" ? { tasks } : { task: tasks.find((entry) => entry.id === args[1]) };
+			return { code: 0, stdout: JSON.stringify(value), stderr: "" };
+		},
+	} as unknown as ExtensionAPI;
+	return { pi };
+}
 
-	beforeEach(() => {
-		workDir = mkdtempSync(path.join(tmpdir(), "cook-sync-"));
-		mkdirSync(path.join(workDir, "backlog"), { recursive: true });
-		__resetHandlers();
-		pi = makePi();
-	});
+function activeState(): CookState {
+	return { ...defaultCookState(), chain: ["implement", "review", "done"], currentTaskId: "TASK-1.1", taskIds: ["TASK-1", "TASK-1.1"] };
+}
 
-	afterEach(() => {
-		rmSync(workDir, { recursive: true, force: true });
-		vi.restoreAllMocks();
-	});
-
-	it("returns state unchanged when no active chain", async () => {
-		const mod = await freshExtension(pi);
-		const state = mod.defaultCookState();
-		const result = await mod.syncFromBacklog(pi, workDir, state);
+describe("Cook reconciliation keeps task ownership", () => {
+	it.each(["To Do", "Blocked", "In Progress", "Draft", "Cancelled"])
+	("retains completed pointer without activating open %s sibling", async (status) => {
+		const state = activeState();
+		state.claims = { "TASK-1.2": "other-lane" };
+		const sibling = task("TASK-1.2", status, { parent_task_id: "TASK-1" });
+		const repo = repository([task("TASK-1.1", "Done", { parent_task_id: "TASK-1" }), sibling]);
+		const result = await syncFromBacklog(repo.pi, cwd, state);
 		expect(result).toBe(state);
+		expect(result.currentTaskId).toBe("TASK-1.1");
+		expect(result.taskIds).not.toContain("TASK-1.2");
+		expect(result.claims).toEqual({ "TASK-1.2": "other-lane" });
+		expect(sibling.status).toBe(status);
 	});
 
-	it("returns state unchanged when currentTaskId is null", async () => {
-		const mod = await freshExtension(pi);
-		const state = { ...mod.defaultCookState(), chain: ["implement"], currentTaskId: null };
-		const result = await mod.syncFromBacklog(pi, workDir, state);
-		expect(result).toBe(state);
+	it("never selects an already active tracked task after current task finishes", async () => {
+		const state = { ...activeState(), currentTaskId: "TASK-1", taskIds: ["TASK-1", "TASK-2"] };
+		const repo = repository([task("TASK-1", "Done"), task("TASK-2", "In Progress")]);
+		expect(await syncFromBacklog(repo.pi, cwd, state)).toBe(state);
 	});
 
-	it("returns state unchanged when task is still In Progress", async () => {
-		const mod = await freshExtension(pi);
-		const state = {
-			...mod.defaultCookState(),
-			chain: ["implement", "review"],
-			currentStage: 0,
-			currentTaskId: "TASK-1",
-			taskIds: ["TASK-1"],
-		};
-
-		// Mock: backlog CLI returns task as In Progress
-		pi.exec.mockResolvedValueOnce({
-			code: 0,
-			stdout: JSON.stringify({
-				task: { id: "TASK-1", status: "In Progress", title: "Test" },
-			}),
-			stderr: "",
-		});
-
-		const result = await mod.syncFromBacklog(pi, workDir, state);
-		expect(result).toBe(state);
+	it("keeps a completed parent pointer while untracked child work remains open", async () => {
+		const state = { ...activeState(), currentTaskId: "TASK-1", taskIds: ["TASK-1"] };
+		const child = task("TASK-1.1", "To Do", { parent_task_id: "TASK-1" });
+		const repo = repository([task("TASK-1", "Done"), child]);
+		expect(await syncFromBacklog(repo.pi, cwd, state)).toBe(state);
+		expect(child.status).toBe("To Do");
 	});
 
-	it("auto-advances to next subtask when currentTaskId is Done", async () => {
-		const mod = await freshExtension(pi);
-		const state = {
-			...mod.defaultCookState(),
-			chain: ["implement", "review"],
-			currentStage: 0,
-			currentTaskId: "TASK-1.1",
-			taskIds: ["TASK-1", "TASK-1.1"],
-		};
-
-		// Mock: getTaskJson returns Done task
-		pi.exec.mockResolvedValueOnce({
-			code: 0,
-			stdout: JSON.stringify({
-				task: {
-					id: "TASK-1.1",
-					status: "Done",
-					title: "Subtask 1",
-					parent_task_id: "TASK-1",
-				},
-			}),
-			stderr: "",
-		});
-
-		// Mock: getAllTasks (readyChildren) returns next ready subtask
-		pi.exec.mockResolvedValueOnce({
-			code: 0,
-			stdout: JSON.stringify({
-				tasks: [
-					{
-						id: "TASK-1.2",
-						status: "To Do",
-						title: "Subtask 2",
-						parent_task_id: "TASK-1",
-						dependencies: [],
-					},
-				],
-			}),
-			stderr: "",
-		});
-
-		// Mock: mark next task In Progress
-		pi.exec.mockResolvedValueOnce({ code: 0, stdout: "", stderr: "" });
-
-		const result = await mod.syncFromBacklog(pi, workDir, state);
-
-		expect(result.currentTaskId).toBe("TASK-1.2");
-		expect(result.taskIds).toContain("TASK-1.2");
-		expect(result.chain).toEqual(state.chain);
+	it.each(["To Do", "Blocked", "In Progress"])("does not replace a nonterminal %s current pointer", async (status) => {
+		const state = activeState();
+		state.taskIds.push("TASK-1.2");
+		const repo = repository([task("TASK-1.1", status), task("TASK-1.2", "In Progress")]);
+		expect(await syncFromBacklog(repo.pi, cwd, state)).toBe(state);
 	});
 
-	it("does not advance when activating the next subtask fails", async () => {
-		const mod = await freshExtension(pi);
-		const state = {
-			...mod.defaultCookState(),
-			chain: ["implement", "review"],
-			currentTaskId: "TASK-1.1",
-			taskIds: ["TASK-1.1", "TASK-1.2"],
-		};
-		pi.exec.mockResolvedValueOnce({
-			code: 0,
-			stdout: JSON.stringify({ task: { id: "TASK-1.1", status: "Done", parent_task_id: "TASK-1" } }),
-			stderr: "",
-		});
-		pi.exec.mockResolvedValueOnce({
-			code: 0,
-			stdout: JSON.stringify({ tasks: [
-				{ id: "TASK-1.1", status: "Done", parent_task_id: "TASK-1", dependencies: [] },
-				{ id: "TASK-1.2", status: "To Do", parent_task_id: "TASK-1", dependencies: [] },
-			] }),
-			stderr: "",
-		});
-		pi.exec.mockResolvedValueOnce({ code: 1, stdout: "", stderr: "status denied" });
-		expect(await mod.syncFromBacklog(pi, workDir, state)).toEqual(state);
-	});
-
-	it("completes the chain when all subtasks are Done", async () => {
-		const mod = await freshExtension(pi);
-		const state = {
-			...mod.defaultCookState(),
-			chain: ["implement", "review"],
-			currentStage: 0,
-			currentTaskId: "TASK-1.1",
-			taskIds: ["TASK-1", "TASK-1.1"],
-		};
-
-		// Mock: getTaskJson returns Done task
-		pi.exec.mockResolvedValueOnce({
-			code: 0,
-			stdout: JSON.stringify({
-				task: {
-					id: "TASK-1.1",
-					status: "Done",
-					title: "Subtask 1",
-					parent_task_id: "TASK-1",
-				},
-			}),
-			stderr: "",
-		});
-
-		// Mock: getAllTasks returns empty (all subtasks done)
-		pi.exec.mockResolvedValueOnce({
-			code: 0,
-			stdout: JSON.stringify({ tasks: [] }),
-			stderr: "",
-		});
-
-		const result = await mod.syncFromBacklog(pi, workDir, state);
+	it("parks only exhausted lineage and leaves unrelated work alone", async () => {
+		const state = activeState();
+		const unrelated = task("TASK-2.1", "To Do", { parent_task_id: "TASK-2" });
+		const repo = repository([
+			task("TASK-1.1", " done ", { parent_task_id: "TASK-1" }),
+			task("TASK-1.2", "CLOSED", { parent_task_id: "TASK-1" }),
+			task("TASK-1.3", "Archived", { parent_task_id: "TASK-1" }),
+			unrelated,
+		]);
+		const result = await syncFromBacklog(repo.pi, cwd, state);
+		expect(result.currentTaskId).toBeNull();
 		expect(result.currentStage).toBe(state.chain.length - 1);
-		expect(result.currentTaskId).toBeNull();
+		expect(result.taskIds).toEqual(state.taskIds);
+		expect(unrelated.status).toBe("To Do");
+		expect(await syncFromBacklog(repo.pi, cwd, result)).toBe(result);
 	});
 
-	it("clears a completed task pointer when already on the final stage", async () => {
-		const mod = await freshExtension(pi);
-		const state = {
-			...mod.defaultCookState(),
-			chain: ["implement", "review"],
-			currentStage: 1,
-			currentTaskId: "TASK-1",
-			taskIds: ["TASK-1"],
-		};
-
-		pi.exec.mockResolvedValueOnce({
-			code: 0,
-			stdout: JSON.stringify({
-				task: { id: "TASK-1", status: "Done", title: "Task" },
-			}),
-			stderr: "",
-		});
-		pi.exec.mockResolvedValueOnce({
-			code: 0,
-			stdout: JSON.stringify({ tasks: [] }),
-			stderr: "",
-		});
-
-		const result = await mod.syncFromBacklog(pi, workDir, state);
-		expect(result).not.toBe(state);
-		expect(result.currentStage).toBe(1);
-		expect(result.currentTaskId).toBeNull();
+	it("keeps current state when Backlog cannot prove exhaustion", async () => {
+		const state = activeState();
+		const pi = { exec: async () => { throw new Error("CLI unavailable"); } } as unknown as ExtensionAPI;
+		expect(await syncFromBacklog(pi, cwd, state)).toBe(state);
 	});
 
-	it("is best-effort: returns state on CLI error", async () => {
-		const mod = await freshExtension(pi);
-		const state = {
-			...mod.defaultCookState(),
-			chain: ["implement"],
-			currentStage: 0,
-			currentTaskId: "TASK-1",
-			taskIds: ["TASK-1"],
-		};
+	it("keeps current state when list data is corrupt after current completion", async () => {
+		const state = activeState();
+		const pi = { exec: async (_command: string, args: string[]) => ({ code: 0, stderr: "",
+			stdout: args[1] === "list" ? "bad list" : JSON.stringify({ task: task("TASK-1.1", "Done") }),
+		}) } as unknown as ExtensionAPI;
+		expect(await syncFromBacklog(pi, cwd, state)).toBe(state);
+	});
+});
 
-		// Mock: CLI throws
-		pi.exec.mockRejectedValueOnce(new Error("CLI not found"));
+describe("shared task readiness", () => {
+	it.each(["todo", " To Do ", " IN   PROGRESS "])("admits normalized %s only after dependencies finish", (status) => {
+		const candidate = task("TASK-10", status, { dependencies: [" task-1 ", "TASK-2", "TASK-3"] });
+		const tasks = [candidate, task("TASK-1", "Done"), task("TASK-2", "archived"), task("TASK-3", "CLOSED")];
+		expect(isReadyTask(candidate, tasks, {})).toBe(true);
+		tasks[1].status = "Blocked";
+		expect(isReadyTask(candidate, tasks, {})).toBe(false);
+	});
 
-		const result = await mod.syncFromBacklog(pi, workDir, state);
-		expect(result).toBe(state);
+	it.each(["Blocked", "Draft", "Cancelled", "Done", "Closed", "Archived", "Review", ""])
+	("never offers %s work even with no dependencies", (status) => {
+		const candidate = task("TASK-1", status);
+		expect(isReadyTask(candidate, [candidate], {})).toBe(false);
+	});
+
+	it("rejects claims case-insensitively and missing dependencies", () => {
+		const candidate = task("TASK-1", "To Do");
+		expect(isReadyTask(candidate, [candidate], { " task-1 ": "other-lane" })).toBe(false);
+		candidate.dependencies = ["TASK-MISSING"];
+		expect(isReadyTask(candidate, [candidate], {})).toBe(false);
+	});
+
+	it("orders ready work by priority then numeric ID", () => {
+		const tasks = [
+			task("TASK-2", "To Do"), task("TASK-10", "To Do", { priority: "high" }),
+			task("TASK-1", "To Do", { priority: "low" }), task("TASK-2.10", "To Do", { priority: "high" }),
+			task("TASK-2.2", "To Do", { priority: "high" }), task("TASK-1.1", "To Do", { priority: "medium" }),
+		];
+		expect(tasks.sort(compareReadyTasks).map((entry) => entry.id)).toEqual(["TASK-2.2", "TASK-2.10", "TASK-10", "TASK-1.1", "TASK-1", "TASK-2"]);
+	});
+
+	it("recognizes terminal statuses without treating blocked work as finished", () => {
+		expect(["Done", " ARCHIVED ", "closed"].every(isTerminalStatus)).toBe(true);
+		expect(["Blocked", "Cancelled", "In Progress", "To Do"].some(isTerminalStatus)).toBe(false);
 	});
 });

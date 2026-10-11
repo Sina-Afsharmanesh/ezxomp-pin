@@ -34,6 +34,8 @@ Augment requires a configured @smol model.
 
 Configure a SMOL alias in your OMP model settings to use Augment. The output style still targets the active destination model's family (Claude vs GPT) unless the `outputStyleFamily` setting overrides it.
 
+Provider errors stop the rewrite and display the provider diagnostic. Partial error responses are never inserted or retried as malformed output; user cancellation and timeout remain distinct.
+
 Configure the six persisted settings in the centered overlay:
 
 ```

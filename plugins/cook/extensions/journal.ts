@@ -1,14 +1,14 @@
-import { existsSync, mkdirSync, readFileSync, appendFileSync } from "node:fs";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
+import { canonicalCookRoot, readCookFile, withCookLockSync, writeCookFileAtomic } from "./coordination.ts";
 
 /**
  * Cook write-ahead intent journal (upstream jeff 6.0 slate item 3, adapted).
  *
  * Per-task append-only JSONL: backlog/.cook-journal/<TASKID>.jsonl
  * Closed event vocabulary: intent | record | gate | external.
- * Seq is monotonic per task under the caller's serialization discipline
- * (cook state mutations are single-threaded per session; journal appends
- * read the tail to derive the next seq, writes fail-closed, reads fail-open).
+ * Seq is monotonic per task under the canonical project lock. State and
+ * journal writes share ownership; atomic durable replacement prevents partial
+ * appends. Unreadable or malformed history fails closed, never resets lineage.
  *
  * Resume semantics (COOK_PROTOCOL): a dangling intent (no later matching
  * record for the same stage) means the dispatch may have died: dispatch a
@@ -33,44 +33,51 @@ export interface JournalEntry {
 
 function journalPath(cwd: string, taskId: string): string {
 	const id = taskId.trim().toUpperCase().replace(/[^A-Z0-9._-]/g, "-");
-	return `${cwd}/${JOURNAL_DIR}/${id}.jsonl`;
+	return join(canonicalCookRoot(cwd), JOURNAL_DIR, `${id}.jsonl`);
 }
 
-/** Append one entry; seq derived from tail. Fails closed (throws). */
+/** Append one durable entry under the same project lock as state mutations. */
 function append(cwd: string, taskId: string, entry: Omit<JournalEntry, "seq" | "at">): JournalEntry {
-	const p = journalPath(cwd, taskId);
-	mkdirSync(dirname(p), { recursive: true });
-	const tail = readTail(cwd, taskId);
-	const full: JournalEntry = {
-		seq: tail.length ? tail[tail.length - 1].seq + 1 : 0,
-		at: new Date().toISOString(),
-		...entry,
-	};
-	appendFileSync(p, JSON.stringify(full) + "\n");
-	return full;
+	return withCookLockSync(cwd, () => {
+		const entries = readJournal(cwd, taskId);
+		const full: JournalEntry = {
+			seq: entries.length ? entries[entries.length - 1].seq + 1 : 0,
+			at: new Date().toISOString(),
+			...entry,
+		};
+		writeCookFileAtomic(journalPath(cwd, taskId), [...entries, full].map((row) => JSON.stringify(row)).join("\n") + "\n");
+		return full;
+	});
 }
 
-/** Read the full journal; malformed lines are skipped with a warning. */
-// fallow-ignore-next-line complexity
+/** Corrupt coordination history must be repaired explicitly, never skipped. */
 export function readJournal(cwd: string, taskId: string): JournalEntry[] {
-	const p = journalPath(cwd, taskId);
-	if (!existsSync(p)) return [];
+	const path = journalPath(cwd, taskId);
+	const content = readCookFile(path, "journal");
+	if (content === undefined) return [];
 	const entries: JournalEntry[] = [];
-	const lines = readFileSync(p, "utf-8").split("\n");
-	for (const line of lines) {
-		if (!line.trim()) continue;
+	if (!content || !content.endsWith("\n")) {
+		throw new Error(`Invalid Cook journal: ${path}; final line is incomplete`);
+	}
+	const lines = content.split("\n");
+	lines.pop();
+	for (const [index, line] of lines.entries()) {
 		try {
-			const parsed = JSON.parse(line) as JournalEntry;
-			if (typeof parsed.seq === "number" && typeof parsed.event === "string") {
-				entries.push(parsed);
-			} else {
-				console.warn(`[cook-journal] skipping malformed entry (missing seq/event) in ${p}`);
+			const entry: JournalEntry = JSON.parse(line);
+			if (!entry || typeof entry !== "object" || Array.isArray(entry) ||
+				!Number.isSafeInteger(entry.seq) || entry.seq < 0 ||
+				(entry.seq <= (entries.at(-1)?.seq ?? -1)) ||
+				typeof entry.at !== "string" || !Number.isFinite(Date.parse(entry.at)) ||
+				!["intent", "record", "gate", "external"].includes(entry.event) ||
+				[entry.stage, entry.note, entry.hash].some((value) => value !== undefined && typeof value !== "string")) {
+				throw new Error("invalid event or sequence");
 			}
-		} catch {
-			console.warn(`[cook-journal] skipping unparseable line in ${p}`);
+			entries.push(entry);
+		} catch (error) {
+			throw new Error(`Invalid Cook journal: ${path}:${index + 1}; restore valid history before continuing`, { cause: error });
 		}
 	}
-	return entries.sort((a, b) => a.seq - b.seq);
+	return entries;
 }
 
 /** Alias kept for contract naming; same as readJournal. */

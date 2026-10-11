@@ -5,6 +5,7 @@ Backlog.md integration plugin for OMP.
 - Registers the full `backlog_*` tool suite (task create/edit/list/view, doc, decision, milestone, search, board export) as a thin, faithful wrapper over the `backlog` CLI.
 - Ships shared task helpers (`runBacklogCli`, `getTaskJson`, `getAllTasks`, `computeReadySet`, `readyChildren`) and the `TaskInfo` type for other plugins.
 - Injects the canonical Backlog.md workflow instructions (overview + task creation / execution / finalization guides + artifact quality standards) as the **default system-prompt overlay before every agent start** — the default instruction source for general model work.
+- Document creation reports partial failure if content/tags cannot be saved; recover through the returned document ID instead of creating a duplicate. Public document types map to the CLI's supported values.
 
 ## Layout
 

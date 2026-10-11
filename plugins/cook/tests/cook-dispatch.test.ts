@@ -15,6 +15,9 @@
  * module-loading boundary per test, matching the established pattern in
  * cook-durability.test.ts (vi.resetModules + per-test registration state).
  */
+import { mkdirSync, mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { profileForStage } from "../extensions/constants.ts";
@@ -81,18 +84,26 @@ const PARAMS: Record<Role, Record<string, unknown>> = {
 	judge: { task_id: "TASK-X" },
 };
 
+let workDir: string;
+
+beforeEach(() => {
+	workDir = mkdtempSync(path.join(tmpdir(), "cook-dispatch-"));
+	mkdirSync(path.join(workDir, "backlog"), { recursive: true });
+	__resetHandlers();
+});
+
+afterEach(() => {
+	rmSync(workDir, { recursive: true, force: true });
+	vi.restoreAllMocks();
+});
+
 describe("cook dispatch — task-tool availability contract", () => {
 	let pi: PiStub;
 	let ctx: CtxStub;
 
 	beforeEach(() => {
-		__resetHandlers();
 		pi = makePi();
-		ctx = makeCtx({ hasUI: true });
-	});
-
-	afterEach(() => {
-		vi.restoreAllMocks();
+		ctx = makeCtx({ cwd: workDir, hasUI: true });
 	});
 
 	it("emits a structured dispatch payload when task is registered", async () => {
@@ -190,7 +201,7 @@ describe("upstream-derived stage profile dispatch", () => {
 		expect(profileForStage("unsupported")).toBeUndefined();
 
 		const pi = makePi();
-		const ctx = makeCtx({ hasUI: true });
+		const ctx = makeCtx({ cwd: workDir, hasUI: true });
 		seedToolSurface(pi, [{ name: "task" }, { name: "hub" }]);
 		await freshExtension(pi);
 
@@ -210,7 +221,7 @@ describe("upstream-derived stage profile dispatch", () => {
 
 	it("fails fast for audit when native task is inactive", async () => {
 		const pi = makePi();
-		const ctx = makeCtx({ hasUI: true });
+		const ctx = makeCtx({ cwd: workDir, hasUI: true });
 		seedToolSurface(pi, [{ name: "task" }, { name: "hub" }]);
 		seedActiveSurface(pi, ["hub"]);
 		await freshExtension(pi);

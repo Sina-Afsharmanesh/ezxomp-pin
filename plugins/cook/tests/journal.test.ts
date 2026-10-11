@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, afterEach } from "vitest";
-import { mkdtempSync, rmSync, existsSync, readFileSync } from "node:fs";
+import { mkdtempSync, rmSync, mkdirSync, writeFileSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -60,19 +60,39 @@ describe("cook journal", () => {
 		expect(entries[1].event).toBe("external");
 	});
 
-	it("reads fail-open: malformed lines skipped with warning", () => {
+	it.each([
+		"NOT JSON AT ALL",
+		JSON.stringify({ nope: true }),
+		JSON.stringify({ seq: 0, at: "2026-01-01T00:00:01Z", event: "record", stage: "plan" }),
+		JSON.stringify({ seq: 2, at: "2026-01-01T00:00:01Z", event: "invented" }),
+		"",
+	])("rejects corrupt history without appending or dropping prior intent (%s)", (badLine) => {
 		const p = join(cwd, JOURNAL_DIR, "TASK-4.jsonl");
-		require("node:fs").mkdirSync(join(cwd, JOURNAL_DIR), { recursive: true });
-		require("node:fs").writeFileSync(
-			p,
-			JSON.stringify({ seq: 0, at: "2026-01-01T00:00:00Z", event: "intent", stage: "plan" }) + "\n" +
-			"NOT JSON AT ALL\n" +
-			JSON.stringify({ seq: 2, at: "2026-01-01T00:00:01Z", event: "record", stage: "plan" }) + "\n" +
-			JSON.stringify({ nope: true }) + "\n"
-		);
-		const entries = readJournal(cwd, "TASK-4");
-		expect(entries).toHaveLength(2);
-		expect(entries.map((e) => e.seq)).toEqual([0, 2]);
+		mkdirSync(join(cwd, JOURNAL_DIR), { recursive: true });
+		const content = JSON.stringify({ seq: 0, at: "2026-01-01T00:00:00Z", event: "intent", stage: "plan" }) + "\n" + badLine + "\n";
+		writeFileSync(p, content);
+		expect(() => readJournal(cwd, "TASK-4")).toThrow("Invalid Cook journal");
+		expect(() => appendRecord(cwd, "TASK-4", "plan")).toThrow("Invalid Cook journal");
+		expect(readFileSync(p, "utf-8")).toBe(content);
+	});
+
+	it("rejects incomplete final records instead of silently accepting a truncated history", () => {
+		appendIntent(cwd, "TASK-TORN", "implement");
+		const p = join(cwd, JOURNAL_DIR, "TASK-TORN.jsonl");
+		const content = readFileSync(p, "utf-8") + '{"seq":1';
+		writeFileSync(p, content);
+		expect(() => readJournal(cwd, "TASK-TORN")).toThrow("final line is incomplete");
+		expect(() => appendRecord(cwd, "TASK-TORN", "implement")).toThrow("final line is incomplete");
+		expect(readFileSync(p, "utf-8")).toBe(content);
+	});
+
+	it("rejects a zero-byte existing journal rather than restarting sequence", () => {
+		mkdirSync(join(cwd, JOURNAL_DIR), { recursive: true });
+		const path = join(cwd, JOURNAL_DIR, "TASK-EMPTY.jsonl");
+		writeFileSync(path, "");
+		expect(() => readJournal(cwd, "TASK-EMPTY")).toThrow("Invalid Cook journal");
+		expect(() => appendIntent(cwd, "TASK-EMPTY", "implement")).toThrow("Invalid Cook journal");
+		expect(readFileSync(path, "utf-8")).toBe("");
 	});
 
 	it("returns empty array when no journal exists", () => {
@@ -108,13 +128,9 @@ describe("cook journal", () => {
 		expect(findDanglingIntents(synthetic)).toHaveLength(0);
 	});
 
-	it("writes fail-closed: appends surface errors (read-only journal dir throws)", () => {
-		require("node:fs").mkdirSync(join(cwd, JOURNAL_DIR), { recursive: true });
-		require("node:fs").chmodSync(join(cwd, JOURNAL_DIR), 0o500); // read-only
-		try {
-			expect(() => appendIntent(cwd, "TASK-7", "plan")).toThrow();
-		} finally {
-			require("node:fs").chmodSync(join(cwd, JOURNAL_DIR), 0o755);
-		}
+	it("surfaces unreadable journal paths instead of resetting sequence", () => {
+		mkdirSync(join(cwd, JOURNAL_DIR, "TASK-7.jsonl"), { recursive: true });
+		expect(() => readJournal(cwd, "TASK-7")).toThrow("Cannot read Cook journal");
+		expect(() => appendIntent(cwd, "TASK-7", "plan")).toThrow("Cannot read Cook journal");
 	});
 });

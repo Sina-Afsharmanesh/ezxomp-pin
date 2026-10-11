@@ -33,7 +33,7 @@ function capabilitiesMetadata(value: unknown): ObservedModelMetadata {
   const capabilities = record(value);
   if (!capabilities) return {};
   const vision = boolean(capabilities.vision) || boolean(record(capabilities.vision)?.supported) || (strings(capabilities.input_modalities) || []).includes("image");
-  const directReasoning = boolean(capabilities.reasoning) || boolean(capabilities.thinking) || boolean(capabilities.supportsThinking);
+  const directReasoning = boolean(capabilities.reasoning) ?? boolean(capabilities.thinking) ?? boolean(capabilities.supportsThinking);
   const reasoning = record(capabilities.reasoning);
   const type = typeof reasoning?.type === "string" ? reasoning.type : undefined;
   const effortOptions = strings(capabilities.effort_tiers) || strings(reasoning?.effort_options);
@@ -44,7 +44,10 @@ function capabilitiesMetadata(value: unknown): ObservedModelMetadata {
     ...(type === "minimal" ? { reasoning: true, alwaysThinking: true } : {}),
     ...(type === "effort" ? { reasoning: true, ...(effortOptions ? { effortOptions } : {}) } : {}),
     ...(type === undefined && defined(directReasoning) ? { reasoning: directReasoning } : {}),
-    ...(defined(omniEffortTiers) ? { reasoning: true, effortOptions: omniEffortTiers.filter(t => t !== "none") } : {}),
+    ...(defined(omniEffortTiers) ? {
+      ...(type === undefined && directReasoning === undefined ? { reasoning: true } : {}),
+      effortOptions: omniEffortTiers.filter(t => t !== "none"),
+    } : {}),
   };
 }
 
@@ -55,7 +58,7 @@ function metadataFromMeta(value: unknown): ObservedModelMetadata {
   const maxTokens = firstFiniteNumber(meta, "max_tokens", "max_output_tokens", "outputTokenLimit");
   const capabilityInfo = capabilitiesMetadata(meta.capabilities);
   const vision = capabilityInfo.vision || boolean(meta.supports_vision);
-  const reasoning = capabilityInfo.reasoning || boolean(meta.supports_reasoning) || boolean(meta.thinking);
+  const reasoning = capabilityInfo.reasoning ?? boolean(meta.supports_reasoning) ?? boolean(meta.thinking);
   const endpointTypes = strings(meta.supported_endpoint_types);
   return {
     ...(defined(contextWindow) ? { contextWindow } : {}),
@@ -90,32 +93,32 @@ function finitePositive(value: unknown): number | undefined {
   return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : undefined;
 }
 
+function listVision(item: JsonRecord, capabilityInfo: ObservedModelMetadata): boolean | undefined {
+  const inputModalities = strings(record(item.architecture)?.input_modalities) || strings(item.modalities);
+  const nestedInputModalities = strings(record(item.capabilities)?.input_modalities);
+  return (inputModalities ? inputModalities.includes("image") : false)
+    || (nestedInputModalities ? nestedInputModalities.includes("image") : false)
+    || capabilityInfo.vision || boolean(item.supports_vision);
+}
+
 /** Parse OpenRouter, One API, New API, and Gemini inline model-list evidence. */
 export function metadataFromModelListItem(value: unknown): ObservedModelMetadata | undefined {
   const item = record(value);
   if (!item) return undefined;
   const contextWindow = firstFiniteNumber(item, "context_length", "context_window", "max_input_tokens", "inputTokenLimit");
   const maxTokens = firstFiniteNumber(item, "max_tokens", "max_output_tokens", "outputTokenLimit", "max_completion_tokens");
-  const inputModalities = strings(record(item.architecture)?.input_modalities) || strings(item.modalities);
   const capabilityInfo = capabilitiesMetadata(item.capabilities);
-  const caps = record(item.capabilities);
-  const nestedInputModalities = strings(caps?.input_modalities);
-  const vision = (inputModalities ? inputModalities.includes("image") : false) || (nestedInputModalities ? nestedInputModalities.includes("image") : false) || capabilityInfo.vision || boolean(item.supports_vision);
-  const reasoning = boolean(item.reasoning) || capabilityInfo.reasoning || boolean(item.supports_reasoning) || boolean(item.thinking);
+  const vision = listVision(item, capabilityInfo);
+  const reasoning = boolean(item.reasoning) ?? capabilityInfo.reasoning ?? boolean(item.supports_reasoning) ?? boolean(item.thinking);
   const endpointTypes = strings(item.supported_endpoint_types);
-  const observed = mergeObservedMetadata(
-    {
-      ...(defined(contextWindow) ? { contextWindow } : {}),
-      ...(defined(maxTokens) ? { maxTokens } : {}),
-      ...(defined(vision) ? { vision } : {}),
-      ...(defined(reasoning) ? { reasoning } : {}),
-      ...(endpointTypes ? { endpointTypes } : {}),
-      ...capabilityInfo,
-    },
-    // 9router emits camelCase token limits inside the capabilities block.
-    metadataFrom9routerCapabilities(item.capabilities),
-    metadataFromMeta(item.meta),
-  );
+  const observed: ObservedModelMetadata = { ...capabilityInfo };
+  if (defined(contextWindow)) observed.contextWindow = contextWindow;
+  if (defined(maxTokens)) observed.maxTokens = maxTokens;
+  if (defined(vision)) observed.vision = vision;
+  if (endpointTypes) observed.endpointTypes = endpointTypes;
+  Object.assign(observed, metadataFrom9routerCapabilities(item.capabilities), metadataFromMeta(item.meta));
+  // Explicit list/capability evidence wins over contradictory nested meta.
+  if (defined(reasoning)) observed.reasoning = reasoning;
   return hasMetadata(observed) ? observed : undefined;
 }
 
@@ -123,15 +126,7 @@ export function metadataFromModelListItem(value: unknown): ObservedModelMetadata
 export function metadataFromModelDetail(value: unknown): ObservedModelMetadata | undefined {
   const item = record(value);
   if (!item) return undefined;
-  const base = metadataFromModelListItem(item) || {};
-  const capabilityInfo = capabilitiesMetadata(item.capabilities);
-  const observed = mergeObservedMetadata(
-    base,
-    capabilityInfo,
-    metadataFrom9routerCapabilities(item.capabilities),
-    metadataFromMeta(item.meta),
-  );
-  return hasMetadata(observed) ? observed : undefined;
+  return metadataFromModelListItem(item);
 }
 
 export function modelIdFromEntry(value: unknown): string | undefined {

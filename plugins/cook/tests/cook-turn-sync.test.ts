@@ -5,7 +5,7 @@ import { execSync, spawnSync } from "node:child_process";
 import path from "node:path";
 
 import makePi, { __emitHook, __resetHandlers, makeCtx, makeUiStub } from "./__mocks__/pi-coding-agent";
-import { defaultCookState, saveCookState } from "../extensions/state.ts";
+import { defaultCookState, saveCookState, loadCookState } from "../extensions/state.ts";
 
 let workDir: string;
 
@@ -55,22 +55,26 @@ afterEach(() => {
 });
 
 describe("cook turn synchronization", () => {
-	it("reconciles a stale active pointer, repaints the widget, and refreshes the dagr run", async () => {
+	it("keeps unrelated active task ownership while repainting current workflow and dagr", async () => {
 		const pi = makeRealPi();
 		await freshExtension(pi);
 		const ui = makeUiStub();
-		const title = ui.setTitle;
-		const widget = ui.setWidget;
+		let title = "";
+		let widgetLines: string[] = [];
+		ui.setTitle.mockImplementation((value: string) => { title = value; });
+		ui.setWidget.mockImplementation((_id: string, lines: string[] | undefined) => { widgetLines = lines ?? []; });
 		const ctx = makeCtx({ cwd: workDir, ui, hasUI: true });
 
 		await __emitHook("turn_start", {}, ctx);
-		await new Promise((resolve) => setTimeout(resolve, 25));
-
-		expect(title).toHaveBeenCalledWith("cook: implement [worker] — TASK-2");
-		const widgetLines = widget.mock.calls.at(-1)?.[1] as string[];
-		expect(widgetLines).toEqual(expect.arrayContaining([expect.stringContaining("task: TASK-2"), expect.stringContaining("stage: IMPLEMENT")]));
+		await vi.waitFor(() => expect(widgetLines).toEqual(expect.arrayContaining([
+			expect.stringContaining("task: TASK-1"), expect.stringContaining("stage: CAPTURE"),
+		])));
+		expect(title).toBe("cook: capture [chef] — TASK-1");
+		expect(loadCookState(workDir).currentTaskId).toBe("TASK-1");
+		const activeTask = JSON.parse(bl("task TASK-2 --json")).task;
+		expect(activeTask.status).toBe("In Progress");
 		expect(existsSync(path.join(workDir, ".dagr", "run.json"))).toBe(true);
 		const run = JSON.parse(readFileSync(path.join(workDir, ".dagr", "run.json"), "utf-8"));
-		expect(run.run.title).toBe("cook: TASK-2");
+		expect(run.run.title).toBe("cook: TASK-1");
 	});
 });

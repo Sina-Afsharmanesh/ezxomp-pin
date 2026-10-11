@@ -9,6 +9,7 @@ import makePi, {
 	type PiStub,
 	type CtxStub,
 } from "./__mocks__/pi-coding-agent";
+import { stopWatcher } from "../extensions/watch.ts";
 
 // Drives the watcher end-to-end: session_start with watch.enabled=true
 // installs fs.watch on <cwd>/backlog; backlog file event fires pi.sendMessage
@@ -63,6 +64,7 @@ beforeEach(async () => {
 });
 
 afterEach(() => {
+	stopWatcher();
 	rmSync(workDir, { recursive: true, force: true });
 });
 

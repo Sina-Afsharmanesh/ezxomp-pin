@@ -27,9 +27,16 @@ On `session_start`, Cook refreshes the complete roster in the project `.omp/agen
 
 Record each fresh specialist envelope with `cook_record_result`; worker repair envelopes include the actual `modified_files`. Missing or out-of-scope file evidence forces a full judgment reset. At the post-bonus convergence cap, Cook persists a council episode: execute the exact three-lane batch from `cook_dispatch_council`, pass the three votes to `cook_dispatch_council_synthesis`, then record its executable `plan`, `implement`, or `verify` route with `cook_record_council`.
 
+Each dispatch emits `dispatch_stage`; pass that exact identity to `cook_record_result` for parallel specialists. Recovery retains journal history but starts a fresh attempt, so prior failed receipts cannot block repaired work. If a validator or judge is proven orphaned, redispatch with `supersede:<its dispatch_stage>`; all specialists required by that attempt must run fresh.
+
+Validator gates use `cook_journal({task_id,event:"gate",stage:"verify",dispatch_stage,hash,green,note})`. Standalone audit or other-stage gates never complete a validator dispatch. Copy the exact binding from the validator brief; stale or mismatched receipts are rejected.
+
+Claims and state/journal commits share an interprocess lock at the canonical project root. Only a persisted claim authorizes a lane. Corrupt state/journal or persistence failure is explicit, not an empty-state fallback. Turn reconciliation leaves sibling activation to `cook_next`, which excludes claimed/blocked/terminal tasks and orders ready work high, medium, low, then unprioritized.
+
+
 ## Watch mode
 
-Watch mode installs a file watcher on your `backlog/` directory. When backlog task files change (e.g. an agent marks a task as Done), the watcher triggers a cook re-evaluation automatically — no manual `/cook next` needed.
+Watch mode starts monitoring immediately, including existing and newly created nested task/doc directories under `backlog/` on Linux. Task/doc edits notify without restarting the session. Dotfiles, state/config churn, and directory symlinks are excluded.
 
 ### Enabling watch
 
@@ -96,7 +103,7 @@ When a backlog file event fires, the cook policy engine decides the next action:
 
 ### Lifecycle
 
-- **session_start**: If `watch.enabled === true` in `backlog/cook-state.json`, the watcher is automatically re-installed on `backlog/`. No manual restart needed across OMP sessions.
+- **session_start**: Persisted enabled watch settings resume filesystem monitoring. `cook_watch start` and bare `/cook start` install monitoring immediately; stop closes all watchers and pending notifications. In manual mode, notifications do not request an agent turn.
 - **session_stop**: The active watcher is closed and its resources released.
 
 ### Worked example

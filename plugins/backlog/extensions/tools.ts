@@ -8,6 +8,8 @@ import type { TSchema } from "@oh-my-pi/pi-ai";
 import type { BacklogToolsContext } from "./types.ts";
 import { runBacklogCli } from "./helpers.ts";
 
+const DOCUMENT_CLI_TYPES = { spec: "specification", research: "other", adr: "other", guide: "guide", report: "other" } as const;
+
 export function registerBacklogTools(pi: ExtensionAPI, sc: BacklogToolsContext): void {
 	function registerBacklogCliTool<P>(config: {
 		name: string;
@@ -204,13 +206,7 @@ export function registerBacklogTools(pi: ExtensionAPI, sc: BacklogToolsContext):
 		}) as unknown as TSchema,
 		async execute(_id, params: { title: string; content: string; type: "spec" | "research" | "adr" | "guide" | "report"; path?: string; tags?: string[] }, _signal, _onUpdate, ctx) {
 			sc.currentCwd = ctx.cwd;
-			const cliType = {
-				spec: "specification",
-				research: "other",
-				adr: "other",
-				guide: "guide",
-				report: "other",
-			}[params.type];
+			const cliType = DOCUMENT_CLI_TYPES[params.type];
 			const args = [
 				"doc",
 				"create",
@@ -219,7 +215,6 @@ export function registerBacklogTools(pi: ExtensionAPI, sc: BacklogToolsContext):
 				cliType,
 			];
 			if (params.path) args.push("-p", params.path);
-			if (params.tags) args.push("--tags", params.tags.join(","));
 			const created = await runBacklogCli(pi, args, ctx.cwd);
 			if (created.code !== 0) {
 				return {
@@ -230,21 +225,23 @@ export function registerBacklogTools(pi: ExtensionAPI, sc: BacklogToolsContext):
 			const docId = created.stdout.match(/Created document (\S+)/)?.[1];
 			if (!docId) {
 				return {
-					content: [{ type: "text", text: created.stdout || created.stderr }],
-					isError: false,
+					content: [{ type: "text", text: `${created.stdout || created.stderr}\nDocument creation incomplete: could not identify created document; content was not saved. Inspect existing documents before retrying.` }],
+					isError: true,
 				};
 			}
+			const updateArgs = ["doc", "update", docId, "--content", params.content];
+			if (params.tags) updateArgs.push("--tags", params.tags.join(","));
 			const updated = await runBacklogCli(
 				pi,
-				["doc", "update", docId, "--content", params.content],
+				updateArgs,
 				ctx.cwd,
 			);
-			const warning = updated.code !== 0
-				? ` Warning: created document ${docId}, but content update failed: ${updated.stderr || updated.stdout}`
+			const incomplete = updated.code !== 0
+				? `\nDocument creation incomplete: ${docId} exists, but content update failed: ${updated.stderr || updated.stdout}. Retry with backlog doc update ${docId} --content <content>; do not create a duplicate.`
 				: "";
 			return {
-				content: [{ type: "text", text: `${created.stdout}${warning}` }],
-				isError: false,
+				content: [{ type: "text", text: `${created.stdout}${incomplete}` }],
+				isError: updated.code !== 0,
 			};
 		},
 	});
@@ -407,9 +404,9 @@ export function registerBacklogTools(pi: ExtensionAPI, sc: BacklogToolsContext):
 		}) as unknown as TSchema,
 		args: (params: { doc_id: string; content?: string; title?: string; type?: "spec" | "research" | "adr" | "guide" | "report"; tags?: string[]; path?: string }) => {
 			const a = ["doc", "update", params.doc_id];
-			if (params.content) a.push("--content", params.content);
-			if (params.title) a.push("--title", params.title);
-			if (params.type) a.push("-t", params.type);
+			if (params.content !== undefined) a.push("--content", params.content);
+			if (params.title !== undefined) a.push("--title", params.title);
+			if (params.type) a.push("-t", DOCUMENT_CLI_TYPES[params.type]);
 			if (params.tags) a.push("--tags", params.tags.join(","));
 			if (params.path) a.push("-p", params.path);
 			return a;

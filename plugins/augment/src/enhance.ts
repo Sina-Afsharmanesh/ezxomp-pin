@@ -130,7 +130,14 @@ async function callLLM(
       signal: combined,
       maxTokens: Math.min(model.maxTokens ?? settings.maxOutputTokens, settings.maxOutputTokens),
     });
-    if (signal.aborted || response.stopReason === "aborted") return null;
+    if (signal.aborted) return null;
+    if (timeoutController.signal.aborted) {
+      throw new Error("Augment timed out. Try again or use a faster model.");
+    }
+    if (response.stopReason === "aborted") return null;
+    if (response.stopReason === "error") {
+      throw new Error((response.errorMessage || "Augment provider completion failed.").slice(0, 500));
+    }
     return response;
   } catch (error) {
     if (signal.aborted) return null;

@@ -1,4 +1,7 @@
-import { describe, expect, it, beforeEach, vi } from "vitest";
+import { afterEach, describe, expect, it, beforeEach, vi } from "vitest";
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import makePi, {
 	__resetHandlers,
 	__getCommandHandler,
@@ -14,11 +17,15 @@ import makePi, {
 // after each __resetHandlers(). Static import would leak watcher state.
 
 let ctx: CtxStub;
+let cwd: string;
 
 beforeEach(() => {
 	__resetHandlers();
-	ctx = makeCtx({ cwd: "/tmp/ezxomp-cook-watch-cli" });
+	cwd = mkdtempSync(join(tmpdir(), "ezxomp-cook-watch-cli-"));
+	ctx = makeCtx({ cwd });
 });
+
+afterEach(() => rmSync(cwd, { recursive: true, force: true }));
 
 describe("/cook start|stop|status", () => {
 	it("registerCommand('cook') description mentions start/stop/status subcommands", async () => {

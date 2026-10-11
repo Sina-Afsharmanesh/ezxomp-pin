@@ -32,6 +32,7 @@ function setup() {
 		return { code: r.status ?? 0, stdout: r.stdout ?? "", stderr: r.stderr ?? "" };
 	});
 	const sc = createStoreContext(pi);
+	sc.currentCwd = workDir;
 	registerCookTools(pi, sc);
 	const ctx = makeCtx({ cwd: workDir });
 	return { pi, sc, ctx };

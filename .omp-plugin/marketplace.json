@@ -28,9 +28,9 @@
     {
       "name": "agent-learning",
       "source": "./plugins/agent-learning",
-      "description": "Unified agent learning for OMP \u2014 ezxomp plugin/tool catalog + skills.sh surface (safe-language policy), native-memory facts shim, skillforge evidence/procedures pipeline with human-gated patches, habits lane via @ezxomp/experiences, optional learning.review gate.",
+      "description": "Unified agent learning for OMP — ezxomp plugin/tool catalog + skills.sh surface (safe-language policy), native-memory facts shim, skillforge evidence/procedures pipeline with human-gated patches, habits lane via @ezxomp/experiences, optional learning.review gate.",
       "version": "0.1.0-ezxomp.0",
-      "attribution": "ezxomp original \u2014 consolidates the skills, skillforge, and experiences lanes (doc-5)."
+      "attribution": "ezxomp original — consolidates the skills, skillforge, and experiences lanes (doc-5)."
     },
     {
       "name": "compact-eng",
@@ -50,7 +50,7 @@
       "name": "augment",
       "source": "./plugins/augment",
       "description": "Augment-style prompt rewriting with persisted OMP settings and editor review.",
-      "version": "1.0.9-ezxomp.0",
+      "version": "1.0.9-ezxomp.1",
       "attribution": "Forked from pi-augment by sting8k. Ported to OMP 17.2.1 by ezxomp."
     },
     {
@@ -71,14 +71,14 @@
       "name": "cook",
       "source": "./plugins/cook",
       "description": "Backlog.md cookbook workflow plugin for OMP. Decomposes work into atomic sub-tickets and drives scout/planner/worker/validator/judge plus conditional audit/refute agents through OMP's native task tool, with ADHD divergent ideation, DAG iteration, and Done-gate enforcement.",
-      "version": "0.1.7-ezxomp.8",
+      "version": "0.1.7-ezxomp.9",
       "attribution": "Forked from pi-backlog-cook. Ported to OMP 17.2.1 by ezxomp."
     },
     {
       "name": "backlog",
       "source": "./plugins/backlog",
       "description": "Backlog.md integration plugin for OMP. Registers the backlog_* tool suite over the backlog CLI and injects the canonical Backlog.md workflow instructions as the default system-prompt overlay for all agent work.",
-      "version": "0.1.0-ezxomp.0",
+      "version": "0.1.0-ezxomp.1",
       "attribution": "Born in ezxomp; tools extracted from @ezxomp/cook."
     },
     {
@@ -120,7 +120,7 @@
       "name": "better-custom",
       "source": "./plugins/better-custom",
       "description": "Typed /custom-provider wizard for adding, editing, and deleting custom model providers through native OMP UI, with an authenticated model browser registered in the /model seam.",
-      "version": "0.1.3-ezxomp.0",
+      "version": "0.1.3-ezxomp.1",
       "attribution": "Born in ezxomp."
     }
   ]

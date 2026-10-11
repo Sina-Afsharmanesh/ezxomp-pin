@@ -2,6 +2,6 @@
   "originalName": "omp-backlog",
   "url": "https://tangled.org/expi.tngl.sh/ezxomp",
   "integrity": "sha256-omp-backlog-born-in-repo",
-  "localForkVersion": "0.1.0-ezxomp.0",
+  "localForkVersion": "0.1.0-ezxomp.1",
   "note": "Born in the ezxomp monorepo. Extensions/backlog-tools.ts and backlog-helpers.ts were extracted verbatim from @ezxomp/cook (fork of omp-backlog-cook) when backlog integration became a standalone plugin."
 }

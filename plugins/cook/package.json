@@ -1,6 +1,6 @@
 {
   "name": "@ezxomp/cook",
-  "version": "0.1.7-ezxomp.8",
+  "version": "0.1.7-ezxomp.9",
   "description": "Backlog.md cookbook workflow plugin for OMP. Decomposes work into atomic sub-tickets and drives scout/planner/worker/validator/judge plus conditional audit/refute agents through OMP's native task tool, with ADHD divergent ideation, DAG iteration, and Done-gate enforcement. Backlog tools/helpers/instructions now provided by @ezxomp/backlog.",
   "keywords": [
     "omp-package",

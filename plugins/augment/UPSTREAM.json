@@ -20,5 +20,5 @@
     "src/strategies/strategy.ts",
     "src/types.ts"
   ],
-  "localForkVersion": "1.0.9-ezxomp.0"
+  "localForkVersion": "1.0.9-ezxomp.1"
 }

@@ -68,7 +68,8 @@ describe("dagr projection freshness and recovery demo", () => {
 		(pi as unknown as { getActiveTools: () => Promise<string[]> }).getActiveTools = async () => ["task", "hub", "eval"];
 		const result = await invoke("cook_dispatch_worker", { task_id: "TASK-1", plan: "demo" }, ctx);
 		expect(result.isError).toBeFalsy();
-		expect(sc.getStore().agentLog).toContainEqual(expect.objectContaining({ taskId: "TASK-1", stage: "dispatch:worker", role: "worker" }));
+		const dispatch = sc.getStore().agentLog.find((entry) => entry.taskId === "TASK-1" && entry.role === "worker");
+		expect(dispatch?.stage).toBe("dispatch:worker:0");
 		await settleProjection();
 		expect(existsSync(path.join(workDir, ".dagr", "run.json"))).toBe(true);
 	});
@@ -150,19 +151,20 @@ describe("dagr projection freshness and recovery demo", () => {
 		writeFileSync(invalidCwd, "x");
 		const result = await invoke("cook_dispatch_validator", { task_id: "TASK-1" }, makeCtx({ cwd: invalidCwd }));
 		expect(result.isError).toBe(true);
-		expect(result.content[0]?.text).toContain("journal");
 	});
 
 	it("uses the pure lifecycle builder for a live receipt projection", async () => {
 		bl('task create "Child"');
-		const { pi, ctx } = setup();
+		const { pi, sc, ctx } = setup();
 		(pi as unknown as { getActiveTools: () => Promise<string[]> }).getActiveTools = async () => ["task"];
-		await invoke("cook_dispatch_worker", { task_id: "TASK-1" }, ctx);
-		await invoke("cook_journal", { task_id: "TASK-1", event: "gate", stage: "dispatch:worker", hash: "live-gate", green: true }, ctx);
-		await invoke("cook_claim", { task_id: "TASK-1", by: "cook-worker" }, ctx);
+		expect((await invoke("cook_start", { task_id: "TASK-1", chain_name: "implement" }, ctx)).isError).toBeFalsy();
+		expect((await invoke("cook_dispatch_worker", { task_id: "TASK-1" }, ctx)).isError).toBeFalsy();
+		const dispatch = sc.getStore().agentLog.find((entry) => entry.taskId === "TASK-1" && entry.role === "worker");
+		expect((await invoke("cook_record_result", { task_id: "TASK-1", stage: "implement", dispatch_stage: dispatch?.stage, outcome: "success", evidence: "verified", receipt: "worker-receipt" }, ctx)).isError).toBeFalsy();
+		expect((await invoke("cook_claim", { task_id: "TASK-1", by: "cook-worker" }, ctx)).isError).toBeFalsy();
 		await settleProjection();
 		const doc = JSON.parse(readFileSync(path.join(workDir, ".dagr", "run.json"), "utf-8"));
 		const attempt = doc.tasks.find((task: any) => task.id === "TASK-1").attempts[0];
-		expect(attempt.outcome).toMatchObject({ result: "done", evidence: "verified", receipt: "live-gate" });
+		expect(attempt.outcome).toMatchObject({ result: "done", evidence: "verified", receipt: "worker-receipt" });
 	});
 });

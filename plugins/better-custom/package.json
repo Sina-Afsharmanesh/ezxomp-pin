@@ -1,6 +1,6 @@
 {
   "name": "@ezxomp/better-custom",
-  "version": "0.1.3-ezxomp.0",
+  "version": "0.1.3-ezxomp.1",
   "description": "OMP extension — typed custom-provider wizard boundary",
   "type": "module",
   "main": "src/index.ts",
